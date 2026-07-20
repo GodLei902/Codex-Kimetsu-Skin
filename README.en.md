@@ -9,7 +9,7 @@
   Local CDP injection · no official app patching · native Codex controls remain interactive
 </p>
 
-> This repository is adapted from a local CDP theming runtime. This fork removes upstream release content outside the Demon Slayer / Zenitsu / Thunder Breathing theme and keeps only the runtime needed for that skin.
+> Bring Zenitsu Agatsuma's Thunder Breathing energy, lightning accents, and focused dark-workbench atmosphere into Codex Desktop. The skin is applied through local CDP injection without patching the official app or replacing native Codex interactions.
 
 ## Preview
 
@@ -73,5 +73,9 @@ Before shipping, also inspect the home route, task route, profile menu, and sett
 ## License And Notices
 
 Software license: [`macos/LICENSE`](./macos/LICENSE). Asset and trademark notes: [`macos/NOTICE.md`](./macos/NOTICE.md).
+
+## Credits
+
+This project references and uses the local CDP theming approach and cross-platform script structure from [Fei-Away/Codex-Dream-Skin](https://github.com/Fei-Away/Codex-Dream-Skin), then adapts that foundation into the Zenitsu Agatsuma “Thunder Breathing” theme.
 
 This is not an official OpenAI product. Codex, Demon Slayer, Zenitsu Agatsuma, and related names, characters, trademarks, and artwork belong to their respective owners. The character skin assets are included as a personal theme example only; redistribution or commercial use requires independent rights review.

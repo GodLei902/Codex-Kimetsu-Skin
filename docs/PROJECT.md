@@ -1,6 +1,6 @@
 # Codex Kimetsu Skin · 项目记录
 
-本仓库是基于本机 CDP 换肤运行框架改造的主题化 fork。上游提供跨平台 Codex 换肤运行能力；本 fork 的维护目标是把发行内容收敛成一套我妻善逸「霹雳呼吸」主题。
+本仓库参考 [Fei-Away/Codex-Dream-Skin](https://github.com/Fei-Away/Codex-Dream-Skin) 的本机 CDP 换肤思路与跨平台脚本结构，维护目标是提供一套我妻善逸「霹雳呼吸」Codex 桌面端主题。
 
 ## 当前范围
 
@@ -8,7 +8,7 @@
 - 保留 macOS 与 Windows 的安装、启动、验证、暂停、恢复脚本。
 - 保留主题导入/保存能力，方便本地测试与自定义。
 - 内置主题只保留 `preset-thunder-breathing`。
-- 删除上游多主题发行内容、旧生图提示词和非善逸主题素材。
+- 清理非善逸主题素材、旧生图提示词和无关发行内容。
 
 ## 运行模型
 

@@ -9,7 +9,7 @@
   基于本机 CDP 注入 · 不修改官方安装包 · 保留 Codex 原生交互
 </p>
 
-> 本项目基于本机 CDP 换肤运行框架改造。当前 fork 已移除上游多主题发行内容，只保留「鬼灭之刃 / 我妻善逸 / 霹雳呼吸」这一套主题相关资源和运行代码。
+> 把我妻善逸「霹雳呼吸」的速度感、雷光和深色工作台氛围带进 Codex 桌面端。主题通过本机 CDP 注入应用，不改官方安装包，也不替换 Codex 的原生交互。
 
 ## 主题预览
 
@@ -73,5 +73,9 @@ powershell -File windows/tests/run-tests.ps1
 ## 许可与声明
 
 代码许可见 [`macos/LICENSE`](./macos/LICENSE)，额外素材声明见 [`macos/NOTICE.md`](./macos/NOTICE.md)。
+
+## 来源与致谢
+
+本项目参考并使用了 [Fei-Away/Codex-Dream-Skin](https://github.com/Fei-Away/Codex-Dream-Skin) 的本机 CDP 换肤思路与跨平台脚本结构，在此基础上整理为我妻善逸「霹雳呼吸」主题版本。
 
 本项目不是 OpenAI 官方产品。Codex、鬼灭之刃、我妻善逸及相关名称、角色、商标和素材权利归各自权利人所有。本仓库中的角色主题素材仅作个人主题示意；公开再分发或商用前请自行完成权利核验。
