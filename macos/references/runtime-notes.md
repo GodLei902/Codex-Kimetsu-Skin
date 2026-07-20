@@ -9,6 +9,6 @@
 - Treat loopback CDP as locally privileged but unauthenticated. Keep the themed session limited to trusted local use and close the port through a full Restore when finished.
 - Poll page targets and reinject after document loads. A debounced mutation observer plus a low-frequency safety timer handles in-page route changes.
 - Record injector PID, start time, executable, script path, app identity, selected port, and theme directory. Refuse to stop a PID when any required identity differs.
-- Store mutable data under `~/Library/Application Support/CodexDreamSkinStudio`; keep the installed program under `~/.codex/codex-dream-skin-studio`.
+- Store mutable data under `~/Library/Application Support/CodexKimetsuSkin`; keep the installed program under `~/.codex/codex-kimetsu-skin`.
 - Back up and restore only `appearanceTheme` and `appearanceDarkCodeThemeId`. Leave `appearanceDarkChromeTheme` and unrelated TOML content untouched.
 - Never modify, replace, unpack, repack, re-sign, or back up `app.asar`.

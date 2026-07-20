@@ -1,31 +1,31 @@
 ((cssText, artDataUrl, themeConfig) => {
-  const STATE_KEY = "__CODEX_DREAM_SKIN_STATE__";
-  const DISABLED_KEY = "__CODEX_DREAM_SKIN_DISABLED__";
-  const STYLE_ID = "codex-dream-skin-style";
-  const CHROME_ID = "codex-dream-skin-chrome";
-  const SHELL_ATTR = "data-dream-shell";
+  const STATE_KEY = "__CODEX_KIMETSU_SKIN_STATE__";
+  const DISABLED_KEY = "__CODEX_KIMETSU_SKIN_DISABLED__";
+  const STYLE_ID = "codex-kimetsu-skin-style";
+  const CHROME_ID = "codex-kimetsu-skin-chrome";
+  const SHELL_ATTR = "data-kimetsu-shell";
   const ART_ATTRS = [
-    "data-dream-art-wide", "data-dream-art-safe", "data-dream-task-mode",
-    "data-dream-art-safe-area", "data-dream-art-task-mode", "data-dream-art-aspect",
-    "data-dream-art-ready",
+    "data-kimetsu-art-wide", "data-kimetsu-art-safe", "data-kimetsu-task-mode",
+    "data-kimetsu-art-safe-area", "data-kimetsu-art-task-mode", "data-kimetsu-art-aspect",
+    "data-kimetsu-art-ready", "data-kimetsu-theme-id",
   ];
-  const VERSION = __DREAM_SKIN_VERSION_JSON__;
-  const STYLE_REVISION = __DREAM_SKIN_STYLE_REVISION_JSON__;
+  const VERSION = __KIMETSU_SKIN_VERSION_JSON__;
+  const STYLE_REVISION = __KIMETSU_SKIN_STYLE_REVISION_JSON__;
   const THEME = themeConfig && typeof themeConfig === "object" ? themeConfig : {};
   const ART = THEME.art && typeof THEME.art === "object" ? THEME.art : {};
   const ART_METADATA = THEME.artMetadata && typeof THEME.artMetadata === "object"
     ? THEME.artMetadata : null;
-  const ANALYSIS_CACHE_KEY = "__CODEX_DREAM_SKIN_ANALYSIS_CACHE__";
+  const ANALYSIS_CACHE_KEY = "__CODEX_KIMETSU_SKIN_ANALYSIS_CACHE__";
   const THEME_VARIABLES = [
     "--ds-bg", "--ds-panel", "--ds-panel-2", "--ds-green", "--ds-lime",
     "--ds-cyan", "--ds-purple", "--ds-text", "--ds-muted", "--ds-line",
     "--ds-bg-rgb", "--ds-panel-rgb", "--ds-panel-2-rgb", "--ds-accent-rgb",
     "--ds-accent-alt-rgb", "--ds-secondary-rgb", "--ds-highlight-rgb",
     "--ds-text-rgb", "--ds-muted-rgb", "--ds-line-rgb",
-    "--dream-art-focus-x", "--dream-art-focus-y", "--dream-art-position",
-    "--dream-skin-focus-x", "--dream-skin-focus-y", "--dream-skin-art-position",
-    "--dream-skin-name", "--dream-skin-tagline", "--dream-skin-project-prefix",
-    "--dream-skin-project-label",
+    "--kimetsu-art-focus-x", "--kimetsu-art-focus-y", "--kimetsu-art-position",
+    "--kimetsu-skin-focus-x", "--kimetsu-skin-focus-y", "--kimetsu-skin-art-position",
+    "--kimetsu-skin-name", "--kimetsu-skin-tagline", "--kimetsu-skin-project-prefix",
+    "--kimetsu-skin-project-label",
   ];
   const installToken = {};
   const existingAnalysisCache = window[ANALYSIS_CACHE_KEY];
@@ -205,16 +205,16 @@
     // synchronously. Mutation records created by this probe are drained below
     // so the root observer does not schedule a redundant ensure pass.
     try {
-      const hadSkin = root.classList.contains("codex-dream-skin");
+      const hadSkin = root.classList.contains("codex-kimetsu-skin");
       const savedShell = root.getAttribute(SHELL_ATTR);
       samplingNativeShell = true;
-      if (hadSkin) root.classList.remove("codex-dream-skin");
+      if (hadSkin) root.classList.remove("codex-kimetsu-skin");
       if (savedShell !== null) root.removeAttribute(SHELL_ATTR);
       let colorScheme = "";
       try {
         colorScheme = getComputedStyle(root).colorScheme || "";
       } finally {
-        if (hadSkin) root.classList.add("codex-dream-skin");
+        if (hadSkin) root.classList.add("codex-kimetsu-skin");
         if (savedShell !== null) root.setAttribute(SHELL_ATTR, savedShell);
         rootObserver?.takeRecords?.();
         samplingNativeShell = false;
@@ -231,11 +231,11 @@
 
     // Only use surface luminance before the skin owns those surfaces. Sampling
     // our own translucent layers would create route-dependent light/dark flips.
-    if (!root.classList.contains("codex-dream-skin")) {
+    if (!root.classList.contains("codex-kimetsu-skin")) {
       const samples = [
         body,
-        document.querySelector("main.main-surface"),
-        document.querySelector("aside.app-shell-left-panel"),
+        document.querySelector(".main-surface"),
+        document.querySelector(".app-shell-left-panel"),
       ].filter(Boolean);
       let votesLight = 0;
       let votesDark = 0;
@@ -341,10 +341,10 @@
       const rgb = rgbString(value);
       if (rgb) setStyleProperty(root, name, rgb);
     }
-    setStyleProperty(root, "--dream-skin-name", cssString(THEME.name || "Codex Dream Skin"));
-    setStyleProperty(root, "--dream-skin-tagline", cssString(THEME.tagline || "Make something wonderful."));
-    setStyleProperty(root, "--dream-skin-project-prefix", cssString(THEME.projectPrefix || "选择项目 · "));
-    setStyleProperty(root, "--dream-skin-project-label", cssString(THEME.projectLabel || "◉  选择项目"));
+    setStyleProperty(root, "--kimetsu-skin-name", cssString(THEME.name || "Codex Kimetsu Skin"));
+    setStyleProperty(root, "--kimetsu-skin-tagline", cssString(THEME.tagline || "Make something wonderful."));
+    setStyleProperty(root, "--kimetsu-skin-project-prefix", cssString(THEME.projectPrefix || "选择项目 · "));
+    setStyleProperty(root, "--kimetsu-skin-project-label", cssString(THEME.projectLabel || "◉  选择项目"));
   };
 
   const applyArtMetadata = (root) => {
@@ -363,19 +363,19 @@
     const focusXValue = `${(clamp(focusX, 0, 1) * 100).toFixed(2)}%`;
     const focusYValue = `${(clamp(focusY, 0, 1) * 100).toFixed(2)}%`;
 
-    setAttribute(root, "data-dream-art-wide", wide ? "true" : "false");
-    setAttribute(root, "data-dream-art-safe", canonicalSafe);
-    setAttribute(root, "data-dream-task-mode", taskMode);
-    setAttribute(root, "data-dream-art-safe-area", safeArea);
-    setAttribute(root, "data-dream-art-task-mode", taskMode);
-    setAttribute(root, "data-dream-art-aspect", aspect);
-    setAttribute(root, "data-dream-art-ready", artAnalysis ? "true" : "false");
-    setStyleProperty(root, "--dream-art-focus-x", focusXValue);
-    setStyleProperty(root, "--dream-art-focus-y", focusYValue);
-    setStyleProperty(root, "--dream-art-position", `${focusXValue} ${focusYValue}`);
-    setStyleProperty(root, "--dream-skin-focus-x", focusXValue);
-    setStyleProperty(root, "--dream-skin-focus-y", focusYValue);
-    setStyleProperty(root, "--dream-skin-art-position", `${focusXValue} ${focusYValue}`);
+    setAttribute(root, "data-kimetsu-art-wide", wide ? "true" : "false");
+    setAttribute(root, "data-kimetsu-art-safe", canonicalSafe);
+    setAttribute(root, "data-kimetsu-task-mode", taskMode);
+    setAttribute(root, "data-kimetsu-art-safe-area", safeArea);
+    setAttribute(root, "data-kimetsu-art-task-mode", taskMode);
+    setAttribute(root, "data-kimetsu-art-aspect", aspect);
+    setAttribute(root, "data-kimetsu-art-ready", artAnalysis ? "true" : "false");
+    setStyleProperty(root, "--kimetsu-art-focus-x", focusXValue);
+    setStyleProperty(root, "--kimetsu-art-focus-y", focusYValue);
+    setStyleProperty(root, "--kimetsu-art-position", `${focusXValue} ${focusYValue}`);
+    setStyleProperty(root, "--kimetsu-skin-focus-x", focusXValue);
+    setStyleProperty(root, "--kimetsu-skin-focus-y", focusYValue);
+    setStyleProperty(root, "--kimetsu-skin-art-position", `${focusXValue} ${focusYValue}`);
   };
 
   const analyzeArt = () => new Promise((resolve) => {
@@ -533,13 +533,13 @@
       style = document.createElement("style");
       style.id = STYLE_ID;
       style.textContent = cssText;
-      style.dataset.dreamSkinVersion = VERSION;
+      style.dataset.kimetsuSkinVersion = VERSION;
       (document.head || root).appendChild(style);
-    } else if (style.dataset.dreamSkinStyleRevision !== STYLE_REVISION) {
+    } else if (style.dataset.kimetsuSkinStyleRevision !== STYLE_REVISION) {
       style.textContent = cssText;
     }
-    style.dataset.dreamSkinVersion = VERSION;
-    style.dataset.dreamSkinStyleRevision = STYLE_REVISION;
+    style.dataset.kimetsuSkinVersion = VERSION;
+    style.dataset.kimetsuSkinStyleRevision = STYLE_REVISION;
     return style;
   };
 
@@ -548,10 +548,11 @@
     ensureStyle(root);
     const shell = resolvedShell();
     setAttribute(root, SHELL_ATTR, shell);
-    setStyleProperty(root, "--dream-skin-art", `url("${artUrl}")`);
+    setAttribute(root, "data-kimetsu-theme-id", THEME.id || "custom");
+    setStyleProperty(root, "--kimetsu-skin-art", `url("${artUrl}")`);
     applyTheme(root, shell);
     applyArtMetadata(root);
-    root.classList.add("codex-dream-skin");
+    root.classList.add("codex-kimetsu-skin");
     return shell;
   };
 
@@ -560,23 +561,27 @@
     const root = document.documentElement;
     if (!root) return;
     shell ||= root.getAttribute(SHELL_ATTR) || resolvedShell();
-    const shellMain = document.querySelector("main.main-surface") || document.querySelector("main");
+    const shellMain = document.querySelector(".main-surface") || document.querySelector("main");
     const homeIndicator = document.querySelector('[data-testid="home-icon"]');
     const home = homeIndicator?.closest('[role="main"]') ||
       [...document.querySelectorAll('[role="main"]')].find((candidate) =>
         candidate.querySelector('[data-feature="game-source"]') &&
         candidate.querySelector('.group\\\\/home-suggestions')) || null;
-    for (const candidate of document.querySelectorAll('[role="main"].dream-skin-home')) {
-      if (candidate !== home) candidate.classList.remove("dream-skin-home");
+    const settings = Boolean(
+      document.querySelector('nav[aria-label="设置"]') &&
+      document.querySelector('input[aria-label="搜索设置"], input[role="searchbox"]')
+    );
+    for (const candidate of document.querySelectorAll('[role="main"].kimetsu-skin-home')) {
+      if (candidate !== home) candidate.classList.remove("kimetsu-skin-home");
     }
-    if (home) home.classList.add("dream-skin-home");
+    if (home) home.classList.add("kimetsu-skin-home");
     const homeUtilityBars = new Set(home
       ? home.querySelectorAll('[class*="_homeUtilityBar_"]')
       : []);
-    for (const candidate of document.querySelectorAll(".dream-skin-home-utility")) {
-      if (!homeUtilityBars.has(candidate)) candidate.classList.remove("dream-skin-home-utility");
+    for (const candidate of document.querySelectorAll(".kimetsu-skin-home-utility")) {
+      if (!homeUtilityBars.has(candidate)) candidate.classList.remove("kimetsu-skin-home-utility");
     }
-    for (const candidate of homeUtilityBars) candidate.classList.add("dream-skin-home-utility");
+    for (const candidate of homeUtilityBars) candidate.classList.add("kimetsu-skin-home-utility");
 
     if (!shellMain || !document.body) return;
     if (observedShellMain !== shellMain) {
@@ -585,7 +590,8 @@
       observedShellMain = shellMain;
       layout = true;
     }
-    shellMain.classList.toggle("dream-skin-home-shell", Boolean(home));
+    shellMain.classList.toggle("kimetsu-skin-home-shell", Boolean(home));
+    shellMain.classList.toggle("kimetsu-skin-settings-shell", settings);
     let chrome = document.getElementById(CHROME_ID);
     let created = false;
     if (!chrome || chrome.parentElement !== document.body) {
@@ -594,14 +600,14 @@
       chrome.id = CHROME_ID;
       chrome.setAttribute("aria-hidden", "true");
       chrome.innerHTML = `
-        <div class="dream-skin-brand">
-          <span class="dream-skin-portal-mark">◉</span>
+        <div class="kimetsu-skin-brand">
+          <span class="kimetsu-skin-portal-mark">◉</span>
           <span><b></b><small></small></span>
         </div>
-        <div class="dream-skin-status"><i></i><span></span></div>
-        <div class="dream-skin-quote"></div>
-        <div class="dream-skin-particles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="dream-skin-orbit"></div>`;
+        <div class="kimetsu-skin-status"><i></i><span></span></div>
+        <div class="kimetsu-skin-quote"></div>
+        <div class="kimetsu-skin-particles"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="kimetsu-skin-orbit"></div>`;
       document.body.appendChild(chrome);
       created = true;
       chromeParts = null;
@@ -609,15 +615,15 @@
     if (!chromeParts || chromeParts.chrome !== chrome) {
       chromeParts = {
         chrome,
-        name: chrome.querySelector(".dream-skin-brand b"),
-        subtitle: chrome.querySelector(".dream-skin-brand small"),
-        status: chrome.querySelector(".dream-skin-status span"),
-        quote: chrome.querySelector(".dream-skin-quote"),
+        name: chrome.querySelector(".kimetsu-skin-brand b"),
+        subtitle: chrome.querySelector(".kimetsu-skin-brand small"),
+        status: chrome.querySelector(".kimetsu-skin-status span"),
+        quote: chrome.querySelector(".kimetsu-skin-quote"),
       };
     }
-    setTextContent(chromeParts.name, THEME.name || "Codex Dream Skin");
-    setTextContent(chromeParts.subtitle, THEME.brandSubtitle || "CODEX DREAM SKIN");
-    setTextContent(chromeParts.status, THEME.statusText || "DREAM SKIN ONLINE");
+    setTextContent(chromeParts.name, THEME.name || "Codex Kimetsu Skin");
+    setTextContent(chromeParts.subtitle, THEME.brandSubtitle || "CODEX KIMETSU SKIN");
+    setTextContent(chromeParts.status, THEME.statusText || "KIMETSU SKIN ONLINE");
     setTextContent(chromeParts.quote, THEME.quote || "MAKE SOMETHING WONDERFUL");
     if (layout || created) {
       metrics.layoutReads += 1;
@@ -627,9 +633,10 @@
       setStyleProperty(chrome, "width", `${Math.round(shellBox.width)}px`);
       setStyleProperty(chrome, "height", `${Math.round(shellBox.height)}px`);
     }
-    chrome.classList.toggle("dream-skin-home-shell", Boolean(home));
-    if (chrome.dataset.dreamShell !== shell) {
-      chrome.dataset.dreamShell = shell;
+    chrome.classList.toggle("kimetsu-skin-home-shell", Boolean(home));
+    chrome.classList.toggle("kimetsu-skin-settings-shell", settings);
+    if (chrome.dataset.kimetsuShell !== shell) {
+      chrome.dataset.kimetsuShell = shell;
       metrics.attributeWrites += 1;
     }
   };
@@ -647,14 +654,15 @@
     const state = window[STATE_KEY];
     if (state?.installToken !== installToken) return false;
     window[DISABLED_KEY] = true;
-    document.documentElement?.classList.remove("codex-dream-skin");
+    document.documentElement?.classList.remove("codex-kimetsu-skin");
     document.documentElement?.removeAttribute(SHELL_ATTR);
     for (const name of ART_ATTRS) document.documentElement?.removeAttribute(name);
-    document.documentElement?.style.removeProperty("--dream-skin-art");
+    document.documentElement?.style.removeProperty("--kimetsu-skin-art");
     for (const name of THEME_VARIABLES) document.documentElement?.style.removeProperty(name);
-    document.querySelectorAll(".dream-skin-home").forEach((node) => node.classList.remove("dream-skin-home"));
-    document.querySelectorAll(".dream-skin-home-shell").forEach((node) => node.classList.remove("dream-skin-home-shell"));
-    document.querySelectorAll(".dream-skin-home-utility").forEach((node) => node.classList.remove("dream-skin-home-utility"));
+    document.querySelectorAll(".kimetsu-skin-home").forEach((node) => node.classList.remove("kimetsu-skin-home"));
+    document.querySelectorAll(".kimetsu-skin-home-shell").forEach((node) => node.classList.remove("kimetsu-skin-home-shell"));
+    document.querySelectorAll(".kimetsu-skin-settings-shell").forEach((node) => node.classList.remove("kimetsu-skin-settings-shell"));
+    document.querySelectorAll(".kimetsu-skin-home-utility").forEach((node) => node.classList.remove("kimetsu-skin-home-utility"));
     document.getElementById(STYLE_ID)?.remove();
     document.getElementById(CHROME_ID)?.remove();
     state?.observer?.disconnect();
@@ -783,4 +791,4 @@
     shell: resolvedShell(),
     analysis: artAnalysis,
   };
-})(__DREAM_SKIN_CSS_JSON__, __DREAM_SKIN_ART_JSON__, __DREAM_SKIN_THEME_JSON__)
+})(__KIMETSU_SKIN_CSS_JSON__, __KIMETSU_SKIN_ART_JSON__, __KIMETSU_SKIN_THEME_JSON__)

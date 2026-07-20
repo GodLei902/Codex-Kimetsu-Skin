@@ -1,10 +1,10 @@
-# Codex Dream Skin for Windows
+# Codex Kimetsu Skin for Windows
 
 <p align="center">
   <a href="./README.md">中文</a> · <strong>English</strong>
 </p>
 
-Codex Dream Skin loads an external theme into the official Codex Windows desktop app through loopback CDP. The native sidebar, project picker, task content, and composer remain interactive. The tool does not modify WindowsApps, `app.asar`, or the app signature.
+Codex Kimetsu Skin loads an external theme into the official Codex Windows desktop app through loopback CDP. This fork only bundles the Zenitsu Agatsuma “Thunder Breathing” theme. The native sidebar, project picker, task content, and composer remain interactive. The tool does not modify WindowsApps, `app.asar`, or the app signature.
 
 ## Requirements
 
@@ -19,36 +19,36 @@ Run the installer after Codex has fully exited. Normal use does not require admi
 Open PowerShell in the repository's `windows` directory and run:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-dream-skin.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-kimetsu-skin.ps1
 ```
 
-The installer validates the official Codex Store package and Node.js, saves a recoverable appearance baseline, and initializes the local theme store. By default it also creates these shortcuts:
+The installer validates the official Codex Store package and Node.js, saves a recoverable appearance baseline, and initializes the local theme store. On first install, Thunder Breathing becomes the active theme and is saved as `preset-thunder-breathing`. By default it also creates these shortcuts:
 
-- `Codex Dream Skin`: launch or reapply the skin.
-- `Codex Dream Skin - Tray`: open the system tray theme controls.
-- `Codex Dream Skin - Restore`: restore the stock appearance and close the saved CDP session.
+- `Codex Kimetsu Skin`: launch or reapply the skin.
+- `Codex Kimetsu Skin - Tray`: open the system tray theme controls.
+- `Codex Kimetsu Skin - Restore`: restore the stock appearance and close the saved CDP session.
 
 Pass `-Port` during installation to use a fixed custom port. Valid ports range from `1024` through `65535`.
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-dream-skin.ps1 -Port 9444
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-kimetsu-skin.ps1 -Port 9444
 ```
 
 ## Launch and verify
 
-The `Codex Dream Skin` shortcut is the recommended launcher. It asks for confirmation before restarting an open Codex window.
+The `Codex Kimetsu Skin` shortcut is the recommended launcher. It asks for confirmation before restarting an open Codex window.
 
 Command-line launch:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-dream-skin.ps1 -PromptRestart
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\start-kimetsu-skin.ps1 -PromptRestart
 ```
 
 Run verification after launch:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-dream-skin.ps1 `
-  -ScreenshotPath "$env:TEMP\codex-dream-skin.png"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify-kimetsu-skin.ps1 `
+  -ScreenshotPath "$env:TEMP\codex-kimetsu-skin.png"
 ```
 
 The verification script confirms:
@@ -63,10 +63,10 @@ Next, use the generated screenshot to check horizontal overflow and text contras
 
 ## Change and save themes
 
-Open `Codex Dream Skin - Tray` to:
+Open `Codex Kimetsu Skin - Tray` to:
 
 - Import a PNG, JPEG, or WebP background.
-- Save the active theme and switch through saved themes.
+- Save the active theme and switch through saved themes; the only bundled saved theme is Thunder Breathing.
 - Pause or resume the skin.
 - Reapply the theme or fully restore Codex.
 
@@ -77,14 +77,14 @@ Import a UI-free wallpaper rather than a preview containing a window, sidebar, c
 Restore the stock appearance. If Codex is running, confirm its closure and relaunch:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\restore-dream-skin.ps1 `
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\restore-kimetsu-skin.ps1 `
   -RestoreBaseTheme -PromptRestart
 ```
 
-Add `-Uninstall` to also remove the shortcuts created by Dream Skin:
+Add `-Uninstall` to also remove the shortcuts created by Kimetsu Skin:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\restore-dream-skin.ps1 `
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\restore-kimetsu-skin.ps1 `
   -RestoreBaseTheme -PromptRestart -Uninstall
 ```
 
@@ -94,14 +94,14 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\restore-dream-
 
 | Purpose | Path |
 |---------|------|
-| Dream Skin state root | `%LOCALAPPDATA%\CodexDreamSkin` |
-| Active theme | `%LOCALAPPDATA%\CodexDreamSkin\active-theme` |
-| Saved themes | `%LOCALAPPDATA%\CodexDreamSkin\themes` |
-| Imported image archive | `%LOCALAPPDATA%\CodexDreamSkin\images` |
-| Session state | `%LOCALAPPDATA%\CodexDreamSkin\state.json` |
-| Injector log | `%LOCALAPPDATA%\CodexDreamSkin\injector.log` |
-| Injector error log | `%LOCALAPPDATA%\CodexDreamSkin\injector-error.log` |
-| Verification log | `%LOCALAPPDATA%\CodexDreamSkin\verify.log` |
+| Kimetsu Skin state root | `%LOCALAPPDATA%\CodexKimetsuSkin` |
+| Active theme | `%LOCALAPPDATA%\CodexKimetsuSkin\active-theme` |
+| Saved themes | `%LOCALAPPDATA%\CodexKimetsuSkin\themes` |
+| Imported image archive | `%LOCALAPPDATA%\CodexKimetsuSkin\images` |
+| Session state | `%LOCALAPPDATA%\CodexKimetsuSkin\state.json` |
+| Injector log | `%LOCALAPPDATA%\CodexKimetsuSkin\injector.log` |
+| Injector error log | `%LOCALAPPDATA%\CodexKimetsuSkin\injector-error.log` |
+| Verification log | `%LOCALAPPDATA%\CodexKimetsuSkin\verify.log` |
 | Codex configuration | `%USERPROFILE%\.codex\config.toml` |
 
 See [`../docs/platforms.md`](../docs/platforms.md) for the complete platform path reference.
@@ -132,13 +132,13 @@ When `-Port` is omitted, the launcher searches for a free port beginning at `933
 
 ### Verification cannot find a CDP endpoint
 
-Launch Codex through the `Codex Dream Skin` shortcut, then run verification. A normal Codex launch does not open the debug session used by Dream Skin.
+Launch Codex through the `Codex Kimetsu Skin` shortcut, then run verification. A normal Codex launch does not open the debug session used by Kimetsu Skin.
 
 ### The skin stops working after a Codex update
 
 Run the installer and launch shortcut again. The scripts rediscover the currently registered Store package instead of trusting an executable path from an older app version.
 
-Open the repository's [new issue page](https://github.com/Fei-Away/Codex-Dream-Skin/issues/new/choose) and choose the bug form when reporting a problem. Include the Windows version, Codex source, reproduction steps, and relevant log lines. Remove secrets, `auth.json`, relay tokens, and private conversation content.
+When reporting a problem, include the Windows version, Codex source, reproduction steps, and relevant log lines. Remove secrets, `auth.json`, relay tokens, and private conversation content.
 
 ## Security boundaries
 

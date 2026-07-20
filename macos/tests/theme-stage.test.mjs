@@ -7,8 +7,8 @@ import { spawn } from "node:child_process";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const macosRoot = path.resolve(here, "..");
 const stageScript = path.join(macosRoot, "scripts", "stage-theme.mjs");
-const fixtureAsset = path.join(macosRoot, "assets", "portal-hero.png");
-const tempRoot = await fs.mkdtemp(path.join("/tmp", "codex-dream-skin-stage-"));
+const fixtureAsset = path.join(macosRoot, "assets", "kimetsu-reference.jpg");
+const tempRoot = await fs.mkdtemp(path.join("/tmp", "codex-kimetsu-skin-stage-"));
 
 function runStage(source, stage) {
   return new Promise((resolve, reject) => {

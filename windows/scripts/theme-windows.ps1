@@ -1,10 +1,10 @@
-﻿if (-not (Get-Command Read-DreamSkinUtf8File -ErrorAction SilentlyContinue)) {
+﻿if (-not (Get-Command Read-KimetsuSkinUtf8File -ErrorAction SilentlyContinue)) {
   . (Join-Path $PSScriptRoot 'config-utf8.ps1')
 }
 
-$script:DreamSkinMaxImageBytes = 16 * 1024 * 1024
+$script:KimetsuSkinMaxImageBytes = 16 * 1024 * 1024
 
-function Assert-DreamSkinNoReparseComponents {
+function Assert-KimetsuSkinNoReparseComponents {
   param([Parameter(Mandatory = $true)][string]$Path)
   $fullPath = [System.IO.Path]::GetFullPath($Path)
   $root = [System.IO.Path]::GetPathRoot($fullPath)
@@ -13,7 +13,7 @@ function Assert-DreamSkinNoReparseComponents {
     if (Test-Path -LiteralPath $current) {
       $item = Get-Item -LiteralPath $current -Force -ErrorAction Stop
       if (($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
-        throw "Managed Dream Skin path contains a junction or symbolic link: $current"
+        throw "Managed Kimetsu Skin path contains a junction or symbolic link: $current"
       }
     }
     $currentNormalized = $current.TrimEnd('\')
@@ -25,7 +25,7 @@ function Assert-DreamSkinNoReparseComponents {
   }
 }
 
-function Ensure-DreamSkinManagedDirectory {
+function Ensure-KimetsuSkinManagedDirectory {
   param(
     [Parameter(Mandatory = $true)][string]$Path,
     [Parameter(Mandatory = $true)][string]$Root
@@ -34,25 +34,25 @@ function Ensure-DreamSkinManagedDirectory {
   $fullRoot = [System.IO.Path]::GetFullPath($Root).TrimEnd('\')
   if (-not ($fullPath.Equals($fullRoot, [System.StringComparison]::OrdinalIgnoreCase) -or
       $fullPath.StartsWith($fullRoot + '\', [System.StringComparison]::OrdinalIgnoreCase))) {
-    throw "Managed Dream Skin path escaped its state root: $fullPath"
+    throw "Managed Kimetsu Skin path escaped its state root: $fullPath"
   }
-  Assert-DreamSkinNoReparseComponents -Path $fullPath
+  Assert-KimetsuSkinNoReparseComponents -Path $fullPath
   if (Test-Path -LiteralPath $fullPath -PathType Leaf) {
-    throw "Managed Dream Skin path is a file, not a directory: $fullPath"
+    throw "Managed Kimetsu Skin path is a file, not a directory: $fullPath"
   }
   New-Item -ItemType Directory -Force -Path $fullPath | Out-Null
-  Assert-DreamSkinNoReparseComponents -Path $fullPath
+  Assert-KimetsuSkinNoReparseComponents -Path $fullPath
   if (-not (Test-Path -LiteralPath $fullPath -PathType Container)) {
-    throw "Managed Dream Skin directory could not be created: $fullPath"
+    throw "Managed Kimetsu Skin directory could not be created: $fullPath"
   }
 }
 
-function Get-DreamSkinValidatedImageMetadata {
+function Get-KimetsuSkinValidatedImageMetadata {
   param([Parameter(Mandatory = $true)][string]$Path)
-  if (-not (Get-Command Get-DreamSkinNodeRuntime -ErrorAction SilentlyContinue)) {
+  if (-not (Get-Command Get-KimetsuSkinNodeRuntime -ErrorAction SilentlyContinue)) {
     throw 'Node.js runtime validation is unavailable for image metadata checks.'
   }
-  $node = Get-DreamSkinNodeRuntime
+  $node = Get-KimetsuSkinNodeRuntime
   $metadataScript = Join-Path $PSScriptRoot 'image-metadata.mjs'
   $output = @(& $node.Path $metadataScript '--check' ([System.IO.Path]::GetFullPath($Path)) 2>&1)
   if ($LASTEXITCODE -ne 0) {
@@ -66,7 +66,7 @@ function Get-DreamSkinValidatedImageMetadata {
   }
 }
 
-function Assert-DreamSkinImageFile {
+function Assert-KimetsuSkinImageFile {
   param(
     [Parameter(Mandatory = $true)][string]$Path,
     [switch]$SkipImageMetadata
@@ -81,16 +81,16 @@ function Assert-DreamSkinImageFile {
   }
   $length = (Get-Item -LiteralPath $fullPath -Force).Length
   if ($length -lt 1) { throw 'Theme image cannot be empty.' }
-  if ($length -gt $script:DreamSkinMaxImageBytes) {
+  if ($length -gt $script:KimetsuSkinMaxImageBytes) {
     throw 'Theme image exceeds the 16 MB limit.'
   }
   if (-not $SkipImageMetadata) {
-    Get-DreamSkinValidatedImageMetadata -Path $fullPath
+    Get-KimetsuSkinValidatedImageMetadata -Path $fullPath
   }
 }
 
-function Get-DreamSkinThemePaths {
-  param([string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin'))
+function Get-KimetsuSkinThemePaths {
+  param([string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin'))
   $fullRoot = [System.IO.Path]::GetFullPath($StateRoot)
   return [pscustomobject]@{
     Root = $fullRoot
@@ -102,7 +102,7 @@ function Get-DreamSkinThemePaths {
   }
 }
 
-function Test-DreamSkinThemePathWithin {
+function Test-KimetsuSkinThemePathWithin {
   param([string]$Path, [string]$Root)
   if (-not $Path -or -not $Root) { return $false }
   try {
@@ -133,20 +133,20 @@ function Test-DreamSkinThemePathWithin {
   }
 }
 
-function Read-DreamSkinTheme {
+function Read-KimetsuSkinTheme {
   param(
     [Parameter(Mandatory = $true)][string]$ThemeDirectory,
     [switch]$SkipImageMetadata
   )
   $directory = [System.IO.Path]::GetFullPath($ThemeDirectory)
-  Assert-DreamSkinNoReparseComponents -Path $directory
+  Assert-KimetsuSkinNoReparseComponents -Path $directory
   $themePath = Join-Path $directory 'theme.json'
-  Assert-DreamSkinNoReparseComponents -Path $themePath
+  Assert-KimetsuSkinNoReparseComponents -Path $themePath
   if (-not (Test-Path -LiteralPath $themePath -PathType Leaf)) {
     throw "Theme metadata is missing: $themePath"
   }
   try {
-    $theme = (Read-DreamSkinUtf8File -Path $themePath) | ConvertFrom-Json -ErrorAction Stop
+    $theme = (Read-KimetsuSkinUtf8File -Path $themePath) | ConvertFrom-Json -ErrorAction Stop
   } catch {
     throw "Theme metadata is invalid JSON: $themePath"
   }
@@ -156,11 +156,11 @@ function Read-DreamSkinTheme {
   $image = "$($theme.image)"
   if ([System.IO.Path]::IsPathRooted($image)) { throw 'Theme image path must be relative.' }
   $imagePath = [System.IO.Path]::GetFullPath((Join-Path $directory $image))
-  if (-not (Test-DreamSkinThemePathWithin -Path $imagePath -Root $directory) -or
+  if (-not (Test-KimetsuSkinThemePathWithin -Path $imagePath -Root $directory) -or
     -not (Test-Path -LiteralPath $imagePath -PathType Leaf)) {
     throw 'Theme image must remain inside its theme directory and exist.'
   }
-  Assert-DreamSkinImageFile -Path $imagePath -SkipImageMetadata:$SkipImageMetadata
+  Assert-KimetsuSkinImageFile -Path $imagePath -SkipImageMetadata:$SkipImageMetadata
   return [pscustomobject]@{
     Directory = $directory
     ThemePath = $themePath
@@ -169,92 +169,98 @@ function Read-DreamSkinTheme {
   }
 }
 
-function Write-DreamSkinTheme {
+function Write-KimetsuSkinTheme {
   param(
     [Parameter(Mandatory = $true)][string]$ThemeDirectory,
     [Parameter(Mandatory = $true)][object]$Theme
   )
-  Assert-DreamSkinNoReparseComponents -Path $ThemeDirectory
+  Assert-KimetsuSkinNoReparseComponents -Path $ThemeDirectory
   New-Item -ItemType Directory -Force -Path $ThemeDirectory | Out-Null
-  Assert-DreamSkinNoReparseComponents -Path $ThemeDirectory
+  Assert-KimetsuSkinNoReparseComponents -Path $ThemeDirectory
   $json = $Theme | ConvertTo-Json -Depth 8
   $themePath = Join-Path $ThemeDirectory 'theme.json'
-  Assert-DreamSkinNoReparseComponents -Path $themePath
-  Write-DreamSkinUtf8FileAtomically -Path $themePath -Content ($json + "`r`n")
+  Assert-KimetsuSkinNoReparseComponents -Path $themePath
+  Write-KimetsuSkinUtf8FileAtomically -Path $themePath -Content ($json + "`r`n")
 }
 
-function Initialize-DreamSkinThemeStore {
+function Initialize-KimetsuSkinThemeStore {
   param(
     [Parameter(Mandatory = $true)][string]$SkillRoot,
-    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin')
+    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin')
   )
-  $paths = Get-DreamSkinThemePaths -StateRoot $StateRoot
+  $paths = Get-KimetsuSkinThemePaths -StateRoot $StateRoot
   foreach ($directory in @($paths.Root, $paths.Active, $paths.Saved, $paths.Images)) {
-    Ensure-DreamSkinManagedDirectory -Path $directory -Root $paths.Root
+    Ensure-KimetsuSkinManagedDirectory -Path $directory -Root $paths.Root
   }
   $assetRoot = Join-Path $SkillRoot 'assets'
-  $assetImage = Join-Path $assetRoot 'dream-reference.jpg'
-  Assert-DreamSkinImageFile -Path $assetImage
+  $assetImage = Join-Path $assetRoot 'kimetsu-reference.jpg'
+  Assert-KimetsuSkinImageFile -Path $assetImage
+  foreach ($savedPreset in Get-ChildItem -LiteralPath $paths.Saved -Directory -Force -ErrorAction Stop) {
+    if ($savedPreset.Name -like 'preset-*' -and $savedPreset.Name -cne 'preset-thunder-breathing') {
+      Assert-KimetsuSkinNoReparseComponents -Path $savedPreset.FullName
+      Remove-Item -LiteralPath $savedPreset.FullName -Recurse -Force -ErrorAction Stop
+    }
+  }
   $activeTheme = Join-Path $paths.Active 'theme.json'
-  Assert-DreamSkinNoReparseComponents -Path $activeTheme
+  Assert-KimetsuSkinNoReparseComponents -Path $activeTheme
   if (-not (Test-Path -LiteralPath $activeTheme -PathType Leaf)) {
-    Ensure-DreamSkinManagedDirectory -Path $paths.Active -Root $paths.Root
-    Assert-DreamSkinNoReparseComponents -Path (Join-Path $paths.Active 'dream-reference.jpg')
-    $activeImage = Join-Path $paths.Active 'dream-reference.jpg'
-    Copy-Item -LiteralPath (Join-Path $assetRoot 'dream-reference.jpg') `
+    Ensure-KimetsuSkinManagedDirectory -Path $paths.Active -Root $paths.Root
+    Assert-KimetsuSkinNoReparseComponents -Path (Join-Path $paths.Active 'kimetsu-reference.jpg')
+    $activeImage = Join-Path $paths.Active 'kimetsu-reference.jpg'
+    Copy-Item -LiteralPath (Join-Path $assetRoot 'kimetsu-reference.jpg') `
       -Destination $activeImage -Force
-    Assert-DreamSkinNoReparseComponents -Path $activeImage
-    Assert-DreamSkinImageFile -Path $activeImage
-    $imageArchive = Join-Path $paths.Images 'dream-reference.jpg'
-    Assert-DreamSkinNoReparseComponents -Path $imageArchive
-    Copy-Item -LiteralPath (Join-Path $assetRoot 'dream-reference.jpg') `
+    Assert-KimetsuSkinNoReparseComponents -Path $activeImage
+    Assert-KimetsuSkinImageFile -Path $activeImage
+    $imageArchive = Join-Path $paths.Images 'kimetsu-reference.jpg'
+    Assert-KimetsuSkinNoReparseComponents -Path $imageArchive
+    Copy-Item -LiteralPath (Join-Path $assetRoot 'kimetsu-reference.jpg') `
       -Destination $imageArchive -Force
-    Assert-DreamSkinNoReparseComponents -Path $imageArchive
-    Assert-DreamSkinImageFile -Path $imageArchive
-    Assert-DreamSkinNoReparseComponents -Path $activeTheme
+    Assert-KimetsuSkinNoReparseComponents -Path $imageArchive
+    Assert-KimetsuSkinImageFile -Path $imageArchive
+    Assert-KimetsuSkinNoReparseComponents -Path $activeTheme
     Copy-Item -LiteralPath (Join-Path $assetRoot 'theme.json') -Destination $activeTheme -Force
   }
-  $presetDirectory = Join-Path $paths.Saved 'preset-romantic-rose'
+  $presetDirectory = Join-Path $paths.Saved 'preset-thunder-breathing'
   $presetTheme = Join-Path $presetDirectory 'theme.json'
-  Assert-DreamSkinNoReparseComponents -Path $presetDirectory
-  Assert-DreamSkinNoReparseComponents -Path $presetTheme
+  Assert-KimetsuSkinNoReparseComponents -Path $presetDirectory
+  Assert-KimetsuSkinNoReparseComponents -Path $presetTheme
   if (-not (Test-Path -LiteralPath $presetTheme -PathType Leaf)) {
-    Ensure-DreamSkinManagedDirectory -Path $presetDirectory -Root $paths.Root
-    $presetImage = Join-Path $presetDirectory 'dream-reference.jpg'
-    Assert-DreamSkinNoReparseComponents -Path $presetImage
-    Copy-Item -LiteralPath (Join-Path $assetRoot 'dream-reference.jpg') `
+    Ensure-KimetsuSkinManagedDirectory -Path $presetDirectory -Root $paths.Root
+    $presetImage = Join-Path $presetDirectory 'kimetsu-reference.jpg'
+    Assert-KimetsuSkinNoReparseComponents -Path $presetImage
+    Copy-Item -LiteralPath (Join-Path $assetRoot 'kimetsu-reference.jpg') `
       -Destination $presetImage -Force
-    Assert-DreamSkinNoReparseComponents -Path $presetImage
-    Assert-DreamSkinImageFile -Path $presetImage
-    Assert-DreamSkinNoReparseComponents -Path $presetTheme
+    Assert-KimetsuSkinNoReparseComponents -Path $presetImage
+    Assert-KimetsuSkinImageFile -Path $presetImage
+    Assert-KimetsuSkinNoReparseComponents -Path $presetTheme
     Copy-Item -LiteralPath (Join-Path $assetRoot 'theme.json') -Destination $presetTheme -Force
   }
-  $null = Read-DreamSkinTheme -ThemeDirectory $paths.Active
+  $null = Read-KimetsuSkinTheme -ThemeDirectory $paths.Active
   return $paths
 }
 
-function New-DreamSkinThemeImageName {
+function New-KimetsuSkinThemeImageName {
   param([Parameter(Mandatory = $true)][string]$Extension)
   return 'art-' + (Get-Date).ToString('yyyyMMdd-HHmmss-fff') + '-' +
     [guid]::NewGuid().ToString('N').Substring(0, 8) + $Extension.ToLowerInvariant()
 }
 
-function Set-DreamSkinActiveTheme {
+function Set-KimetsuSkinActiveTheme {
   param(
     [Parameter(Mandatory = $true)][string]$ImagePath,
     [AllowNull()][object]$Theme,
     [string]$Name,
-    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin')
+    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin')
   )
-  $paths = Get-DreamSkinThemePaths -StateRoot $StateRoot
-  Ensure-DreamSkinManagedDirectory -Path $paths.Root -Root $paths.Root
-  Ensure-DreamSkinManagedDirectory -Path $paths.Active -Root $paths.Root
-  Ensure-DreamSkinManagedDirectory -Path $paths.Images -Root $paths.Root
+  $paths = Get-KimetsuSkinThemePaths -StateRoot $StateRoot
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Root -Root $paths.Root
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Active -Root $paths.Root
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Images -Root $paths.Root
   $source = [System.IO.Path]::GetFullPath($ImagePath)
-  Assert-DreamSkinImageFile -Path $source
+  Assert-KimetsuSkinImageFile -Path $source
   $extension = [System.IO.Path]::GetExtension($source).ToLowerInvariant()
   $oldImage = $null
-  try { $oldImage = (Read-DreamSkinTheme -ThemeDirectory $paths.Active).ImagePath } catch {}
+  try { $oldImage = (Read-KimetsuSkinTheme -ThemeDirectory $paths.Active).ImagePath } catch {}
   if ($null -eq $Theme) {
     $Theme = [pscustomobject]@{
       id = 'custom'
@@ -264,18 +270,18 @@ function Set-DreamSkinActiveTheme {
       palette = [pscustomobject]@{}
     }
   }
-  $imageName = New-DreamSkinThemeImageName -Extension $extension
+  $imageName = New-KimetsuSkinThemeImageName -Extension $extension
   $target = Join-Path $paths.Active $imageName
-  $temporary = Join-Path $paths.Active ('.dream-tmp-' + [guid]::NewGuid().ToString('N') + $extension)
+  $temporary = Join-Path $paths.Active ('.kimetsu-tmp-' + [guid]::NewGuid().ToString('N') + $extension)
   try {
-    Assert-DreamSkinNoReparseComponents -Path $target
-    Assert-DreamSkinNoReparseComponents -Path $temporary
+    Assert-KimetsuSkinNoReparseComponents -Path $target
+    Assert-KimetsuSkinNoReparseComponents -Path $temporary
     Copy-Item -LiteralPath $source -Destination $temporary -Force
-    Assert-DreamSkinNoReparseComponents -Path $temporary
-    Assert-DreamSkinImageFile -Path $temporary
+    Assert-KimetsuSkinNoReparseComponents -Path $temporary
+    Assert-KimetsuSkinImageFile -Path $temporary
     Move-Item -LiteralPath $temporary -Destination $target -Force
-    Assert-DreamSkinNoReparseComponents -Path $target
-    Assert-DreamSkinImageFile -Path $target
+    Assert-KimetsuSkinNoReparseComponents -Path $target
+    Assert-KimetsuSkinImageFile -Path $target
     $Theme | Add-Member -NotePropertyName image -NotePropertyValue $imageName -Force
     if ($Name) { $Theme | Add-Member -NotePropertyName name -NotePropertyValue $Name -Force }
     if (-not $Theme.id) { $Theme | Add-Member -NotePropertyName id -NotePropertyValue 'custom' -Force }
@@ -287,67 +293,67 @@ function Set-DreamSkinActiveTheme {
     if (-not $Theme.palette) {
       $Theme | Add-Member -NotePropertyName palette -NotePropertyValue ([pscustomobject]@{}) -Force
     }
-    Write-DreamSkinTheme -ThemeDirectory $paths.Active -Theme $Theme
+    Write-KimetsuSkinTheme -ThemeDirectory $paths.Active -Theme $Theme
   } finally {
     Remove-Item -LiteralPath $temporary -Force -ErrorAction SilentlyContinue
   }
   $sameImage = $oldImage -and ([System.IO.Path]::GetFullPath($oldImage) -ieq [System.IO.Path]::GetFullPath($target))
   if ($oldImage -and -not $sameImage -and
-    (Test-DreamSkinThemePathWithin -Path $oldImage -Root $paths.Active)) {
+    (Test-KimetsuSkinThemePathWithin -Path $oldImage -Root $paths.Active)) {
     Remove-Item -LiteralPath $oldImage -Force -ErrorAction SilentlyContinue
   }
   $imageArchive = Join-Path $paths.Images $imageName
-  Assert-DreamSkinNoReparseComponents -Path $imageArchive
+  Assert-KimetsuSkinNoReparseComponents -Path $imageArchive
   Copy-Item -LiteralPath $target -Destination $imageArchive -Force
-  Assert-DreamSkinNoReparseComponents -Path $imageArchive
-  Assert-DreamSkinImageFile -Path $imageArchive
-  return Read-DreamSkinTheme -ThemeDirectory $paths.Active
+  Assert-KimetsuSkinNoReparseComponents -Path $imageArchive
+  Assert-KimetsuSkinImageFile -Path $imageArchive
+  return Read-KimetsuSkinTheme -ThemeDirectory $paths.Active
 }
 
-function Save-DreamSkinCurrentTheme {
+function Save-KimetsuSkinCurrentTheme {
   param(
     [Parameter(Mandatory = $true)][string]$Name,
-    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin')
+    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin')
   )
   $trimmed = $Name.Trim()
   if (-not $trimmed -or $trimmed.Length -gt 80 -or $trimmed -match '[\u0000-\u001f]') {
     throw 'Theme name must be between 1 and 80 visible characters.'
   }
-  $paths = Get-DreamSkinThemePaths -StateRoot $StateRoot
-  Ensure-DreamSkinManagedDirectory -Path $paths.Root -Root $paths.Root
-  Ensure-DreamSkinManagedDirectory -Path $paths.Saved -Root $paths.Root
-  $active = Read-DreamSkinTheme -ThemeDirectory $paths.Active
+  $paths = Get-KimetsuSkinThemePaths -StateRoot $StateRoot
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Root -Root $paths.Root
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Saved -Root $paths.Root
+  $active = Read-KimetsuSkinTheme -ThemeDirectory $paths.Active
   $id = (Get-Date).ToString('yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N').Substring(0, 8)
   $destination = Join-Path $paths.Saved $id
-  Ensure-DreamSkinManagedDirectory -Path $destination -Root $paths.Root
+  Ensure-KimetsuSkinManagedDirectory -Path $destination -Root $paths.Root
   $extension = [System.IO.Path]::GetExtension($active.ImagePath).ToLowerInvariant()
   $imageName = 'art' + $extension
   $destinationImage = Join-Path $destination $imageName
-  Assert-DreamSkinNoReparseComponents -Path $destinationImage
+  Assert-KimetsuSkinNoReparseComponents -Path $destinationImage
   Copy-Item -LiteralPath $active.ImagePath -Destination $destinationImage -Force
-  Assert-DreamSkinNoReparseComponents -Path $destinationImage
-  Assert-DreamSkinImageFile -Path $destinationImage
+  Assert-KimetsuSkinNoReparseComponents -Path $destinationImage
+  Assert-KimetsuSkinImageFile -Path $destinationImage
   $theme = $active.Theme | ConvertTo-Json -Depth 8 | ConvertFrom-Json
   $theme.id = $id
   $theme.name = $trimmed
   $theme.image = $imageName
-  Write-DreamSkinTheme -ThemeDirectory $destination -Theme $theme
-  return Read-DreamSkinTheme -ThemeDirectory $destination
+  Write-KimetsuSkinTheme -ThemeDirectory $destination -Theme $theme
+  return Read-KimetsuSkinTheme -ThemeDirectory $destination
 }
 
-function Get-DreamSkinSavedThemes {
+function Get-KimetsuSkinSavedThemes {
   param(
-    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin'),
+    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin'),
     [switch]$SkipImageMetadata
   )
-  $paths = Get-DreamSkinThemePaths -StateRoot $StateRoot
-  Ensure-DreamSkinManagedDirectory -Path $paths.Root -Root $paths.Root
-  Ensure-DreamSkinManagedDirectory -Path $paths.Saved -Root $paths.Root
+  $paths = Get-KimetsuSkinThemePaths -StateRoot $StateRoot
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Root -Root $paths.Root
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Saved -Root $paths.Root
   if (-not (Test-Path -LiteralPath $paths.Saved -PathType Container)) { return @() }
   $themes = @()
   foreach ($directory in Get-ChildItem -LiteralPath $paths.Saved -Directory -ErrorAction SilentlyContinue) {
     try {
-      $loaded = Read-DreamSkinTheme -ThemeDirectory $directory.FullName -SkipImageMetadata:$SkipImageMetadata
+      $loaded = Read-KimetsuSkinTheme -ThemeDirectory $directory.FullName -SkipImageMetadata:$SkipImageMetadata
       $themes += [pscustomobject]@{
         Id = "$($loaded.Theme.id)"
         Name = if ($loaded.Theme.name) { "$($loaded.Theme.name)" } else { $directory.Name }
@@ -358,41 +364,41 @@ function Get-DreamSkinSavedThemes {
   return @($themes | Sort-Object Name)
 }
 
-function Use-DreamSkinSavedTheme {
+function Use-KimetsuSkinSavedTheme {
   param(
     [Parameter(Mandatory = $true)][string]$ThemeDirectory,
-    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin')
+    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin')
   )
-  $paths = Get-DreamSkinThemePaths -StateRoot $StateRoot
-  Ensure-DreamSkinManagedDirectory -Path $paths.Root -Root $paths.Root
-  Ensure-DreamSkinManagedDirectory -Path $paths.Saved -Root $paths.Root
+  $paths = Get-KimetsuSkinThemePaths -StateRoot $StateRoot
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Root -Root $paths.Root
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Saved -Root $paths.Root
   $directory = [System.IO.Path]::GetFullPath($ThemeDirectory)
-  if (-not (Test-DreamSkinThemePathWithin -Path $directory -Root $paths.Saved)) {
-    throw 'Saved theme must remain inside the Dream Skin themes folder.'
+  if (-not (Test-KimetsuSkinThemePathWithin -Path $directory -Root $paths.Saved)) {
+    throw 'Saved theme must remain inside the Kimetsu Skin themes folder.'
   }
-  $saved = Read-DreamSkinTheme -ThemeDirectory $directory
+  $saved = Read-KimetsuSkinTheme -ThemeDirectory $directory
   $theme = $saved.Theme | ConvertTo-Json -Depth 8 | ConvertFrom-Json
-  return Set-DreamSkinActiveTheme -ImagePath $saved.ImagePath -Theme $theme -StateRoot $StateRoot
+  return Set-KimetsuSkinActiveTheme -ImagePath $saved.ImagePath -Theme $theme -StateRoot $StateRoot
 }
 
-function Set-DreamSkinPaused {
+function Set-KimetsuSkinPaused {
   param(
     [Parameter(Mandatory = $true)][bool]$Paused,
-    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin')
+    [string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin')
   )
-  $paths = Get-DreamSkinThemePaths -StateRoot $StateRoot
-  Ensure-DreamSkinManagedDirectory -Path $paths.Root -Root $paths.Root
+  $paths = Get-KimetsuSkinThemePaths -StateRoot $StateRoot
+  Ensure-KimetsuSkinManagedDirectory -Path $paths.Root -Root $paths.Root
   if ($Paused) {
-    Assert-DreamSkinNoReparseComponents -Path $paths.PauseFile
-    Write-DreamSkinUtf8FileAtomically -Path $paths.PauseFile -Content "paused`r`n"
+    Assert-KimetsuSkinNoReparseComponents -Path $paths.PauseFile
+    Write-KimetsuSkinUtf8FileAtomically -Path $paths.PauseFile -Content "paused`r`n"
   } else {
-    if (Test-Path -LiteralPath $paths.PauseFile) { Assert-DreamSkinNoReparseComponents -Path $paths.PauseFile }
+    if (Test-Path -LiteralPath $paths.PauseFile) { Assert-KimetsuSkinNoReparseComponents -Path $paths.PauseFile }
     Remove-Item -LiteralPath $paths.PauseFile -Force -ErrorAction SilentlyContinue
   }
   return $Paused
 }
 
-function Test-DreamSkinPaused {
-  param([string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin'))
-  return (Test-Path -LiteralPath (Get-DreamSkinThemePaths -StateRoot $StateRoot).PauseFile -PathType Leaf)
+function Test-KimetsuSkinPaused {
+  param([string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin'))
+  return (Test-Path -LiteralPath (Get-KimetsuSkinThemePaths -StateRoot $StateRoot).PauseFile -PathType Leaf)
 }

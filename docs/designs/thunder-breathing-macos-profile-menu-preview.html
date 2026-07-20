@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thunder Breathing macOS Profile Menu Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --wallpaper: url("../../macos/presets/preset-thunder-breathing/background.jpg");
+      --bg: #070a0f;
+      --panel: rgba(10, 14, 20, .76);
+      --panel-strong: rgba(9, 12, 18, .94);
+      --panel-soft: rgba(20, 28, 38, .72);
+      --text: #f7f4e8;
+      --muted: #aab7bd;
+      --dim: #78868d;
+      --bolt: #fff8bb;
+      --bolt-soft: #f6d36a;
+      --amber: #e1a04d;
+      --orange: #b95f2a;
+      --steel: #5f8aa6;
+      --line: rgba(255, 232, 142, .22);
+      --line-cool: rgba(95, 138, 166, .24);
+      --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Avenir Next", "PingFang SC", "Microsoft YaHei UI", system-ui, sans-serif;
+      --font-display: "Avenir Next Condensed", "DIN Condensed", "SF Pro Display", "PingFang SC", system-ui, sans-serif;
+      --font-mono: "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-width: 2048px;
+      min-height: 1280px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      letter-spacing: 0;
+    }
+
+    .app {
+      position: relative;
+      width: 2048px;
+      height: 1280px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(7, 10, 15, .94), rgba(7, 10, 15, .78) 34%, rgba(7, 10, 15, .58) 58%, rgba(7, 10, 15, .42)),
+        linear-gradient(180deg, rgba(7, 10, 15, .46), rgba(7, 10, 15, .66) 64%, rgba(7, 10, 15, .90)),
+        var(--wallpaper) 72% 44% / cover no-repeat;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 71% 34%, rgba(255, 248, 187, .14), transparent 27%),
+        linear-gradient(112deg, rgba(255, 248, 187, .08), transparent 20%),
+        linear-gradient(292deg, rgba(95, 138, 166, .14), transparent 36%);
+      mix-blend-mode: screen;
+    }
+
+    .traffic {
+      position: absolute;
+      z-index: 10;
+      top: 21px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .traffic span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ff5f57;
+    }
+
+    .traffic span:nth-child(2) { background: #ffbd2e; }
+    .traffic span:nth-child(3) { background: #28c840; }
+
+    .sidebar {
+      position: absolute;
+      z-index: 2;
+      inset: 0 auto 0 0;
+      width: 426px;
+      padding: 66px 18px 18px;
+      background:
+        linear-gradient(90deg, rgba(8, 11, 16, .84), rgba(8, 11, 16, .48) 86%, transparent),
+        linear-gradient(180deg, rgba(255, 248, 187, .06), transparent 30%);
+      color: var(--muted);
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 34px;
+      padding: 0 7px;
+      color: var(--amber);
+      font-size: 19px;
+      font-weight: 820;
+      text-shadow: 0 0 12px rgba(225, 160, 77, .22);
+    }
+
+    .brand-row .search-icon {
+      color: rgba(247, 244, 232, .42);
+      font-size: 18px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 8px;
+      color: rgba(247, 244, 232, .76);
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .nav-row.active {
+      border: 1px solid rgba(255, 248, 187, .22);
+      background: linear-gradient(90deg, rgba(255, 248, 187, .14), rgba(225, 160, 77, .08) 54%, rgba(8, 11, 16, .12));
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--bolt-soft), 0 10px 24px rgba(0, 0, 0, .16);
+    }
+
+    .icon {
+      width: 20px;
+      color: var(--amber);
+      text-align: center;
+    }
+
+    .project-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 26px;
+      font-size: 17px;
+      font-weight: 620;
+    }
+
+    .section-title {
+      padding: 9px 12px 3px;
+      color: rgba(247, 244, 232, .48);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .task-row {
+      height: 36px;
+      padding: 7px 12px 0 31px;
+      border: 1px solid rgba(225, 160, 77, .26);
+      border-radius: 8px;
+      background: rgba(225, 160, 77, .12);
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--amber);
+    }
+
+    .folder {
+      padding-left: 12px;
+      color: rgba(247, 244, 232, .70);
+    }
+
+    .profile-footer {
+      position: absolute;
+      left: 18px;
+      right: 48px;
+      bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 38px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 248, 187, .18);
+      border-radius: 8px;
+      background: rgba(9, 12, 18, .48);
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 720;
+      box-shadow: inset 3px 0 0 var(--amber);
+    }
+
+    .profile-help {
+      position: absolute;
+      right: 18px;
+      bottom: 22px;
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(247, 244, 232, .35);
+      border-radius: 50%;
+      color: rgba(247, 244, 232, .72);
+      font-weight: 800;
+    }
+
+    .profile-menu {
+      position: absolute;
+      z-index: 8;
+      left: 10px;
+      bottom: 82px;
+      width: 406px;
+      padding: 7px;
+      border: 1px solid rgba(255, 248, 187, .32);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(17, 23, 32, .96), rgba(9, 12, 18, .97)),
+        rgba(9, 12, 18, .96);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, .38),
+        inset 0 1px rgba(255, 248, 187, .12);
+    }
+
+    .profile-menu::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 52px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 248, 187, .24), transparent);
+    }
+
+    .menu-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 42px;
+      padding: 0 12px;
+      border-radius: 6px;
+      color: rgba(247, 244, 232, .80);
+      font-size: 18px;
+      font-weight: 690;
+    }
+
+    .menu-item .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .menu-item .menu-icon {
+      width: 24px;
+      color: rgba(255, 248, 187, .82);
+      text-align: center;
+      font-size: 20px;
+      filter: drop-shadow(0 0 8px rgba(255, 248, 187, .22));
+    }
+
+    .menu-item.account {
+      margin-bottom: 11px;
+      color: rgba(247, 244, 232, .66);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .menu-item.settings {
+      background: linear-gradient(90deg, rgba(255, 248, 187, .16), rgba(225, 160, 77, .12), rgba(95, 138, 166, .08));
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--bolt-soft);
+    }
+
+    .shortcut {
+      color: rgba(247, 244, 232, .55);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 720;
+    }
+
+    .main {
+      position: absolute;
+      z-index: 1;
+      inset: 0 0 0 426px;
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 5;
+      inset: 0 0 auto 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 52px;
+      padding: 0 24px;
+      color: rgba(247, 244, 232, .72);
+      font-size: 16px;
+      font-weight: 680;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, .75);
+    }
+
+    .top-left,
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .top-right {
+      justify-content: flex-end;
+    }
+
+    .thread {
+      position: absolute;
+      inset: 72px 354px 172px 118px;
+      display: grid;
+      align-content: start;
+      gap: 24px;
+      max-width: 960px;
+    }
+
+    .message {
+      position: relative;
+      padding: 18px 20px;
+      border: 1px solid rgba(255, 248, 187, .18);
+      border-radius: 8px;
+      background: rgba(10, 14, 20, .62);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, .18);
+    }
+
+    .message.user {
+      justify-self: end;
+      max-width: 680px;
+      border-color: rgba(225, 160, 77, .30);
+      background: rgba(39, 26, 16, .72);
+      box-shadow: inset 3px 0 0 var(--amber), 0 12px 28px rgba(0, 0, 0, .18);
+    }
+
+    .message h1 {
+      margin: 0 0 12px;
+      color: var(--bolt);
+      font-family: var(--font-display);
+      font-size: 31px;
+      font-weight: 850;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .message p {
+      margin: 0;
+      color: rgba(247, 244, 232, .84);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .activity {
+      display: grid;
+      gap: 9px;
+      padding: 14px 16px;
+      border: 1px solid rgba(95, 138, 166, .24);
+      border-radius: 8px;
+      background: rgba(11, 18, 26, .68);
+      color: rgba(247, 244, 232, .76);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .activity strong {
+      color: var(--steel);
+      font-weight: 780;
+    }
+
+    .composer {
+      position: absolute;
+      left: 50%;
+      bottom: 34px;
+      width: 880px;
+      min-height: 104px;
+      transform: translateX(-50%);
+      border: 1px solid rgba(255, 248, 187, .24);
+      border-radius: 8px;
+      background: rgba(9, 12, 18, .92);
+      box-shadow:
+        0 16px 36px rgba(0, 0, 0, .30),
+        inset 0 1px rgba(255, 248, 187, .10);
+    }
+
+    .composer-text {
+      padding: 20px 22px;
+      color: rgba(247, 244, 232, .46);
+      font-size: 18px;
+    }
+
+    .composer-tools {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tool-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tool,
+    .send {
+      height: 34px;
+      min-width: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(247, 244, 232, .16);
+      border-radius: 6px;
+      color: rgba(247, 244, 232, .70);
+      background: rgba(255, 248, 187, .06);
+      font-weight: 760;
+    }
+
+    .send {
+      min-width: 46px;
+      border-color: rgba(255, 248, 187, .52);
+      color: #11151d;
+      background: linear-gradient(180deg, var(--bolt), var(--bolt-soft));
+      box-shadow: 0 0 18px rgba(255, 248, 187, .22);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+    <aside class="sidebar">
+      <div class="brand-row">
+        <span>Codex</span>
+        <span class="search-icon">⌕</span>
+      </div>
+      <nav class="nav" aria-label="主导航">
+        <div class="nav-row active"><span class="icon">＋</span><span>新建任务</span></div>
+        <div class="nav-row"><span class="icon">⌁</span><span>拉取请求</span></div>
+        <div class="nav-row"><span class="icon">◷</span><span>已安排</span></div>
+        <div class="nav-row"><span class="icon">◇</span><span>插件</span></div>
+      </nav>
+      <div class="project-list">
+        <div class="section-title">Projects</div>
+        <div class="folder">Codex-Kimetsu-Skin</div>
+        <div class="task-row">设计 macOS Codex 皮肤</div>
+        <div class="folder">contentproducer</div>
+        <div class="folder">查找失败重试接口</div>
+        <div class="folder">修复批量发布报错</div>
+        <div class="folder">shiheng-manager-electron</div>
+        <div class="folder">更新批量发布账号筛选</div>
+      </div>
+
+      <div class="profile-menu" role="menu" aria-label="个人资料菜单">
+        <div class="menu-item account" role="menuitem">
+          <div class="left"><span class="menu-icon">◉</span><span>custom</span></div>
+        </div>
+        <div class="menu-item" role="menuitem">
+          <div class="left"><span class="menu-icon">☾</span><span>显示宠物</span></div>
+        </div>
+        <div class="menu-item settings" role="menuitem">
+          <div class="left"><span class="menu-icon">⚙</span><span>设置</span></div>
+          <span class="shortcut">⌘,</span>
+        </div>
+      </div>
+
+      <div class="profile-footer">
+        <span class="icon">⚙</span>
+        <span>custom</span>
+      </div>
+      <div class="profile-help">?</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-left">设计 macOS Codex 皮肤</div>
+        <div>打开位置</div>
+        <div class="top-right">⎇  ⌘  ⋯</div>
+      </header>
+      <section class="thread">
+        <div class="message user">
+          <p>然后左下角设置和设置页面能不能做</p>
+        </div>
+        <div class="message">
+          <h1>Thunder Breathing Menu</h1>
+          <p>普通任务页左下角的个人资料菜单是页面内弹层，可以跟随主题换成深蓝黑硬边界、霹雳白金描边和羽织橙选中态。菜单项仍然是 Codex 原生控件，点击设置会进入原生设置页。</p>
+        </div>
+        <div class="activity">
+          <strong>DOM hooks</strong>
+          <span>button[aria-label="打开个人资料菜单"]</span>
+          <span>[role="menu"] / [role="menuitem"]</span>
+        </div>
+      </section>
+      <div class="composer">
+        <div class="composer-text">询问 Codex</div>
+        <div class="composer-tools">
+          <div class="tool-group"><div class="tool">＋</div><div class="tool">⌘</div></div>
+          <div class="send">↑</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

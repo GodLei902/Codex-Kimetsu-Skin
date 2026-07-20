@@ -1,38 +1,38 @@
 ((cssText, artDataUrl, rawConfig) => {
-  const STATE_KEY = "__CODEX_DREAM_SKIN_STATE__";
-  const STYLE_ID = "codex-dream-skin-style";
-  const CHROME_ID = "codex-dream-skin-chrome";
+  const STATE_KEY = "__CODEX_KIMETSU_SKIN_STATE__";
+  const STYLE_ID = "codex-kimetsu-skin-style";
+  const CHROME_ID = "codex-kimetsu-skin-chrome";
   const ROOT_CLASSES = [
-    "codex-dream-skin",
-    "dream-theme-light",
-    "dream-theme-dark",
-    "dream-art-wide",
-    "dream-art-standard",
-    "dream-focus-left",
-    "dream-focus-center",
-    "dream-focus-right",
-    "dream-safe-left",
-    "dream-safe-center",
-    "dream-safe-right",
-    "dream-safe-none",
-    "dream-task-ambient",
-    "dream-task-banner",
-    "dream-task-off",
+    "codex-kimetsu-skin",
+    "kimetsu-theme-light",
+    "kimetsu-theme-dark",
+    "kimetsu-art-wide",
+    "kimetsu-art-standard",
+    "kimetsu-focus-left",
+    "kimetsu-focus-center",
+    "kimetsu-focus-right",
+    "kimetsu-safe-left",
+    "kimetsu-safe-center",
+    "kimetsu-safe-right",
+    "kimetsu-safe-none",
+    "kimetsu-task-ambient",
+    "kimetsu-task-banner",
+    "kimetsu-task-off",
   ];
   const ROOT_PROPERTIES = [
-    "--dream-art",
-    "--dream-art-position",
-    "--dream-focus-x",
-    "--dream-focus-y",
-    "--dream-accent",
-    "--dream-accent-ink",
-    "--dream-image-luma",
+    "--kimetsu-art",
+    "--kimetsu-art-position",
+    "--kimetsu-focus-x",
+    "--kimetsu-focus-y",
+    "--kimetsu-accent",
+    "--kimetsu-accent-ink",
+    "--kimetsu-image-luma",
   ];
-  const HOME_UTILITY_CLASS = "dream-home-utility";
+  const HOME_UTILITY_CLASS = "kimetsu-home-utility";
   const installToken = {};
   let samplingNativeShell = false;
   let observer = null;
-  window.__CODEX_DREAM_SKIN_DISABLED__ = false;
+  window.__CODEX_KIMETSU_SKIN_DISABLED__ = false;
 
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, Number(value)));
   const luminance = (red, green, blue) => {
@@ -106,7 +106,7 @@
   const existingStyle = document.getElementById(STYLE_ID);
   if (existingStyle) {
     existingStyle.textContent = cssText;
-    existingStyle.dataset.dreamVersion = "3";
+    existingStyle.dataset.kimetsuSkinStyleVersion = "3";
   }
 
   const analyzeArt = () => new Promise((resolve) => {
@@ -235,7 +235,7 @@
     const body = document.body;
     const classes = `${root?.className || ""} ${body?.className || ""}`
       .toLowerCase()
-      .replace(/\bdream-theme-(?:dark|light)\b/g, "");
+      .replace(/\bkimetsu-theme-(?:dark|light)\b/g, "");
     if (/\b(dark|electron-dark|theme-dark|appearance-dark)\b/.test(classes)) return "dark";
     if (/\b(light|electron-light|theme-light|appearance-light)\b/.test(classes)) return "light";
 
@@ -251,7 +251,7 @@
     if (dataTheme.includes("light")) return "light";
 
     try {
-      const hadSkin = root?.classList?.contains?.("codex-dream-skin");
+      const hadSkin = root?.classList?.contains?.("codex-kimetsu-skin");
       const savedSkinClasses = hadSkin
         ? ROOT_CLASSES.filter((className) => root.classList.contains(className))
         : [];
@@ -279,9 +279,9 @@
     const root = document.documentElement;
     root?.classList.remove(...ROOT_CLASSES);
     for (const property of ROOT_PROPERTIES) root?.style.removeProperty(property);
-    document.querySelectorAll(".dream-home").forEach((node) => node.classList.remove("dream-home"));
-    document.querySelectorAll(".dream-task").forEach((node) => node.classList.remove("dream-task"));
-    document.querySelectorAll(".dream-home-shell").forEach((node) => node.classList.remove("dream-home-shell"));
+    document.querySelectorAll(".kimetsu-home").forEach((node) => node.classList.remove("kimetsu-home"));
+    document.querySelectorAll(".kimetsu-task").forEach((node) => node.classList.remove("kimetsu-task"));
+    document.querySelectorAll(".kimetsu-home-shell").forEach((node) => node.classList.remove("kimetsu-home-shell"));
     document.querySelectorAll(`.${HOME_UTILITY_CLASS}`).forEach((node) => node.classList.remove(HOME_UTILITY_CLASS));
     document.getElementById(STYLE_ID)?.remove();
     document.getElementById(CHROME_ID)?.remove();
@@ -299,30 +299,30 @@
       : config.taskMode;
     const accent = config.accent || `rgb(${profile.accent.join(" ")})`;
     const accentInk = luminance(...profile.accent) > .42 ? "rgb(26 24 28)" : "rgb(250 248 251)";
-    root.classList.toggle("dream-theme-light", appearance === "light");
-    root.classList.toggle("dream-theme-dark", appearance === "dark");
-    root.classList.toggle("dream-art-wide", profile.aspect >= 1.75);
-    root.classList.toggle("dream-art-standard", profile.aspect < 1.75);
+    root.classList.toggle("kimetsu-theme-light", appearance === "light");
+    root.classList.toggle("kimetsu-theme-dark", appearance === "dark");
+    root.classList.toggle("kimetsu-art-wide", profile.aspect >= 1.75);
+    root.classList.toggle("kimetsu-art-standard", profile.aspect < 1.75);
     for (const value of ["left", "center", "right"]) {
-      root.classList.toggle(`dream-focus-${value}`, focus === value);
+      root.classList.toggle(`kimetsu-focus-${value}`, focus === value);
     }
     for (const value of ["left", "center", "right", "none"]) {
-      root.classList.toggle(`dream-safe-${value}`, safeArea === value);
+      root.classList.toggle(`kimetsu-safe-${value}`, safeArea === value);
     }
     for (const value of ["ambient", "banner", "off"]) {
-      root.classList.toggle(`dream-task-${value}`, taskMode === value);
+      root.classList.toggle(`kimetsu-task-${value}`, taskMode === value);
     }
-    root.style.setProperty("--dream-art", `url("${artUrl}")`);
-    root.style.setProperty("--dream-art-position", `${Math.round(focusX * 100)}% ${Math.round(focusY * 100)}%`);
-    root.style.setProperty("--dream-focus-x", String(focusX));
-    root.style.setProperty("--dream-focus-y", String(focusY));
-    root.style.setProperty("--dream-accent", accent);
-    root.style.setProperty("--dream-accent-ink", accentInk);
-    root.style.setProperty("--dream-image-luma", profile.luma.toFixed(3));
+    root.style.setProperty("--kimetsu-art", `url("${artUrl}")`);
+    root.style.setProperty("--kimetsu-art-position", `${Math.round(focusX * 100)}% ${Math.round(focusY * 100)}%`);
+    root.style.setProperty("--kimetsu-focus-x", String(focusX));
+    root.style.setProperty("--kimetsu-focus-y", String(focusY));
+    root.style.setProperty("--kimetsu-accent", accent);
+    root.style.setProperty("--kimetsu-accent-ink", accentInk);
+    root.style.setProperty("--kimetsu-image-luma", profile.luma.toFixed(3));
   };
 
   const ensure = () => {
-    if (window.__CODEX_DREAM_SKIN_DISABLED__) return;
+    if (window.__CODEX_KIMETSU_SKIN_DISABLED__) return;
     const root = document.documentElement;
     if (!root || !document.body) return;
 
@@ -333,7 +333,7 @@
       return;
     }
 
-    root.classList.add("codex-dream-skin");
+    root.classList.add("codex-kimetsu-skin");
     applyProfile(root);
 
     let style = document.getElementById(STYLE_ID);
@@ -342,22 +342,22 @@
       style.id = STYLE_ID;
       (document.head || root).appendChild(style);
     }
-    if (style.dataset.dreamVersion !== "3") {
+    if (style.dataset.kimetsuSkinStyleVersion !== "3") {
       style.textContent = cssText;
-      style.dataset.dreamVersion = "3";
+      style.dataset.kimetsuSkinStyleVersion = "3";
     }
 
     const home = document.querySelector('[role="main"]:has([data-testid="home-icon"])');
     for (const candidate of document.querySelectorAll('[role="main"]')) {
-      candidate.classList.toggle("dream-home", candidate === home);
-      candidate.classList.toggle("dream-task", candidate !== home);
+      candidate.classList.toggle("kimetsu-home", candidate === home);
+      candidate.classList.toggle("kimetsu-task", candidate !== home);
     }
     const utilityBars = new Set(home ? home.querySelectorAll('[class*="_homeUtilityBar_"]') : []);
     for (const candidate of document.querySelectorAll(`.${HOME_UTILITY_CLASS}`)) {
       if (!utilityBars.has(candidate)) candidate.classList.remove(HOME_UTILITY_CLASS);
     }
     for (const candidate of utilityBars) candidate.classList.add(HOME_UTILITY_CLASS);
-    shellMain.classList.toggle("dream-home-shell", Boolean(home));
+    shellMain.classList.toggle("kimetsu-home-shell", Boolean(home));
 
     let chrome = document.getElementById(CHROME_ID);
     if (!chrome || chrome.parentElement !== document.body) {
@@ -367,13 +367,13 @@
       chrome.setAttribute("aria-hidden", "true");
       document.body.appendChild(chrome);
     }
-    chrome.classList.toggle("dream-home-shell", Boolean(home));
+    chrome.classList.toggle("kimetsu-home-shell", Boolean(home));
   };
 
   const cleanup = () => {
     const state = window[STATE_KEY];
     if (state?.installToken !== installToken) return false;
-    window.__CODEX_DREAM_SKIN_DISABLED__ = true;
+    window.__CODEX_KIMETSU_SKIN_DISABLED__ = true;
     clearSkinDom();
     state?.observer?.disconnect();
     if (state?.timer) clearInterval(state.timer);
@@ -403,15 +403,15 @@
   });
   const timer = setInterval(ensure, 5000);
   window[STATE_KEY] = {
-    ensure, cleanup, observer, timer, scheduler, artUrl, profile, config, installToken, version: "1.2.0",
+    ensure, cleanup, observer, timer, scheduler, artUrl, profile, config, installToken, version: "1.2.2",
   };
   ensure();
   analyzeArt().then((result) => {
     const state = window[STATE_KEY];
-    if (state?.installToken !== installToken || window.__CODEX_DREAM_SKIN_DISABLED__) return;
+    if (state?.installToken !== installToken || window.__CODEX_KIMETSU_SKIN_DISABLED__) return;
     profile = result;
     state.profile = result;
     ensure();
   });
-  return { installed: true, version: "1.2.0", adaptive: true };
-})(__DREAM_CSS_JSON__, __DREAM_ART_JSON__, __DREAM_THEME_JSON__)
+  return { installed: true, version: "1.2.2", adaptive: true };
+})(__KIMETSU_CSS_JSON__, __KIMETSU_ART_JSON__, __KIMETSU_THEME_JSON__)

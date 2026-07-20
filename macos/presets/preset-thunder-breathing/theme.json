@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "preset-thunder-breathing",
+  "name": "霹雳呼吸",
+  "brandSubtitle": "CODEX KIMETSU SKIN",
+  "tagline": "把霹雳的速度感带进 Codex 工作台。",
+  "projectPrefix": "选择项目 · ",
+  "projectLabel": "◉  选择项目",
+  "statusText": "THUNDER SKIN ONLINE",
+  "quote": "BREATH OF THUNDER",
+  "image": "background.jpg",
+  "appearance": "dark",
+  "art": {
+    "focusX": 0.72,
+    "focusY": 0.44,
+    "safeArea": "left",
+    "taskMode": "ambient"
+  },
+  "colors": {
+    "background": "#080b10",
+    "panel": "#11151d",
+    "panelAlt": "#171f2a",
+    "accent": "#fff8bb",
+    "accentAlt": "#f6d36a",
+    "secondary": "#e1a04d",
+    "highlight": "#5f8aa6",
+    "text": "#f7f4e8",
+    "muted": "#aab6bd",
+    "line": "rgba(255, 232, 142, .22)"
+  }
+}

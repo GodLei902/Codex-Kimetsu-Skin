@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thunder Breathing macOS Task Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --wallpaper: url("../../macos/presets/preset-thunder-breathing/background.jpg");
+      --bg: #070a0f;
+      --panel: rgba(10, 14, 20, .72);
+      --panel-strong: rgba(9, 12, 18, .9);
+      --panel-right: rgba(13, 18, 27, .92);
+      --warm: rgba(55, 37, 20, .78);
+      --text: #f7f4e8;
+      --muted: #aab7bd;
+      --dim: #78868d;
+      --bolt: #fff8bb;
+      --bolt-soft: #f6d36a;
+      --amber: #e1a04d;
+      --orange: #b95f2a;
+      --steel: #5f8aa6;
+      --line: rgba(255, 232, 142, .22);
+      --line-cool: rgba(95, 138, 166, .22);
+      --radius: 8px;
+      --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Avenir Next", "PingFang SC", "Microsoft YaHei UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-width: 2048px;
+      min-height: 1280px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      letter-spacing: 0;
+    }
+
+    .app {
+      position: relative;
+      width: 2048px;
+      height: 1280px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(7, 10, 15, .94), rgba(7, 10, 15, .78) 34%, rgba(7, 10, 15, .58) 58%, rgba(7, 10, 15, .46)),
+        linear-gradient(180deg, rgba(7, 10, 15, .46), rgba(7, 10, 15, .68) 58%, rgba(7, 10, 15, .9)),
+        var(--wallpaper) 72% 44% / cover no-repeat;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 71% 34%, rgba(255, 248, 187, .12), transparent 26%),
+        linear-gradient(112deg, rgba(255, 248, 187, .08), transparent 20%),
+        linear-gradient(290deg, rgba(95, 138, 166, .12), transparent 34%);
+      mix-blend-mode: screen;
+    }
+
+    .traffic {
+      position: absolute;
+      z-index: 6;
+      top: 21px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .traffic span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ff5f57;
+    }
+
+    .traffic span:nth-child(2) { background: #ffbd2e; }
+    .traffic span:nth-child(3) { background: #28c840; }
+
+    .sidebar {
+      position: absolute;
+      z-index: 2;
+      inset: 0 auto 0 0;
+      width: 414px;
+      padding: 66px 18px 20px;
+      background:
+        linear-gradient(90deg, rgba(8, 11, 16, .72), rgba(8, 11, 16, .36) 88%, transparent),
+        linear-gradient(180deg, rgba(255, 248, 187, .06), transparent 28%);
+      color: var(--muted);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--amber);
+      font-size: 20px;
+      font-weight: 820;
+      text-shadow: 0 0 12px rgba(225, 160, 77, .22);
+    }
+
+    .brand::after {
+      content: "⌄";
+      color: rgba(255, 248, 187, .5);
+      font-size: 15px;
+    }
+
+    .search {
+      position: absolute;
+      top: 70px;
+      right: 18px;
+      color: rgba(247, 244, 232, .34);
+      font-size: 18px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+      margin-top: 22px;
+      width: 390px;
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: var(--radius);
+      color: rgba(247, 244, 232, .76);
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .nav-row.active {
+      border: 1px solid rgba(255, 248, 187, .22);
+      background: linear-gradient(90deg, rgba(255, 248, 187, .14), rgba(225, 160, 77, .08) 52%, rgba(8, 11, 16, .14));
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--bolt-soft), 0 10px 24px rgba(0, 0, 0, .16);
+    }
+
+    .icon {
+      width: 20px;
+      color: var(--amber);
+      text-align: center;
+    }
+
+    .project-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 28px;
+      font-size: 17px;
+      font-weight: 620;
+    }
+
+    .section-title {
+      color: rgba(247, 244, 232, .58);
+      font-weight: 720;
+    }
+
+    .folder {
+      color: rgba(247, 244, 232, .72);
+    }
+
+    .task-selected {
+      height: 36px;
+      padding: 7px 12px 0 31px;
+      border: 1px solid rgba(225, 160, 77, .26);
+      border-radius: var(--radius);
+      background: rgba(225, 160, 77, .12);
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--amber);
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(247, 244, 232, .7);
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .main {
+      position: absolute;
+      z-index: 1;
+      inset: 0 0 0 414px;
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 5;
+      inset: 0 0 auto 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      height: 52px;
+      padding: 0 24px;
+      color: rgba(247, 244, 232, .72);
+      font-size: 16px;
+      font-weight: 680;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, .75);
+    }
+
+    .top-left,
+    .top-right {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .top-right {
+      justify-content: flex-end;
+    }
+
+    .open-button {
+      height: 30px;
+      padding: 0 13px;
+      border: 1px solid rgba(255, 248, 187, .18);
+      border-radius: var(--radius);
+      background: rgba(255, 248, 187, .08);
+      color: var(--text);
+    }
+
+    .content {
+      position: absolute;
+      inset: 52px 0 0 0;
+      overflow: hidden;
+    }
+
+    .thread {
+      position: absolute;
+      left: 154px;
+      top: 0;
+      bottom: 0;
+      width: 736px;
+      padding: 42px 0 150px;
+      color: var(--text);
+    }
+
+    .assistant-block {
+      margin-bottom: 20px;
+      color: rgba(247, 244, 232, .9);
+      font-size: 17px;
+      line-height: 1.72;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
+    }
+
+    .assistant-block ul {
+      margin: 0 0 18px 20px;
+      padding: 0;
+    }
+
+    .assistant-block li::marker {
+      color: var(--bolt);
+    }
+
+    .inline-code {
+      display: inline-block;
+      padding: 1px 7px 2px;
+      border: 1px solid rgba(255, 248, 187, .16);
+      border-radius: 6px;
+      background: rgba(255, 248, 187, .08);
+      color: var(--bolt);
+      font-family: var(--font-mono);
+      font-size: .92em;
+    }
+
+    .user-bubble {
+      width: fit-content;
+      max-width: 77%;
+      margin: 22px 0 22px auto;
+      padding: 9px 14px;
+      border: 1px solid rgba(225, 160, 77, .24);
+      border-radius: 10px;
+      background: var(--warm);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 620;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .22), inset 3px 0 0 var(--amber);
+    }
+
+    .activity {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 14px 0;
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 248, 187, .14);
+      border-radius: var(--radius);
+      background: rgba(9, 12, 18, .62);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      box-shadow: inset 3px 0 0 rgba(95, 138, 166, .65);
+    }
+
+    .activity span:first-child {
+      color: var(--bolt);
+    }
+
+    .image-preview {
+      width: 306px;
+      height: 190px;
+      margin: 18px 0;
+      border: 1px solid rgba(255, 248, 187, .18);
+      border-radius: var(--radius);
+      background: var(--wallpaper) 72% 44% / cover no-repeat;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, .34);
+    }
+
+    .resource-card,
+    .diff-card {
+      overflow: hidden;
+      margin: 16px 0;
+      border: 1px solid rgba(255, 248, 187, .16);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(14, 18, 27, .84), rgba(10, 12, 17, .82)),
+        linear-gradient(110deg, rgba(255, 248, 187, .08), transparent 46%);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .28), inset 0 1px rgba(255, 255, 255, .08);
+    }
+
+    .resource-row {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 66px;
+      padding: 11px 13px;
+      border-bottom: 1px solid rgba(255, 248, 187, .1);
+    }
+
+    .resource-row:last-child {
+      border-bottom: 0;
+    }
+
+    .file-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 248, 187, .18);
+      border-radius: 7px;
+      background: rgba(255, 248, 187, .08);
+      color: var(--bolt);
+      font-weight: 900;
+    }
+
+    .file-title {
+      color: rgba(247, 244, 232, .88);
+      font-size: 15px;
+      font-weight: 760;
+    }
+
+    .file-sub {
+      margin-top: 3px;
+      color: var(--dim);
+      font-size: 13px;
+    }
+
+    .open-way {
+      height: 32px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 248, 187, .18);
+      border-radius: 7px;
+      background: rgba(255, 248, 187, .08);
+      color: var(--muted);
+      font-weight: 680;
+    }
+
+    .diff-head {
+      display: grid;
+      grid-template-columns: 42px 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 13px;
+      border-bottom: 1px solid rgba(255, 248, 187, .1);
+    }
+
+    .diff-title {
+      font-size: 16px;
+      font-weight: 760;
+    }
+
+    .plus {
+      color: #8ee29c;
+    }
+
+    .minus {
+      color: #f284a5;
+    }
+
+    .diff-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 10px 14px;
+      color: rgba(247, 244, 232, .76);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      background: rgba(45, 40, 69, .34);
+    }
+
+    .right-panel {
+      position: absolute;
+      top: 62px;
+      right: 16px;
+      width: 300px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 248, 187, .16);
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, rgba(16, 21, 33, .94), rgba(11, 14, 21, .9)),
+        linear-gradient(125deg, rgba(95, 138, 166, .12), transparent 50%);
+      box-shadow: 0 24px 68px rgba(0, 0, 0, .42), inset 0 1px rgba(255, 255, 255, .08);
+    }
+
+    .panel-section {
+      border-bottom: 1px solid rgba(255, 248, 187, .1);
+      padding: 10px 14px 12px;
+    }
+
+    .panel-section:last-child {
+      border-bottom: 0;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 760;
+      margin-bottom: 9px;
+    }
+
+    .panel-row {
+      display: grid;
+      grid-template-columns: 20px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 30px;
+      color: rgba(247, 244, 232, .78);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .panel-row .icon {
+      width: 20px;
+      color: var(--steel);
+    }
+
+    .source-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: rgba(247, 244, 232, .62);
+    }
+
+    .composer {
+      position: absolute;
+      left: 154px;
+      bottom: 16px;
+      width: 736px;
+      min-height: 116px;
+      border: 1px solid rgba(255, 248, 187, .24);
+      border-radius: 10px;
+      background:
+        linear-gradient(180deg, rgba(12, 15, 21, .94), rgba(9, 11, 15, .94)),
+        linear-gradient(90deg, rgba(255, 248, 187, .1), transparent 48%);
+      box-shadow: 0 22px 68px rgba(0, 0, 0, .46), inset 0 1px rgba(255, 255, 255, .1);
+    }
+
+    .composer-text {
+      min-height: 62px;
+      padding: 14px 14px 0;
+      color: rgba(247, 244, 232, .9);
+      font-size: 16px;
+      font-weight: 620;
+    }
+
+    .composer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 11px 10px;
+      color: rgba(247, 244, 232, .58);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .tools,
+    .send-side {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .send {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--bolt), var(--amber) 58%, var(--orange));
+      color: #15100a;
+      font-size: 19px;
+      font-weight: 950;
+      box-shadow: 0 0 22px rgba(255, 248, 187, .38);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="traffic"><span></span><span></span><span></span></div>
+    <aside class="sidebar">
+      <div class="brand">Codex</div>
+      <div class="search">⌕</div>
+      <nav class="nav">
+        <div class="nav-row"><span class="icon">✎</span><span>新建任务</span></div>
+        <div class="nav-row"><span class="icon">⌁</span><span>拉取请求</span></div>
+        <div class="nav-row"><span class="icon">◷</span><span>已安排</span></div>
+        <div class="nav-row"><span class="icon">◉</span><span>插件</span></div>
+      </nav>
+      <div class="project-list">
+        <div class="section-title">项目</div>
+        <div class="folder">▱ Codex-Kimetsu-Skin</div>
+        <div class="task-selected">设计 macOS Codex 皮肤</div>
+        <div class="folder">▱ contentproducer</div>
+        <div>修正私信评论返回用户名</div>
+        <div>修复批量发布报错</div>
+        <div>增加养号时间段配置</div>
+        <div class="folder">▱ shiheng-manager-electron</div>
+      </div>
+      <div class="sidebar-bottom"><span>⚙</span><span>custom</span></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="top-left"><span>◧</span><span>‹</span><span>›</span></div>
+        <div>▱ 设计 macOS Codex 皮肤 ···</div>
+        <div class="top-right"><span class="open-button">▣ 打开位置⌄</span><span>☷</span><span>▢</span></div>
+      </header>
+
+      <section class="content">
+        <section class="thread">
+          <div class="assistant-block">
+            <ul>
+              <li>替换原生输入框结构</li>
+            </ul>
+            <p><strong>真实首页 verify 通过，截图也保存了：</strong></p>
+            <ul>
+              <li><span class="inline-code">真实 Codex 首页截图</span></li>
+              <li><span class="inline-code">支持范围内的新设计预览</span></li>
+              <li><span class="inline-code">设计边界说明</span></li>
+            </ul>
+            <div class="image-preview"></div>
+            <p>本机 Codex 是 <span class="inline-code">/Applications/ChatGPT.app</span>，版本 <span class="inline-code">26.715.31925</span>，当前 Kimetsu Skin live 在 <span class="inline-code">127.0.0.1:9341</span>。</p>
+          </div>
+
+          <div class="resource-card">
+            <div class="resource-row">
+              <div class="file-icon">MD</div>
+              <div><div class="file-title">thunder-breathing-macos-design.md</div><div class="file-sub">文档 · MD</div></div>
+              <button class="open-way">打开方式⌄</button>
+            </div>
+            <div class="resource-row">
+              <div class="file-icon">PNG</div>
+              <div><div class="file-title">codex-live-home-current-theme.png</div><div class="file-sub">图像 · PNG</div></div>
+              <button class="open-way">打开方式⌄</button>
+            </div>
+            <div class="resource-row">
+              <div class="file-icon">CSS</div>
+              <div><div class="file-title">kimetsu-skin.css</div><div class="file-sub">样式 · CSS</div></div>
+              <button class="open-way">打开方式⌄</button>
+            </div>
+          </div>
+
+          <div class="diff-card">
+            <div class="diff-head">
+              <div class="file-icon">±</div>
+              <div class="diff-title">已编辑 2 个文件</div>
+              <div class="plus">+369</div>
+              <div class="minus">-625</div>
+            </div>
+            <div class="diff-row"><span>docs/designs/thunder-breathing-macos-design.md</span><span><span class="plus">+64</span> <span class="minus">-5</span></span></div>
+            <div class="diff-row"><span>docs/designs/thunder-breathing-macos-preview.html</span><span><span class="plus">+305</span> <span class="minus">-620</span></span></div>
+          </div>
+
+          <div class="activity"><span>⚡</span><span>Ran CDP probe against live Codex task DOM</span></div>
+
+          <div class="user-bubble">首页没问题了，然后执行任务这个页面哪些能进行 diy，你排查一下，然后进行设计</div>
+        </section>
+
+        <aside class="right-panel">
+          <section class="panel-section">
+            <div class="panel-title"><span>环境信息</span><span>＋</span></div>
+            <div class="panel-row"><span class="icon">⊞</span><span>变更</span><span><span class="plus">+602</span> <span class="minus">-0</span></span></div>
+            <div class="panel-row"><span class="icon">▭</span><span>本地</span><span>⌄</span></div>
+            <div class="panel-row"><span class="icon">⌘</span><span>main</span><span>⌄</span></div>
+            <div class="panel-row"><span class="icon">⌁</span><span>提交或推送</span><span></span></div>
+            <div class="panel-row"><span class="icon">◉</span><span>GitHub CLI 不可用</span><span></span></div>
+            <div class="panel-row"><span class="icon">◉</span><span>比较分支</span><span>↗</span></div>
+          </section>
+          <section class="panel-section">
+            <div class="panel-title"><span>来源</span><span>＋</span></div>
+            <div class="panel-row"><span>▧</span><span class="source-name">preset-thunder-breathing/theme.json</span><span></span></div>
+            <div class="panel-row"><span>▧</span><span class="source-name">preset-thunder-breathing/background.jpg</span><span></span></div>
+            <div class="panel-row"><span>▧</span><span class="source-name">codex-live-home-current-theme.png</span><span></span></div>
+            <div class="panel-row"><span>⌘</span><span>查看全部</span><span></span></div>
+          </section>
+        </aside>
+
+        <section class="composer">
+          <div class="composer-text">任务页支持范围：消息、资源卡、右侧环境面板、composer。</div>
+          <div class="composer-footer">
+            <div class="tools"><span>＋</span><span>◉ 完全访问</span></div>
+            <div class="send-side"><span>5.5 极高⌄</span><span class="send">↑</span></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

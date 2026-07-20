@@ -13,7 +13,7 @@ while IFS= read -r file; do "$NODE" --check "$file" >/dev/null; done < <(
   /usr/bin/find "$ROOT/scripts" "$ROOT/assets" "$ROOT/presets" -type f \( -name '*.mjs' -o -name '*.js' \) -print
 )
 
-if /usr/bin/grep -R -n -E 'dream-skin-skin|DREAM_SKIN_SKIN|1\.0\.0-rc2' \
+if /usr/bin/grep -R -n -E 'kimetsu-skin-skin|KIMETSU_SKIN_SKIN|1\.0\.0-rc2' \
   "$ROOT/scripts" "$ROOT/assets" >/dev/null; then
   printf 'Legacy release-candidate identifiers remain in runtime files.\n' >&2
   exit 1
@@ -33,8 +33,8 @@ if /usr/bin/grep -R -n --include='*.sh' -E '/usr/bin/osascript[[:space:]]+-e[[:s
   exit 1
 fi
 if ! /usr/bin/grep -F -q 'sfimage=paintpalette.fill' \
-  "$ROOT/menubar/codex_dream_skin.10s.sh"; then
-  printf 'SwiftBar menu title must retain the Dream Skin palette icon.\n' >&2
+  "$ROOT/menubar/codex_kimetsu_skin.10s.sh"; then
+  printf 'SwiftBar menu title must retain the Kimetsu Skin palette icon.\n' >&2
   exit 1
 fi
 if ! /usr/bin/grep -F -q 'flag: "wx"' "$ROOT/scripts/write-theme.mjs"; then
@@ -58,8 +58,8 @@ for preset in "$ROOT"/presets/preset-*/; do
   ' "$PRESET_CHECK"
 done
 
-TMP="$(/usr/bin/mktemp -d /tmp/codex-dream-skin-tests.XXXXXX)"
-TEST_INJECTOR_JOB_LABEL="com.openai.codex-dream-skin-studio.tests.$$"
+TMP="$(/usr/bin/mktemp -d /tmp/codex-kimetsu-skin-tests.XXXXXX)"
+TEST_INJECTOR_JOB_LABEL="com.openai.codex-kimetsu-skin.tests.$$"
 DUMMY_PID=""
 STATUS_PID=""
 WATCH_PID=""
@@ -80,44 +80,29 @@ cleanup_tests() {
 }
 trap cleanup_tests EXIT
 
-# Standalone archives flatten macos/ to their root. Prompt guides and NOTICE
-# must describe that layout and must not claim that Windows assets are bundled.
+# Standalone archives flatten macos/ to their root. Thunder Breathing docs
+# and NOTICE paths must describe that layout.
 STANDALONE_ROOT="$TMP/standalone-root"
 STANDALONE_DOCS="$TMP/standalone-source-docs"
 /bin/mkdir -p "$STANDALONE_ROOT" \
-  "$STANDALONE_DOCS/images/gallery" "$STANDALONE_DOCS/images/presets"
+  "$STANDALONE_DOCS/designs" "$STANDALONE_DOCS/images"
 /usr/bin/printf '%s\n' \
-  'macos/presets/preset-romantic-rose/ macos/assets/portal-hero.png macos/NOTICE.md windows/assets/theme.json' \
-  > "$STANDALONE_DOCS/reference-background-prompt-guide.md"
-/bin/cp "$STANDALONE_DOCS/reference-background-prompt-guide.md" \
-  "$STANDALONE_DOCS/reference-background-prompt-guide.en.md"
-/bin/cp "$STANDALONE_DOCS/reference-background-prompt-guide.md" \
-  "$STANDALONE_DOCS/background-generation-prompts.md"
-: > "$STANDALONE_DOCS/images/gallery/skin-01.jpg"
-: > "$STANDALONE_DOCS/images/presets/romantic-rose-source.png"
-: > "$STANDALONE_DOCS/images/hero-banner-red-white.png"
+  'Thunder design uses macos/presets/preset-thunder-breathing/ and macos/NOTICE.md.' \
+  > "$STANDALONE_DOCS/designs/thunder-breathing-macos-design.md"
+: > "$STANDALONE_DOCS/images/thunder-breathing-live-home-fixed.png"
+: > "$STANDALONE_DOCS/images/codex-live-home-current-theme.png"
 /usr/bin/printf '%s\n' \
-  '- `presets/preset-romantic-rose/background.jpg`' \
-  '- `../windows/assets/dream-reference.jpg`' \
-  '- `../docs/images/presets/romantic-rose-source.png`' \
-  "They are included at the maintainer's direction as a local theme preset, source archive, and real runtime previews." \
+  '- `presets/preset-thunder-breathing/background.jpg`' \
+  '- `../docs/images/thunder-breathing-live-home-fixed.png`' \
   > "$STANDALONE_ROOT/NOTICE.md"
 "$ROOT/scripts/prepare-standalone-docs.sh" "$STANDALONE_ROOT" "$STANDALONE_DOCS"
-/usr/bin/grep -F -q 'presets/preset-romantic-rose/' \
-  "$STANDALONE_ROOT/docs/reference-background-prompt-guide.md"
-/usr/bin/grep -F -q 'assets/portal-hero.png' \
-  "$STANDALONE_ROOT/docs/reference-background-prompt-guide.md"
-/usr/bin/grep -F -q 'https://github.com/Fei-Away/Codex-Dream-Skin/blob/main/windows/assets/theme.json' \
-  "$STANDALONE_ROOT/docs/reference-background-prompt-guide.md"
-[ -f "$STANDALONE_ROOT/docs/images/hero-banner-red-white.png" ]
-/usr/bin/grep -F -q '`docs/images/presets/romantic-rose-source.png`' \
-  "$STANDALONE_ROOT/NOTICE.md"
-/usr/bin/grep -F -q 'not included in this macOS archive' \
+[ -f "$STANDALONE_ROOT/docs/designs/thunder-breathing-macos-design.md" ]
+[ -f "$STANDALONE_ROOT/docs/images/thunder-breathing-live-home-fixed.png" ]
+/usr/bin/grep -F -q '`docs/images/thunder-breathing-live-home-fixed.png`' \
   "$STANDALONE_ROOT/NOTICE.md"
 
 # A standalone studio can build another archive from its already-rewritten
-# docs. Source discovery must stay inside that studio and URL rewriting must
-# be idempotent.
+# docs. Source discovery must stay inside that studio.
 STANDALONE_SOURCE="$TMP/standalone-source"
 STANDALONE_REPACK="$TMP/standalone-repack"
 /bin/mkdir -p "$STANDALONE_SOURCE/scripts" "$STANDALONE_REPACK"
@@ -125,24 +110,18 @@ STANDALONE_REPACK="$TMP/standalone-repack"
 /bin/cp -R "$STANDALONE_ROOT/docs" "$STANDALONE_SOURCE/docs"
 /bin/cp "$STANDALONE_ROOT/NOTICE.md" "$STANDALONE_REPACK/NOTICE.md"
 "$STANDALONE_SOURCE/scripts/prepare-standalone-docs.sh" "$STANDALONE_REPACK"
-REPACK_GUIDE="$STANDALONE_REPACK/docs/reference-background-prompt-guide.md"
-/usr/bin/grep -F -q \
-  'https://github.com/Fei-Away/Codex-Dream-Skin/blob/main/windows/assets/theme.json' \
-  "$REPACK_GUIDE"
-if /usr/bin/grep -E -q 'tree/main/windows/assets|blob/main/https://' "$REPACK_GUIDE"; then
-  printf 'Standalone prompt URL rewriting is not idempotent.\n' >&2
-  exit 1
-fi
+[ -f "$STANDALONE_REPACK/docs/designs/thunder-breathing-macos-design.md" ]
+[ -f "$STANDALONE_REPACK/docs/images/codex-live-home-current-theme.png" ]
 
 # SwiftBar attributes are line-based; unsafe engine paths must never be emitted
 # into bash= or param*= fields.
 UNSAFE_ENGINE="$TMP/unsafe\"engine"
 /bin/mkdir -p "$UNSAFE_ENGINE/scripts"
-/usr/bin/printf '#!/bin/bash\ntrue\n' > "$UNSAFE_ENGINE/scripts/start-dream-skin-macos.sh"
-/bin/chmod +x "$UNSAFE_ENGINE/scripts/start-dream-skin-macos.sh"
+/usr/bin/printf '#!/bin/bash\ntrue\n' > "$UNSAFE_ENGINE/scripts/start-kimetsu-skin-macos.sh"
+/bin/chmod +x "$UNSAFE_ENGINE/scripts/start-kimetsu-skin-macos.sh"
 UNSAFE_MENU_OUTPUT="$(
-  /usr/bin/env CODEX_DREAM_SKIN_ENGINE="$UNSAFE_ENGINE" \
-    "$ROOT/menubar/codex_dream_skin.10s.sh"
+  /usr/bin/env CODEX_KIMETSU_SKIN_ENGINE="$UNSAFE_ENGINE" \
+    "$ROOT/menubar/codex_kimetsu_skin.10s.sh"
 )"
 /usr/bin/printf '%s\n' "$UNSAFE_MENU_OUTPUT" | /usr/bin/grep -F -q \
   'Engine path contains unsupported SwiftBar characters'
@@ -152,14 +131,14 @@ if /usr/bin/printf '%s\n' "$UNSAFE_MENU_OUTPUT" | /usr/bin/grep -F -q 'bash='; t
 fi
 
 MENU_HOME="$TMP/menu-home"
-MENU_IMAGES="$MENU_HOME/Library/Application Support/CodexDreamSkinStudio/images"
+MENU_IMAGES="$MENU_HOME/Library/Application Support/CodexKimetsuSkin/images"
 /bin/mkdir -p "$MENU_IMAGES"
 : > "$MENU_IMAGES/safe-image.png"
 : > "$MENU_IMAGES/"$'bad\timage.png'
 : > "$MENU_IMAGES/"$'bad\033image.png'
 MENU_IMAGE_OUTPUT="$(
-  /usr/bin/env HOME="$MENU_HOME" CODEX_DREAM_SKIN_ENGINE="$ROOT" \
-    "$ROOT/menubar/codex_dream_skin.10s.sh"
+  /usr/bin/env HOME="$MENU_HOME" CODEX_KIMETSU_SKIN_ENGINE="$ROOT" \
+    "$ROOT/menubar/codex_kimetsu_skin.10s.sh"
 )"
 /usr/bin/printf '%s\n' "$MENU_IMAGE_OUTPUT" | /usr/bin/grep -F -q 'safe-image.png'
 if /usr/bin/printf '%s\n' "$MENU_IMAGE_OUTPUT" | /usr/bin/grep -F -q 'bad'; then
@@ -172,29 +151,31 @@ fi
   . "$1/scripts/common-macos.sh"
   ensure_state_root
   themes="$STATE_ROOT/themes"
-  /bin/mkdir -p "$themes/custom-keepme"
+  /bin/mkdir -p "$themes/custom-keepme" "$themes/preset-obsolete"
   : > "$themes/custom-keepme/theme.json"
+  : > "$themes/preset-obsolete/theme.json"
   seed_bundled_presets
   seed_bundled_presets
-  [ -f "$themes/preset-midnight-aurora/theme.json" ] || exit 1
-  [ -f "$themes/preset-midnight-aurora/background.jpg" ] || exit 1
+  [ -f "$themes/preset-thunder-breathing/theme.json" ] || exit 1
+  [ -f "$themes/preset-thunder-breathing/background.jpg" ] || exit 1
   [ -f "$themes/custom-keepme/theme.json" ] || exit 1
+  [ ! -e "$themes/preset-obsolete" ] || exit 1
   seeded="$(/usr/bin/find "$themes" -maxdepth 1 -type d -name "preset-*" | /usr/bin/wc -l | /usr/bin/tr -d " ")"
-  [ "$seeded" -ge 4 ] || exit 1
+  [ "$seeded" -eq 1 ] || exit 1
 ' _ "$ROOT"
 
 # Theme switches stage files and publish theme.json last, preserving a complete
 # active pack while the watcher is running.
 SWITCH_HOME="$TMP/switch-home"
-SWITCH_STATE="$SWITCH_HOME/Library/Application Support/CodexDreamSkinStudio"
+SWITCH_STATE="$SWITCH_HOME/Library/Application Support/CodexKimetsuSkin"
 /bin/mkdir -p "$SWITCH_STATE/themes/preset-switch-fixture" "$SWITCH_STATE/theme"
-/bin/cp "$ROOT/assets/portal-hero.png" "$SWITCH_STATE/themes/preset-switch-fixture/background.png"
+/bin/cp "$ROOT/assets/kimetsu-reference.jpg" "$SWITCH_STATE/themes/preset-switch-fixture/background.jpg"
 /usr/bin/printf '%s\n' \
-  '{"schemaVersion":1,"id":"preset-switch-fixture","name":"切换测试","image":"background.png"}' \
+  '{"schemaVersion":1,"id":"preset-switch-fixture","name":"切换测试","image":"background.jpg"}' \
   > "$SWITCH_STATE/themes/preset-switch-fixture/theme.json"
-/usr/bin/printf '%s\n' '{"schemaVersion":1,"id":"old","name":"旧主题","image":"old.png"}' \
+/usr/bin/printf '%s\n' '{"schemaVersion":1,"id":"previous-active","name":"切换前占位","image":"placeholder.png"}' \
   > "$SWITCH_STATE/theme/theme.json"
-: > "$SWITCH_STATE/theme/old.png"
+: > "$SWITCH_STATE/theme/placeholder.png"
 if /usr/bin/env HOME="$SWITCH_HOME" NODE="$NODE" \
   "$ROOT/scripts/switch-theme-macos.sh" --id '../escape' --no-apply >/dev/null 2>&1; then
   printf 'switch-theme unexpectedly accepted a path traversal theme id.\n' >&2
@@ -202,8 +183,8 @@ if /usr/bin/env HOME="$SWITCH_HOME" NODE="$NODE" \
 fi
 /usr/bin/env HOME="$SWITCH_HOME" NODE="$NODE" \
   "$ROOT/scripts/switch-theme-macos.sh" --id preset-switch-fixture --no-apply >/dev/null
-/usr/bin/cmp -s "$SWITCH_STATE/theme/background.png" \
-  "$SWITCH_STATE/themes/preset-switch-fixture/background.png"
+/usr/bin/cmp -s "$SWITCH_STATE/theme/background.jpg" \
+  "$SWITCH_STATE/themes/preset-switch-fixture/background.jpg"
 [ ! -e "$SWITCH_STATE/theme/old.png" ]
 "$NODE" -e '
   const fs = require("fs");
@@ -213,7 +194,7 @@ fi
 [ -z "$(/usr/bin/find "$SWITCH_STATE" -maxdepth 1 -name '.theme-switch.*' -print -quit)" ]
 
 RUNTIME_HOME="$TMP/runtime-home"
-RUNTIME_STATE_ROOT="$RUNTIME_HOME/Library/Application Support/CodexDreamSkinStudio"
+RUNTIME_STATE_ROOT="$RUNTIME_HOME/Library/Application Support/CodexKimetsuSkin"
 RUNTIME_STATE="$RUNTIME_STATE_ROOT/state.json"
 STATE_EVAL_MARKER="$TMP/state-eval-marker"
 # Bundle/exe must exist for restore to trust them (Codex.app→ChatGPT.app rename),
@@ -247,7 +228,7 @@ EXPECTED_TEAM_ID="TEAM'ID"
 # A reused live PID must never be killed or treated as a successfully stopped
 # injector when its command identity does not match the recorded watcher.
 STOP_HOME="$TMP/stop-home"
-STOP_STATE_ROOT="$STOP_HOME/Library/Application Support/CodexDreamSkinStudio"
+STOP_STATE_ROOT="$STOP_HOME/Library/Application Support/CodexKimetsuSkin"
 /bin/mkdir -p "$STOP_STATE_ROOT"
 "$NODE" -e 'process.on("SIGTERM", () => process.exit(0)); setTimeout(() => {}, 30000);' &
 DUMMY_PID="$!"
@@ -311,7 +292,7 @@ DUMMY_PID=""
 # SwiftBar status must not call a live, reused PID "active" merely because
 # kill -0 succeeds.  A watcher state needs matching command/path/start data.
 STATUS_HOME="$TMP/status-home"
-STATUS_STATE_ROOT="$STATUS_HOME/Library/Application Support/CodexDreamSkinStudio"
+STATUS_STATE_ROOT="$STATUS_HOME/Library/Application Support/CodexKimetsuSkin"
 /bin/mkdir -p "$STATUS_STATE_ROOT"
 "$NODE" -e 'process.on("SIGTERM", () => process.exit(0)); setTimeout(() => {}, 30000);' &
 STATUS_PID="$!"
@@ -324,11 +305,11 @@ STATUS_PID="$!"
     port: 9341,
     injectorPid: Number(pid),
     injectorStartedAt: "not-the-real-start-time",
-    injectorPath: "/tmp/not-the-dream-skin-injector.mjs",
+    injectorPath: "/tmp/not-the-kimetsu-skin-injector.mjs",
     nodePath: "/tmp/not-the-codex-node",
   })}\n`);
 ' "$STATUS_STATE_ROOT/state.json" "$STATUS_PID"
-STATUS_JSON="$(/usr/bin/env HOME="$STATUS_HOME" "$ROOT/scripts/status-dream-skin-macos.sh" --json)"
+STATUS_JSON="$(/usr/bin/env HOME="$STATUS_HOME" "$ROOT/scripts/status-kimetsu-skin-macos.sh" --json)"
 "$NODE" -e '
   const value = JSON.parse(process.argv[1]);
   if (value.session !== "stale" || value.injectorAlive !== false) process.exit(1);
@@ -359,7 +340,7 @@ STATUS_START="$(/bin/ps -p "$STATUS_PID" -o lstart= 2>/dev/null | /usr/bin/awk '
     nodePath: node,
   })}\n`);
 ' "$STATUS_STATE_ROOT/state.json" "$STATUS_PID" "$NODE" "$STATUS_FAKE_INJECTOR" "$STATUS_START"
-STATUS_JSON="$(/usr/bin/env HOME="$STATUS_HOME" "$ROOT/scripts/status-dream-skin-macos.sh" --json)"
+STATUS_JSON="$(/usr/bin/env HOME="$STATUS_HOME" "$ROOT/scripts/status-kimetsu-skin-macos.sh" --json)"
 "$NODE" -e '
   const value = JSON.parse(process.argv[1]);
   if (value.session !== "stale" || value.injectorAlive !== false) process.exit(1);
@@ -371,7 +352,7 @@ STATUS_PID=""
 # The common stop path must reject a real watcher running on 19341 when the
 # saved state claims 1934, even though nodePath/injectorPath/start-time all
 # match. This exercises the signal gate directly (status has its own matcher).
-"$NODE" "$ROOT/scripts/injector.mjs" --watch --port 19341 --theme-dir "$ROOT/presets/preset-midnight-aurora" \
+"$NODE" "$ROOT/scripts/injector.mjs" --watch --port 19341 --theme-dir "$ROOT/presets/preset-thunder-breathing" \
   >"$TMP/near-prefix-injector.out" 2>&1 &
 WATCH_PID="$!"
 /bin/sleep 0.2
@@ -405,17 +386,17 @@ WATCH_PID=""
 
 # A failed start must prove the recorded watcher stopped before deleting its
 # state; this static guard prevents the old launchctl-short-circuit cleanup.
-/usr/bin/grep -F -q 'set -Eeuo pipefail' "$ROOT/scripts/start-dream-skin-macos.sh"
+/usr/bin/grep -F -q 'set -Eeuo pipefail' "$ROOT/scripts/start-kimetsu-skin-macos.sh"
 /usr/bin/grep -F -q 'if "$NODE" "$INJECTOR" --verify' \
-  "$ROOT/scripts/start-dream-skin-macos.sh"
-if /usr/bin/grep -F -q 'set +e' "$ROOT/scripts/start-dream-skin-macos.sh"; then
+  "$ROOT/scripts/start-kimetsu-skin-macos.sh"
+if /usr/bin/grep -F -q 'set +e' "$ROOT/scripts/start-kimetsu-skin-macos.sh"; then
   printf 'start script still disables errexit around expected verify retries.\n' >&2
   exit 1
 fi
 /usr/bin/grep -F -q 'if ! stop_recorded_injector; then' \
-  "$ROOT/scripts/start-dream-skin-macos.sh"
+  "$ROOT/scripts/start-kimetsu-skin-macos.sh"
 if /usr/bin/grep -F -q 'launchctl remove "$INJECTOR_JOB_LABEL" >/dev/null 2>&1 || /bin/kill -TERM "$INJECTOR_PID"' \
-  "$ROOT/scripts/start-dream-skin-macos.sh"; then
+  "$ROOT/scripts/start-kimetsu-skin-macos.sh"; then
   printf 'start script still deletes state without identity-bound injector cleanup.\n' >&2
   exit 1
 fi
@@ -438,9 +419,9 @@ for state_payload in '{' '{}'; do
 done
 
 /bin/mkdir -p "$TMP/theme"
-/bin/cp "$ROOT/assets/portal-hero.png" "$TMP/theme/background.png"
+/bin/cp "$ROOT/assets/kimetsu-reference.jpg" "$TMP/theme/background.jpg"
 "$NODE" "$ROOT/scripts/write-theme.mjs" custom --output-dir "$TMP/theme" \
-  --image background.png --name '测试主题' --tagline '测试口号' --quote 'TEST' \
+  --image background.jpg --name '测试主题' --tagline '测试口号' --quote 'TEST' \
   --accent '#11aa55' --secondary '#22bbcc' --highlight '#663399' >/dev/null
 PAYLOAD_JSON="$("$NODE" "$ROOT/scripts/injector.mjs" --check-payload --theme-dir "$TMP/theme")"
 "$NODE" -e '
@@ -452,15 +433,15 @@ PAYLOAD_JSON="$("$NODE" "$ROOT/scripts/injector.mjs" --check-payload --theme-dir
 "$NODE" -e '
   const value = JSON.parse(process.argv[1]);
   if (!value.pass || value.themeName !== "测试主题" || value.imageBytes < 1) process.exit(1);
-  if (value.artMetadata?.width !== 2168 || value.artMetadata?.height !== 725) process.exit(1);
-  if (!value.artMetadata.wide || value.artMetadata.aspect !== "ultrawide") process.exit(1);
+  if (value.artMetadata?.width !== 3840 || value.artMetadata?.height !== 2160) process.exit(1);
+  if (!value.artMetadata.wide || value.artMetadata.aspect !== "wide") process.exit(1);
   if (!Number.isFinite(value.timings?.buildMs) || value.timings.buildMs < 0) process.exit(1);
 ' "$PAYLOAD_JSON"
 
 /bin/mkdir -p "$TMP/explicit-theme"
-/bin/cp "$ROOT/assets/portal-hero.png" "$TMP/explicit-theme/background.png"
+/bin/cp "$ROOT/assets/kimetsu-reference.jpg" "$TMP/explicit-theme/background.jpg"
 "$NODE" "$ROOT/scripts/write-theme.mjs" custom --output-dir "$TMP/explicit-theme" \
-  --image background.png --name '显式自适应主题' --appearance dark \
+  --image background.jpg --name '显式自适应主题' --appearance dark \
   --focus-x 0.12 --focus-y 0.88 --safe-area none --task-mode off >/dev/null
 EXPLICIT_PAYLOAD_JSON="$(
   "$NODE" "$ROOT/scripts/injector.mjs" --check-payload --theme-dir "$TMP/explicit-theme"
@@ -479,7 +460,7 @@ assert_write_theme_rejected() {
   local label="$1"
   shift
   if "$NODE" "$ROOT/scripts/write-theme.mjs" custom --output-dir "$TMP/explicit-theme" \
-    --image background.png "$@" >/dev/null 2>&1; then
+    --image background.jpg "$@" >/dev/null 2>&1; then
     printf 'write-theme unexpectedly accepted invalid %s.\n' "$label" >&2
     exit 1
   fi
@@ -493,7 +474,7 @@ assert_write_theme_rejected name-control --name $'unsafe\nname'
 assert_write_theme_rejected tagline-control --tagline $'unsafe\rtagline'
 assert_write_theme_rejected quote-control --quote $'unsafe\033quote'
 CONTROL_IMAGE=$'unsafe\nimage.jpg'
-/bin/cp "$TMP/explicit-theme/background.png" "$TMP/explicit-theme/$CONTROL_IMAGE"
+/bin/cp "$TMP/explicit-theme/background.jpg" "$TMP/explicit-theme/$CONTROL_IMAGE"
 if "$NODE" "$ROOT/scripts/write-theme.mjs" custom --output-dir "$TMP/explicit-theme" \
   --image "$CONTROL_IMAGE" >/dev/null 2>&1; then
   printf 'write-theme unexpectedly accepted a control-character image filename.\n' >&2
@@ -554,11 +535,11 @@ fi
 
 # A theme config or image symlink may resolve only inside its own theme root.
 /bin/mkdir -p "$TMP/symlink-outside" "$TMP/symlink-image-theme" "$TMP/symlink-config-theme"
-/bin/cp "$ROOT/assets/portal-hero.png" "$TMP/symlink-outside/background.png"
+/bin/cp "$ROOT/assets/kimetsu-reference.jpg" "$TMP/symlink-outside/background.jpg"
 /usr/bin/printf '%s\n' \
-  '{"schemaVersion":1,"id":"symlink-image","name":"Symlink image","image":"background.png"}' \
+  '{"schemaVersion":1,"id":"symlink-image","name":"Symlink image","image":"background.jpg"}' \
   > "$TMP/symlink-image-theme/theme.json"
-/bin/ln -s "$TMP/symlink-outside/background.png" "$TMP/symlink-image-theme/background.png"
+/bin/ln -s "$TMP/symlink-outside/background.jpg" "$TMP/symlink-image-theme/background.jpg"
 if SYMLINK_IMAGE_OUTPUT="$(
   "$NODE" "$ROOT/scripts/injector.mjs" --check-payload --theme-dir "$TMP/symlink-image-theme" 2>&1
 )"; then
@@ -568,7 +549,7 @@ fi
 /usr/bin/printf '%s\n' "$SYMLINK_IMAGE_OUTPUT" | /usr/bin/grep -F -q \
   'Theme image must stay inside its theme directory'
 /usr/bin/printf '%s\n' \
-  '{"schemaVersion":1,"id":"symlink-config","name":"Symlink config","image":"background.png"}' \
+  '{"schemaVersion":1,"id":"symlink-config","name":"Symlink config","image":"background.jpg"}' \
   > "$TMP/symlink-outside/theme.json"
 /bin/ln -s "$TMP/symlink-outside/theme.json" "$TMP/symlink-config-theme/theme.json"
 if SYMLINK_CONFIG_OUTPUT="$(
@@ -666,7 +647,7 @@ assert_theme_config_restore_rejected() {
   fi
   /usr/bin/cmp -s "$config" "$config.original"
   [ -e "$backup" ]
-  [ ! -e "$config.dream-skin.lock" ]
+  [ ! -e "$config.kimetsu-skin.lock" ]
 }
 
 MALICIOUS_BACKUP_CONFIG="$TMP/config-malicious-backup.toml"
@@ -712,7 +693,7 @@ if "$NODE" "$ROOT/scripts/theme-config.mjs" install \
 fi
 /usr/bin/cmp -s "$INVALID_UTF_CONFIG" "$TMP/original-invalid-utf8.toml"
 [ ! -e "$INVALID_UTF_BACKUP" ]
-[ ! -e "$INVALID_UTF_CONFIG.dream-skin.lock" ]
+[ ! -e "$INVALID_UTF_CONFIG.kimetsu-skin.lock" ]
 
 assert_theme_config_install_rejected() {
   local label="$1"
@@ -725,7 +706,7 @@ assert_theme_config_install_rejected() {
   fi
   /usr/bin/cmp -s "$config" "$config.original"
   [ ! -e "$backup" ]
-  [ ! -e "$config.dream-skin.lock" ]
+  [ ! -e "$config.kimetsu-skin.lock" ]
 }
 
 SYMLINK_CONFIG_TARGET="$TMP/config-symlink-target.toml"
@@ -769,7 +750,7 @@ CRLF_BACKUP="$TMP/config-crlf-backup.json"
 "$NODE" "$ROOT/scripts/theme-config.mjs" restore "$CRLF_CONFIG" "$CRLF_BACKUP" >/dev/null
 /usr/bin/cmp -s "$CRLF_CONFIG" "$TMP/original-crlf.toml"
 
-/usr/bin/env -u HOME /bin/bash -c '. "$1/scripts/common-macos.sh"; [ -n "$HOME" ] && [ "$SKIN_VERSION" = "1.2.0" ]' _ "$ROOT"
+/usr/bin/env -u HOME /bin/bash -c '. "$1/scripts/common-macos.sh"; [ -n "$HOME" ] && [ "$SKIN_VERSION" = "1.2.2" ]' _ "$ROOT"
 "$ROOT/scripts/doctor-macos.sh" >/dev/null
 
 printf 'PASS: syntax, payload, bundled presets, preset seeding, runtime-state safety, custom-theme, config round-trips, HOME recovery, signature, and doctor checks.\n'

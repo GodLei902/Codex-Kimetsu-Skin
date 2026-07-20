@@ -42,7 +42,7 @@ Check what you actually ran. Skip items that do not apply and say so under Notes
 
 - [ ] `macos/tests/run-tests.sh` passed / 已通过
 - [ ] Doctor (optional): `macos/scripts/doctor-macos.sh`
-- [ ] Live verify (if inject/CSS/start path): `verify-dream-skin-macos.sh` or Desktop **Verify**
+- [ ] Live verify (if inject/CSS/start path): `verify-kimetsu-skin-macos.sh` or Desktop **Verify**
 - [ ] Restore / re-apply smoke (if install/restore/start changed) / 若改了安装恢复启动则做过恢复再应用
 
 ### Windows (when code under `windows/` changes)

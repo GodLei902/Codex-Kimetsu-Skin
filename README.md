@@ -1,168 +1,77 @@
-# Codex Dream Skin
+# Codex Kimetsu Skin
 
 <p align="center">
   <strong>中文</strong> · <a href="./README.en.md">English</a>
 </p>
 
 <p align="center">
-  <strong>给 Codex 桌面端换一张会呼吸的脸。</strong><br>
-  外部主题 / 换肤工具 · 本机 CDP 注入 · 不改官方安装包
+  <strong>我妻善逸「霹雳呼吸」Codex 桌面端主题皮肤</strong><br>
+  基于本机 CDP 注入 · 不修改官方安装包 · 保留 Codex 原生交互
 </p>
+
+> 本项目基于本机 CDP 换肤运行框架改造。当前 fork 已移除上游多主题发行内容，只保留「鬼灭之刃 / 我妻善逸 / 霹雳呼吸」这一套主题相关资源和运行代码。
+
+## 主题预览
 
 <p align="center">
-  一张图，一种心情 · 写代码，也要有氛围感
+  <img src="docs/images/codex-live-home-current-theme.png" alt="我妻善逸霹雳呼吸主题首页实机效果" width="900"><br>
+  <sub>霹雳呼吸 · macOS 实机注入截图 · 2026-07-20 重新截取</sub>
 </p>
 
-<p align="center">
-  非 OpenAI 官方产品。不修改 <code>.app</code> / <code>app.asar</code> / WindowsApps。
-</p>
-
-## 赞助商
-
-<p align="center">
-  <a href="https://passion8.cc/register?aff=TuPe">
-    <img src="docs/images/sponsor-passion8.png" alt="Passion8" height="72">
-  </a>
-</p>
-
-<p align="center">
-  <strong>更智能的连接 · 更热爱的创造</strong><br>
-  <sub>热爱驱动 · 无限可能 · Connect AI · Power Creation</sub>
-</p>
-
-<p align="center">
-  感谢 <a href="https://passion8.cc/register?aff=TuPe"><strong>passion8.cc</strong></a> 赞助本项目。<br>
-  满血 AI 中转：官方模型直连，无降智、无套壳；一行配置接入 Codex / Claude Code / Grok。
-</p>
-
-<p align="center">
-  <sub>
-    换肤与 API 配置互相独立，本项目不会自动改写你的模型供应商设置。
-  </sub>
-</p>
-
-## 实测精选预设：桥本有菜
-
-下面这套「桥本有菜 / Arina Hashimoto」已经在真实 Codex 首页分别验证浅色和暗色外观。用户提供的源 PNG 为 `1672 × 941`，主题包在保持源图近 16:9 构图的前提下派生导出 `2560 × 1440` JPEG，并不代表增加了源图细节。截图中的侧栏、卡片、项目选择和输入框都是 Codex 原生控件。
-
-<p align="center">
-  <img src="docs/images/presets/romantic-rose-light.jpg" alt="桥本有菜主题浅色实机效果" width="900"><br>
-  <sub>浅色 · 真实注入截图（未发送输入已在截图时遮蔽，仅预览）</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/presets/romantic-rose-dark.jpg" alt="桥本有菜主题暗色实机效果" width="900"><br>
-  <sub>暗色 · 真实注入截图（未发送输入已在截图时遮蔽，仅预览）</sub>
-</p>
-
-从仓库安装并一键切换（macOS）：
-
-```bash
-cd macos
-./scripts/install-dream-skin-macos.sh --no-launch
-~/.codex/codex-dream-skin-studio/scripts/switch-theme-macos.sh \
-  --id preset-romantic-rose
-```
-
-Windows 使用本地主题仓库与系统托盘，并会预置同一套「桥本有菜」。首次从仓库使用：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\windows\scripts\install-dream-skin.ps1
-powershell -ExecutionPolicy Bypass -File .\windows\scripts\start-dream-skin.ps1
-```
-
-启动后可直接从「已保存主题 → 桥本有菜」切换；不需要跨目录手动导入。托盘里的「更换背景图」仍可导入你自己的纯背景，保存后继续一键切换。
-
-> 可下载的用户源图是 [`docs/images/presets/romantic-rose-source.png`](./docs/images/presets/romantic-rose-source.png)（`1672 × 941`）；macOS 一键预设使用 [`macos/presets/preset-romantic-rose/background.jpg`](./macos/presets/preset-romantic-rose/background.jpg)（规范化派生 `2560 × 1440`）。上面两个效果图包含真实 UI，**只作预览，绝不能当背景导入**。背景为用户提供的 AI 生成示例，不代表 OpenAI/Codex 官方视觉或背书；公开再分发前请确认人物与素材权利。
-
-## 概念效果图（不可直接导入）
-
-下面八张图用于表达可实现的视觉方向，但它们是带界面的概念效果图，不是可直接使用的主题背景。需要同类效果时，先按[参考生图提示词](./docs/reference-background-prompt-guide.md)生成无 UI 的 `2560 × 1440` 素材；八种风格的详细拆解见[概念图提示词](./docs/background-generation-prompts.md)。
-
-<p align="center">
-  <img src="docs/images/gallery/skin-01.jpg" alt="粉系定制" width="900"><br>
-  <sub>粉系定制</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/gallery/skin-02.jpg" alt="财神打工" width="900"><br>
-  <sub>财神打工版</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/gallery/skin-03.jpg" alt="红白科幻" width="900"><br>
-  <sub>红白科幻</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/gallery/skin-04.jpg" alt="清透定制" width="900"><br>
-  <sub>清透定制</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/gallery/skin-05.jpg" alt="灵感小宇宙" width="900"><br>
-  <sub>灵感小宇宙</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/gallery/skin-06.jpg" alt="紫夜限定" width="900"><br>
-  <sub>紫夜限定</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/gallery/skin-07.jpg" alt="青蓝虚拟歌姬" width="900"><br>
-  <sub>青蓝虚拟歌姬</sub>
-</p>
-
-<p align="center">
-  <img src="docs/images/gallery/skin-08.jpg" alt="舞台黑金" width="900"><br>
-  <sub>舞台黑金</sub>
-</p>
-
-## 它能做什么
-
-- **真·可交互**：侧栏、建议卡、项目选择、输入框都是原生控件，不是整窗假截图贴上去
-- **真背景层**：一张 16:9 纯壁纸连续铺满整窗，首页突出氛围，任务页自动降低干扰
-- **可换图**：换一张喜欢的纯背景，自适应焦点、安全区和配色后变成你的主题
-- **可存主题**：macOS 菜单栏与 Windows 系统托盘都能保存/切换本地主题
-- **可恢复**：一键还原官方外观
-- **相对安全**：本机回环 CDP 注入，不改官方二进制与签名
+这套主题使用深蓝黑背景、霹雳白金高光、羽织橙动作态和更硬朗的 6-8px 控件语言。运行时仍然是官方 Codex 的真实侧栏、任务页、项目选择、设置页、输入框和菜单；主题层只通过 CSS 与少量装饰 DOM 改变外观。
 
 ## 快速开始
 
-仓库内按平台放了现成脚本（实现细节不同，效果都是「主题化 Codex」）：
+### macOS
 
-| 平台 | 目录 | 入口 |
-|------|------|------|
-| Apple Silicon / Intel Mac | [`macos/`](./macos/) | 双击 `Install Codex Dream Skin.command` |
-| Windows | [`windows/`](./windows/) | `scripts/install-dream-skin.ps1` → `start-dream-skin.ps1` |
+```bash
+cd macos
+./scripts/install-kimetsu-skin-macos.sh --no-launch
+~/.codex/codex-kimetsu-skin/scripts/switch-theme-macos.sh \
+  --id preset-thunder-breathing
+~/.codex/codex-kimetsu-skin/scripts/start-kimetsu-skin-macos.sh
+```
 
-更细的说明：
+也可以双击 `macos/Install Codex Kimetsu Skin.command` 安装。安装后桌面会创建启动、验证、定制和恢复入口。
 
-- Mac：[`macos/README.md`](./macos/README.md)
-- Windows：[`windows/SKILL.md`](./windows/SKILL.md)
-- 路径对照：[`docs/platforms.md`](./docs/platforms.md)
-- 可直接复制的参考生图模板：[`docs/reference-background-prompt-guide.md`](./docs/reference-background-prompt-guide.md)
-- 八种概念方向详细提示词：[`docs/background-generation-prompts.md`](./docs/background-generation-prompts.md)
-- 项目记录：[`docs/PROJECT.md`](./docs/PROJECT.md)
+### Windows
 
-## 反馈与贡献
+```powershell
+cd windows
+powershell -ExecutionPolicy Bypass -File .\scripts\install-kimetsu-skin.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\start-kimetsu-skin.ps1
+```
 
-- **Issue：** 请用 [Issue 模板](./.github/ISSUE_TEMPLATE/)（Bug / 功能）；已关闭空白 Issue。提交前建议先跑 Verify / Restore 自检。
-- **PR：** 请按 [PR 模板](./.github/pull_request_template.md) 写清改动，并勾选对应自测（如 `macos/tests/run-tests.sh`、verify / restore）。
+Windows 首次安装会把同一套「霹雳呼吸」设为活动主题，并播种到本地已保存主题库。
+
+## 仓库结构
+
+| 路径 | 内容 |
+|------|------|
+| `macos/` | macOS 安装、启动、注入、验证、恢复脚本，以及霹雳呼吸主题资源 |
+| `macos/presets/preset-thunder-breathing/` | 唯一保留的内置主题包 |
+| `windows/` | Windows PowerShell 启动/安装/恢复脚本、CDP 注入器和同款默认主题 |
+| `docs/designs/` | 霹雳呼吸设计说明和静态预览 |
+| `docs/images/` | 当前实机截图与设计预览图 |
 
 ## 安全边界
 
-- CDP 只绑 `127.0.0.1`，主题运行期间勿跑来路不明的本机程序
-- 不修改官方安装目录与代码签名
-- **不会**自动改写 API Key / Base URL；中转与换肤分开
+- CDP 只绑定本机回环地址。
+- 不修改官方 `.app`、WindowsApps、`app.asar`、代码签名、API Key 或 Base URL。
+- Restore 脚本会停止主题注入并恢复官方外观。
+- 运行皮肤时不要让不可信本机程序连接调试端口。
+
+## 测试
+
+```bash
+cd macos && npm test
+powershell -File windows/tests/run-tests.ps1
+```
+
+提交前请同时检查首页、任务页、左下角个人资料菜单和设置页。
 
 ## 许可与声明
 
-- 见 [`macos/LICENSE`](./macos/LICENSE)（MIT）与 [`macos/NOTICE.md`](./macos/NOTICE.md)
-- 非 OpenAI 官方产品；Codex 及相关权利归其权利人
-- 随仓库预设及效果图中的人物 / IP 素材仅作主题示意；商用或公开再分发请自行确认肖像、素材与商标权利
+代码许可见 [`macos/LICENSE`](./macos/LICENSE)，额外素材声明见 [`macos/NOTICE.md`](./macos/NOTICE.md)。
 
----
-
-Star 一下，然后挑一张图，把你的 Codex 变成今天想要的样子。
+本项目不是 OpenAI 官方产品。Codex、鬼灭之刃、我妻善逸及相关名称、角色、商标和素材权利归各自权利人所有。本仓库中的角色主题素材仅作个人主题示意；公开再分发或商用前请自行完成权利核验。

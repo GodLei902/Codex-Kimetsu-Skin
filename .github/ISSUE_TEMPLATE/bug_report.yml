@@ -10,8 +10,8 @@ body:
         感谢反馈！请尽量填全必填项；信息过少的 Issue 可能会被关闭。
 
         **Please try self-check first / 请先自检：**
-        - **macOS:** Desktop `Codex Dream Skin - Verify.command`, or `~/.codex/codex-dream-skin-studio/scripts/verify-dream-skin-macos.sh` / `doctor-macos.sh`. If needed, try **Restore** then re-apply.
-        - **Windows:** `scripts/verify-dream-skin.ps1`, then `scripts/restore-dream-skin.ps1` if you need a clean slate.
+        - **macOS:** Desktop `Codex Kimetsu Skin - Verify.command`, or `~/.codex/codex-kimetsu-skin/scripts/verify-kimetsu-skin-macos.sh` / `doctor-macos.sh`. If needed, try **Restore** then re-apply.
+        - **Windows:** `scripts/verify-kimetsu-skin.ps1`, then `scripts/restore-kimetsu-skin.ps1` if you need a clean slate.
         - Search existing issues / 先搜一下是否已有相同 Issue。
 
         **Do not paste / 请勿粘贴：** API keys, `auth.json`, relay tokens, private chat content.
@@ -66,9 +66,9 @@ body:
       required: true
 
   - type: input
-    id: dream_skin_version
+    id: kimetsu_skin_version
     attributes:
-      label: Dream Skin version / 皮肤工具版本
+      label: Kimetsu Skin version / 皮肤工具版本
       description: |
         macOS: `macos/VERSION` in the repo, or client ZIP release notes (e.g. 1.1.1).
         Windows: commit / download date if no version file.
@@ -155,8 +155,8 @@ body:
     attributes:
       label: Logs / Verify / doctor output（recommended）/ 日志与校验输出（强烈建议）
       description: |
-        **macOS logs:** `~/Library/Application Support/CodexDreamSkinStudio`
-        **Windows logs:** `%LOCALAPPDATA%\CodexDreamSkin`
+        **macOS logs:** `~/Library/Application Support/CodexKimetsuSkin`
+        **Windows logs:** `%LOCALAPPDATA%\CodexKimetsuSkin`
         Paste **relevant** lines only; redact secrets. / 只贴相关片段，打码密钥。
       placeholder: |
         ```

@@ -12,19 +12,19 @@ import {
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const windowsRoot = path.resolve(here, "..");
-const featured = await fs.readFile(path.join(windowsRoot, "assets", "dream-reference.jpg"));
+const featured = await fs.readFile(path.join(windowsRoot, "assets", "kimetsu-reference.jpg"));
 const helper = path.join(windowsRoot, "scripts", "image-metadata.mjs");
 
 assert.deepEqual(readImageMetadata(featured, ".jpg"), {
-  width: 2560,
-  height: 1440,
-  ratio: 2560 / 1440,
+  width: 3840,
+  height: 2160,
+  ratio: 3840 / 2160,
   wide: true,
   aspect: "wide",
   taskMode: "ambient",
 });
 
-const cli = spawnSync(process.execPath, [helper, "--check", path.join(windowsRoot, "assets", "dream-reference.jpg")], {
+const cli = spawnSync(process.execPath, [helper, "--check", path.join(windowsRoot, "assets", "kimetsu-reference.jpg")], {
   encoding: "utf8",
 });
 assert.equal(cli.status, 0);

@@ -2,7 +2,7 @@
 
 ## Result
 
-Codex Dream Skin Studio `1.0.0` passed its macOS release checks on the live Codex desktop app during the original private release validation.
+Codex Kimetsu Skin `1.0.0` passed its macOS release checks on the live Codex desktop app during the original private release validation.
 
 - macOS architecture: `arm64`
 - Codex version: `26.707.72221`
@@ -32,6 +32,6 @@ Live renderer verification returned `pass: true` after `Page.reload`:
 Private release builds included CDP screenshots under `docs/screenshots/`. Those captures may contain third-party UI chrome and demo art and are **not** shipped in this public tree. Reproduce evidence on your machine:
 
 ```bash
-~/.codex/codex-dream-skin-studio/scripts/verify-dream-skin-macos.sh \
-  --reload --screenshot "$HOME/Desktop/Codex Dream Skin Verification.png"
+~/.codex/codex-kimetsu-skin/scripts/verify-kimetsu-skin-macos.sh \
+  --reload --screenshot "$HOME/Desktop/Codex Kimetsu Skin Verification.png"
 ```

@@ -1,13 +1,15 @@
-# Asset provenance
+# Asset Provenance
 
-## Bundled demo hero
+## Thunder Breathing Theme
 
-- File: `assets/portal-hero.png`
-- SHA-256: `cec7a03d1ca8f60add2bfb7d3fcd3fe29225ffeb3f68f98301f140535c470ac5`
-- Created: 2026-07-15 via gpt-image-2 (fuck.codexapis.com)
-- Purpose: default banner / task background preset for light red-white product hero
-- Rights: generated for this project theme pack
+- `assets/kimetsu-reference.jpg`
+- `presets/preset-thunder-breathing/background.jpg`
+- `../windows/assets/kimetsu-reference.jpg`
+- `../docs/images/thunder-breathing-*.png`
+- `../docs/images/codex-live-*-current-theme.png`
 
-## User themes
+These files are the fork-specific Zenitsu / Thunder Breathing theme assets and previews. They are excluded from the MIT software license; see `../NOTICE.md` for redistribution and rights-review notes.
 
-Images chosen through Customize belong to the user (or their licensors).
+## User Themes
+
+Images chosen through Customize belong to the user or their licensors.

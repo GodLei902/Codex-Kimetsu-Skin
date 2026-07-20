@@ -1,8 +1,8 @@
 . (Join-Path $PSScriptRoot 'config-utf8.ps1')
 
-function Enter-DreamSkinOperationLock {
+function Enter-KimetsuSkinOperationLock {
   $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-  $mutex = [System.Threading.Mutex]::new($false, "Local\CodexDreamSkin.$sid.Operation")
+  $mutex = [System.Threading.Mutex]::new($false, "Local\CodexKimetsuSkin.$sid.Operation")
   $acquired = $false
   try {
     $acquired = $mutex.WaitOne(0)
@@ -11,22 +11,22 @@ function Enter-DreamSkinOperationLock {
   }
   if (-not $acquired) {
     $mutex.Dispose()
-    throw 'Another Codex Dream Skin install, start, restore, or verify operation is already running.'
+    throw 'Another Codex Kimetsu Skin install, start, restore, or verify operation is already running.'
   }
   return $mutex
 }
 
-function Exit-DreamSkinOperationLock {
+function Exit-KimetsuSkinOperationLock {
   param([Parameter(Mandatory = $true)][System.Threading.Mutex]$Mutex)
   try { $Mutex.ReleaseMutex() } finally { $Mutex.Dispose() }
 }
 
-function Assert-DreamSkinPort {
+function Assert-KimetsuSkinPort {
   param([Parameter(Mandatory = $true)][int]$Port)
   if ($Port -lt 1024 -or $Port -gt 65535) { throw "Port must be between 1024 and 65535: $Port" }
 }
 
-function Test-DreamSkinPathEqual {
+function Test-KimetsuSkinPathEqual {
   param([string]$Left, [string]$Right)
   if (-not $Left -or -not $Right) { return $false }
   try {
@@ -36,7 +36,7 @@ function Test-DreamSkinPathEqual {
   }
 }
 
-function Test-DreamSkinPathWithin {
+function Test-KimetsuSkinPathWithin {
   param([string]$Path, [string]$Root)
   if (-not $Path -or -not $Root) { return $false }
   try {
@@ -48,22 +48,22 @@ function Test-DreamSkinPathWithin {
   }
 }
 
-function Get-DreamSkinRuntimeEnginePaths {
-  param([string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexDreamSkin'))
+function Get-KimetsuSkinRuntimeEnginePaths {
+  param([string]$StateRoot = (Join-Path $env:LOCALAPPDATA 'CodexKimetsuSkin'))
   $root = Join-Path ([System.IO.Path]::GetFullPath($StateRoot)) 'engine'
   $scripts = Join-Path $root 'scripts'
   return [pscustomobject]@{
     Root = $root
     Scripts = $scripts
-    Start = Join-Path $scripts 'start-dream-skin.ps1'
-    Restore = Join-Path $scripts 'restore-dream-skin.ps1'
-    Tray = Join-Path $scripts 'tray-dream-skin.ps1'
+    Start = Join-Path $scripts 'start-kimetsu-skin.ps1'
+    Restore = Join-Path $scripts 'restore-kimetsu-skin.ps1'
+    Tray = Join-Path $scripts 'tray-kimetsu-skin.ps1'
   }
 }
 
-function Test-DreamSkinTrayActive {
+function Test-KimetsuSkinTrayActive {
   $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-  $mutex = [System.Threading.Mutex]::new($false, "Local\CodexDreamSkin.$sid.Tray")
+  $mutex = [System.Threading.Mutex]::new($false, "Local\CodexKimetsuSkin.$sid.Tray")
   $acquired = $false
   try {
     try { $acquired = $mutex.WaitOne(0) } catch [System.Threading.AbandonedMutexException] {
@@ -81,95 +81,95 @@ function Test-DreamSkinTrayActive {
   }
 }
 
-function Assert-DreamSkinRuntimeTree {
+function Assert-KimetsuSkinRuntimeTree {
   param([Parameter(Mandatory = $true)][string]$Path)
   $root = [System.IO.Path]::GetFullPath($Path)
   if (-not (Test-Path -LiteralPath $root -PathType Container)) {
-    throw "Dream Skin runtime directory does not exist: $root"
+    throw "Kimetsu Skin runtime directory does not exist: $root"
   }
-  if (-not (Get-Command Assert-DreamSkinNoReparseComponents -ErrorAction SilentlyContinue)) {
-    throw 'Dream Skin managed-path validation is unavailable.'
+  if (-not (Get-Command Assert-KimetsuSkinNoReparseComponents -ErrorAction SilentlyContinue)) {
+    throw 'Kimetsu Skin managed-path validation is unavailable.'
   }
-  Assert-DreamSkinNoReparseComponents -Path $root
+  Assert-KimetsuSkinNoReparseComponents -Path $root
   foreach ($item in Get-ChildItem -LiteralPath $root -Recurse -Force -ErrorAction Stop) {
     if (($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0) {
-      throw "Dream Skin runtime contains a junction or symbolic link: $($item.FullName)"
+      throw "Kimetsu Skin runtime contains a junction or symbolic link: $($item.FullName)"
     }
   }
 }
 
-function Remove-DreamSkinRuntimeTree {
+function Remove-KimetsuSkinRuntimeTree {
   param(
     [Parameter(Mandatory = $true)][string]$Path,
     [Parameter(Mandatory = $true)][string]$StateRoot
   )
   $fullPath = [System.IO.Path]::GetFullPath($Path)
   $fullStateRoot = [System.IO.Path]::GetFullPath($StateRoot)
-  if (-not (Test-DreamSkinPathWithin -Path $fullPath -Root $fullStateRoot)) {
-    throw "Refusing to remove a runtime path outside the Dream Skin state root: $fullPath"
+  if (-not (Test-KimetsuSkinPathWithin -Path $fullPath -Root $fullStateRoot)) {
+    throw "Refusing to remove a runtime path outside the Kimetsu Skin state root: $fullPath"
   }
   if (-not (Test-Path -LiteralPath $fullPath)) { return }
-  Assert-DreamSkinRuntimeTree -Path $fullPath
+  Assert-KimetsuSkinRuntimeTree -Path $fullPath
   Remove-Item -LiteralPath $fullPath -Recurse -Force -ErrorAction Stop
 }
 
-function Install-DreamSkinRuntimeEngine {
+function Install-KimetsuSkinRuntimeEngine {
   param(
     [Parameter(Mandatory = $true)][string]$SkillRoot,
     [Parameter(Mandatory = $true)][string]$StateRoot
   )
-  if (-not (Get-Command Ensure-DreamSkinManagedDirectory -ErrorAction SilentlyContinue)) {
-    throw 'Dream Skin managed-directory validation is unavailable.'
+  if (-not (Get-Command Ensure-KimetsuSkinManagedDirectory -ErrorAction SilentlyContinue)) {
+    throw 'Kimetsu Skin managed-directory validation is unavailable.'
   }
 
   $sourceRoot = [System.IO.Path]::GetFullPath($SkillRoot)
   $fullStateRoot = [System.IO.Path]::GetFullPath($StateRoot)
-  $engine = Get-DreamSkinRuntimeEnginePaths -StateRoot $fullStateRoot
+  $engine = Get-KimetsuSkinRuntimeEnginePaths -StateRoot $fullStateRoot
   $required = @(
-    'assets\dream-reference.jpg',
-    'assets\dream-skin.css',
+    'assets\kimetsu-reference.jpg',
+    'assets\kimetsu-skin.css',
     'assets\renderer-inject.js',
     'assets\theme.json',
     'scripts\common-windows.ps1',
     'scripts\config-utf8.ps1',
     'scripts\image-metadata.mjs',
     'scripts\injector.mjs',
-    'scripts\install-dream-skin.ps1',
-    'scripts\restore-dream-skin.ps1',
-    'scripts\start-dream-skin.ps1',
+    'scripts\install-kimetsu-skin.ps1',
+    'scripts\restore-kimetsu-skin.ps1',
+    'scripts\start-kimetsu-skin.ps1',
     'scripts\theme-windows.ps1',
-    'scripts\tray-dream-skin.ps1',
-    'scripts\verify-dream-skin.ps1'
+    'scripts\tray-kimetsu-skin.ps1',
+    'scripts\verify-kimetsu-skin.ps1'
   )
   foreach ($relative in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $sourceRoot $relative) -PathType Leaf)) {
-      throw "Dream Skin runtime source is incomplete: $relative"
+      throw "Kimetsu Skin runtime source is incomplete: $relative"
     }
   }
   foreach ($directoryName in @('assets', 'scripts')) {
     $sourceDirectory = Join-Path $sourceRoot $directoryName
-    if ((Test-DreamSkinPathEqual -Left $fullStateRoot -Right $sourceDirectory) -or
-      (Test-DreamSkinPathWithin -Path $fullStateRoot -Root $sourceDirectory)) {
-      throw "Dream Skin state root cannot be created inside its runtime source: $fullStateRoot"
+    if ((Test-KimetsuSkinPathEqual -Left $fullStateRoot -Right $sourceDirectory) -or
+      (Test-KimetsuSkinPathWithin -Path $fullStateRoot -Root $sourceDirectory)) {
+      throw "Kimetsu Skin state root cannot be created inside its runtime source: $fullStateRoot"
     }
-    Assert-DreamSkinRuntimeTree -Path $sourceDirectory
+    Assert-KimetsuSkinRuntimeTree -Path $sourceDirectory
   }
 
-  Ensure-DreamSkinManagedDirectory -Path $fullStateRoot -Root $fullStateRoot
+  Ensure-KimetsuSkinManagedDirectory -Path $fullStateRoot -Root $fullStateRoot
   $token = [guid]::NewGuid().ToString('N')
   $stagingRoot = Join-Path $fullStateRoot ".engine-staging-$token"
   $backupRoot = Join-Path $fullStateRoot ".engine-backup-$token"
-  Ensure-DreamSkinManagedDirectory -Path $stagingRoot -Root $fullStateRoot
+  Ensure-KimetsuSkinManagedDirectory -Path $stagingRoot -Root $fullStateRoot
 
   try {
     foreach ($directoryName in @('assets', 'scripts')) {
       Copy-Item -LiteralPath (Join-Path $sourceRoot $directoryName) -Destination $stagingRoot `
         -Recurse -Force -ErrorAction Stop
     }
-    Assert-DreamSkinRuntimeTree -Path $stagingRoot
+    Assert-KimetsuSkinRuntimeTree -Path $stagingRoot
     foreach ($relative in $required) {
       if (-not (Test-Path -LiteralPath (Join-Path $stagingRoot $relative) -PathType Leaf)) {
-        throw "Staged Dream Skin runtime is incomplete: $relative"
+        throw "Staged Kimetsu Skin runtime is incomplete: $relative"
       }
     }
 
@@ -183,7 +183,7 @@ function Install-DreamSkinRuntimeEngine {
         -Recurse -File -Force -ErrorAction Stop
     )
     if ($sourceFiles.Count -ne $stagedFiles.Count) {
-      throw 'Staged Dream Skin runtime file count does not match its source.'
+      throw 'Staged Kimetsu Skin runtime file count does not match its source.'
     }
     foreach ($sourceFile in $sourceFiles) {
       $relative = $sourceFile.FullName.Substring($sourcePrefix.Length)
@@ -191,13 +191,13 @@ function Install-DreamSkinRuntimeEngine {
       if (-not (Test-Path -LiteralPath $stagedFile -PathType Leaf) -or
         (Get-FileHash -Algorithm SHA256 -LiteralPath $sourceFile.FullName).Hash -cne
         (Get-FileHash -Algorithm SHA256 -LiteralPath $stagedFile).Hash) {
-        throw "Staged Dream Skin runtime failed hash verification: $relative"
+        throw "Staged Kimetsu Skin runtime failed hash verification: $relative"
       }
     }
 
     $hasBackup = $false
     if (Test-Path -LiteralPath $engine.Root) {
-      Assert-DreamSkinRuntimeTree -Path $engine.Root
+      Assert-KimetsuSkinRuntimeTree -Path $engine.Root
       Move-Item -LiteralPath $engine.Root -Destination $backupRoot -ErrorAction Stop
       $hasBackup = $true
     }
@@ -210,13 +210,13 @@ function Install-DreamSkinRuntimeEngine {
           Move-Item -LiteralPath $backupRoot -Destination $engine.Root -ErrorAction Stop
           $hasBackup = $false
         } catch {
-          throw "Dream Skin runtime update failed and its previous engine could not be restored. Backup preserved at ${backupRoot}: $installError"
+          throw "Kimetsu Skin runtime update failed and its previous engine could not be restored. Backup preserved at ${backupRoot}: $installError"
         }
       }
       throw
     }
     if ($hasBackup) {
-      try { Remove-DreamSkinRuntimeTree -Path $backupRoot -StateRoot $fullStateRoot } catch {
+      try { Remove-KimetsuSkinRuntimeTree -Path $backupRoot -StateRoot $fullStateRoot } catch {
         try {
           Write-Warning "Installed the new runtime but could not remove its previous backup: $($_.Exception.Message)"
         } catch {
@@ -224,12 +224,12 @@ function Install-DreamSkinRuntimeEngine {
         }
       }
     }
-    return Get-DreamSkinRuntimeEnginePaths -StateRoot $fullStateRoot
+    return Get-KimetsuSkinRuntimeEnginePaths -StateRoot $fullStateRoot
   } finally {
     if (Test-Path -LiteralPath $stagingRoot) {
-      try { Remove-DreamSkinRuntimeTree -Path $stagingRoot -StateRoot $fullStateRoot } catch {
+      try { Remove-KimetsuSkinRuntimeTree -Path $stagingRoot -StateRoot $fullStateRoot } catch {
         try {
-          Write-Warning "Could not remove the staged Dream Skin runtime: $($_.Exception.Message)"
+          Write-Warning "Could not remove the staged Kimetsu Skin runtime: $($_.Exception.Message)"
         } catch {
           # Cleanup must never mask the runtime installation result.
         }
@@ -238,14 +238,14 @@ function Install-DreamSkinRuntimeEngine {
   }
 }
 
-function Test-DreamSkinCommandLineToken {
+function Test-KimetsuSkinCommandLineToken {
   param([string]$CommandLine, [string]$Token)
   if (-not $CommandLine -or -not $Token) { return $false }
   $pattern = '(?i)(?:^|[\s"])' + [regex]::Escape($Token) + '(?=$|[\s"])'
   return [regex]::IsMatch($CommandLine, $pattern)
 }
 
-function ConvertTo-DreamSkinProcessArgument {
+function ConvertTo-KimetsuSkinProcessArgument {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Value)
   if ($Value.Contains('"')) { throw 'Process arguments containing a double quote are not supported.' }
   if ($Value.Length -eq 0) { return '""' }
@@ -254,12 +254,12 @@ function ConvertTo-DreamSkinProcessArgument {
   return '"' + $escaped + '"'
 }
 
-function ConvertTo-DreamSkinArgumentLine {
+function ConvertTo-KimetsuSkinArgumentLine {
   param([AllowEmptyCollection()][string[]]$Arguments = @())
-  return (($Arguments | ForEach-Object { ConvertTo-DreamSkinProcessArgument -Value $_ }) -join ' ')
+  return (($Arguments | ForEach-Object { ConvertTo-KimetsuSkinProcessArgument -Value $_ }) -join ' ')
 }
 
-function Get-DreamSkinProcessExecutablePath {
+function Get-KimetsuSkinProcessExecutablePath {
   param([Parameter(Mandatory = $true)][object]$ProcessInfo)
   if ($ProcessInfo.ExecutablePath) { return "$($ProcessInfo.ExecutablePath)" }
   try {
@@ -275,7 +275,7 @@ function Get-DreamSkinProcessExecutablePath {
 # ErrorRecords; while $ErrorActionPreference is 'Stop' the first stderr line
 # becomes a terminating NativeCommandError before the exit code can be read.
 # Run the command with the preference relaxed and report output + exit code.
-function Invoke-DreamSkinNative {
+function Invoke-KimetsuSkinNative {
   param(
     [Parameter(Mandatory = $true)][string]$FilePath,
     [string[]]$ArgumentList = @(),
@@ -297,16 +297,16 @@ function Invoke-DreamSkinNative {
   }
 }
 
-function Get-DreamSkinNodeRuntime {
+function Get-KimetsuSkinNodeRuntime {
   param([int]$MinimumMajor = 22)
 
   $command = Get-Command node.exe -ErrorAction SilentlyContinue
   if (-not $command) { $command = Get-Command node -ErrorAction SilentlyContinue }
   if (-not $command) { throw "Node.js $MinimumMajor or newer is required and was not found in PATH." }
-  $versionProbe = Invoke-DreamSkinNative -FilePath $command.Source -ArgumentList @('-p', 'process.versions.node') -DiscardStderr
+  $versionProbe = Invoke-KimetsuSkinNative -FilePath $command.Source -ArgumentList @('-p', 'process.versions.node') -DiscardStderr
   $version = ($versionProbe.Output -join '').Trim()
   if ($versionProbe.ExitCode -ne 0 -or -not $version) { throw 'The Node.js runtime could not be validated.' }
-  $pathProbe = Invoke-DreamSkinNative -FilePath $command.Source -ArgumentList @('-p', 'process.execPath') -DiscardStderr
+  $pathProbe = Invoke-KimetsuSkinNative -FilePath $command.Source -ArgumentList @('-p', 'process.execPath') -DiscardStderr
   $runtimePath = ($pathProbe.Output -join '').Trim()
   if ($pathProbe.ExitCode -ne 0 -or -not $runtimePath -or -not (Test-Path -LiteralPath $runtimePath)) {
     throw 'The Node.js executable path could not be validated.'
@@ -318,7 +318,7 @@ function Get-DreamSkinNodeRuntime {
   return [pscustomobject]@{ Path = $runtimePath; Version = $version; Major = $major }
 }
 
-function ConvertTo-DreamSkinCodexInstall {
+function ConvertTo-KimetsuSkinCodexInstall {
   param(
     [Parameter(Mandatory = $true)][object]$Package,
     [AllowNull()][object]$Manifest
@@ -360,29 +360,29 @@ function ConvertTo-DreamSkinCodexInstall {
   }
 }
 
-function Get-DreamSkinRegisteredCodexInstalls {
+function Get-KimetsuSkinRegisteredCodexInstalls {
   $packages = @(Get-AppxPackage -Name 'OpenAI.Codex' -ErrorAction Stop | Sort-Object Version -Descending)
   $installs = @()
   foreach ($package in $packages) {
-    $install = ConvertTo-DreamSkinCodexInstall -Package $package
+    $install = ConvertTo-KimetsuSkinCodexInstall -Package $package
     if ($null -ne $install) { $installs += $install }
   }
   return $installs
 }
 
-function Get-DreamSkinCodexInstall {
-  $installs = @(Get-DreamSkinRegisteredCodexInstalls)
+function Get-KimetsuSkinCodexInstall {
+  $installs = @(Get-KimetsuSkinRegisteredCodexInstalls)
   if ($installs.Count -eq 0) { throw 'The official OpenAI.Codex Store package is not installed or its identity cannot be validated.' }
   return $installs[0]
 }
 
-function Initialize-DreamSkinPackageLauncher {
-  if ('CodexDreamSkin.PackageLauncher' -as [type]) { return }
+function Initialize-KimetsuSkinPackageLauncher {
+  if ('CodexKimetsuSkin.PackageLauncher' -as [type]) { return }
   Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 
-namespace CodexDreamSkin {
+namespace CodexKimetsuSkin {
   [Flags]
   internal enum ActivateOptions : uint {
     None = 0
@@ -425,7 +425,7 @@ namespace CodexDreamSkin {
 '@
 }
 
-function Start-DreamSkinCodex {
+function Start-KimetsuSkinCodex {
   param(
     [Parameter(Mandatory = $true)][object]$Codex,
     [AllowEmptyCollection()][string[]]$Arguments = @()
@@ -434,20 +434,20 @@ function Start-DreamSkinCodex {
   if ($appUserModelId -cnotmatch '^[A-Za-z0-9._-]{1,128}![A-Za-z0-9._-]{1,64}$') {
     throw 'The registered Codex AppUserModelId is unavailable or invalid.'
   }
-  Initialize-DreamSkinPackageLauncher
-  $argumentLine = ConvertTo-DreamSkinArgumentLine -Arguments $Arguments
-  $processId = [CodexDreamSkin.PackageLauncher]::Launch($appUserModelId, $argumentLine)
+  Initialize-KimetsuSkinPackageLauncher
+  $argumentLine = ConvertTo-KimetsuSkinArgumentLine -Arguments $Arguments
+  $processId = [CodexKimetsuSkin.PackageLauncher]::Launch($appUserModelId, $argumentLine)
   if ($processId -le 0) { throw 'Windows did not return a Codex process ID after package activation.' }
   return $processId
 }
 
-function Get-DreamSkinCodexStatePathCandidate {
+function Get-KimetsuSkinCodexStatePathCandidate {
   param([AllowNull()][object]$State)
   if ($null -eq $State -or -not $State.codexExe -or -not $State.codexPackageRoot) { return $null }
   $executable = "$($State.codexExe)"
   $packageRoot = "$($State.codexPackageRoot)"
   $expectedExecutable = Join-Path $packageRoot 'app\ChatGPT.exe'
-  if (-not (Test-DreamSkinPathEqual -Left $executable -Right $expectedExecutable)) { return $null }
+  if (-not (Test-KimetsuSkinPathEqual -Left $executable -Right $expectedExecutable)) { return $null }
   return [pscustomobject]@{
     PackageRoot = $packageRoot
     Executable = $executable
@@ -457,20 +457,20 @@ function Get-DreamSkinCodexStatePathCandidate {
   }
 }
 
-function Resolve-DreamSkinCodexInstallFromState {
+function Resolve-KimetsuSkinCodexInstallFromState {
   param(
     [AllowNull()][object]$State,
     [Parameter(Mandatory = $true)][AllowEmptyCollection()][object[]]$RegisteredInstalls
   )
-  $candidate = Get-DreamSkinCodexStatePathCandidate -State $State
+  $candidate = Get-KimetsuSkinCodexStatePathCandidate -State $State
   if ($null -eq $candidate) { return $null }
 
   $hasFullName = [bool]$State.codexPackageFullName
   $hasFamilyName = [bool]$State.codexPackageFamilyName
   if ($hasFullName -xor $hasFamilyName) { return $null }
   foreach ($install in $RegisteredInstalls) {
-    $pathMatches = (Test-DreamSkinPathEqual -Left $candidate.PackageRoot -Right $install.PackageRoot) -and
-      (Test-DreamSkinPathEqual -Left $candidate.Executable -Right $install.Executable)
+    $pathMatches = (Test-KimetsuSkinPathEqual -Left $candidate.PackageRoot -Right $install.PackageRoot) -and
+      (Test-KimetsuSkinPathEqual -Left $candidate.Executable -Right $install.Executable)
     if (-not $pathMatches) { continue }
     if ($hasFullName -and ("$($State.codexPackageFullName)" -ine $install.PackageFullName -or
       "$($State.codexPackageFamilyName)" -ine $install.PackageFamilyName)) {
@@ -492,13 +492,13 @@ function Resolve-DreamSkinCodexInstallFromState {
   return $null
 }
 
-function Get-DreamSkinCodexInstallFromState {
+function Get-KimetsuSkinCodexInstallFromState {
   param([AllowNull()][object]$State)
-  try { $installs = @(Get-DreamSkinRegisteredCodexInstalls) } catch { return $null }
-  return Resolve-DreamSkinCodexInstallFromState -State $State -RegisteredInstalls $installs
+  try { $installs = @(Get-KimetsuSkinRegisteredCodexInstalls) } catch { return $null }
+  return Resolve-KimetsuSkinCodexInstallFromState -State $State -RegisteredInstalls $installs
 }
 
-function Test-DreamSkinWebSocketUrl {
+function Test-KimetsuSkinWebSocketUrl {
   param([string]$Value, [int]$Port)
   try {
     $uri = [Uri]$Value
@@ -512,7 +512,7 @@ function Test-DreamSkinWebSocketUrl {
   }
 }
 
-function Test-DreamSkinCdpPageTarget {
+function Test-KimetsuSkinCdpPageTarget {
   param([AllowNull()][object]$Target, [int]$Port)
   if ($null -eq $Target -or "$($Target.type)" -cne 'page' -or
     "$($Target.url)" -notlike 'app://*') {
@@ -521,8 +521,8 @@ function Test-DreamSkinCdpPageTarget {
   if ($Target.id -isnot [string]) { return $false }
   $targetId = "$($Target.id)"
   $webSocketUrl = "$($Target.webSocketDebuggerUrl)"
-  if (-not (Test-DreamSkinBrowserId -Value $targetId) -or
-    -not (Test-DreamSkinWebSocketUrl -Value $webSocketUrl -Port $Port)) {
+  if (-not (Test-KimetsuSkinBrowserId -Value $targetId) -or
+    -not (Test-KimetsuSkinWebSocketUrl -Value $webSocketUrl -Port $Port)) {
     return $false
   }
   try {
@@ -532,34 +532,34 @@ function Test-DreamSkinCdpPageTarget {
   }
 }
 
-function Get-DreamSkinCdpTargets {
+function Get-KimetsuSkinCdpTargets {
   param([int]$Port)
   try {
     $targets = Invoke-RestMethod -Uri "http://127.0.0.1:$Port/json/list" -TimeoutSec 2 `
       -MaximumRedirection 0 -ErrorAction Stop
-    return @($targets | Where-Object { Test-DreamSkinCdpPageTarget -Target $_ -Port $Port })
+    return @($targets | Where-Object { Test-KimetsuSkinCdpPageTarget -Target $_ -Port $Port })
   } catch {
     return @()
   }
 }
 
-function Test-DreamSkinBrowserId {
+function Test-KimetsuSkinBrowserId {
   param([string]$Value)
   return [bool]($Value -and $Value.Length -le 200 -and $Value -cmatch '^[A-Za-z0-9._-]+$')
 }
 
-function Get-DreamSkinCdpBrowserIdentity {
+function Get-KimetsuSkinCdpBrowserIdentity {
   param([int]$Port)
   try {
     $version = Invoke-RestMethod -Uri "http://127.0.0.1:$Port/json/version" -TimeoutSec 2 `
       -MaximumRedirection 0 -ErrorAction Stop
     $webSocketUrl = "$($version.webSocketDebuggerUrl)"
-    if (-not (Test-DreamSkinWebSocketUrl -Value $webSocketUrl -Port $Port)) { return $null }
+    if (-not (Test-KimetsuSkinWebSocketUrl -Value $webSocketUrl -Port $Port)) { return $null }
     $uri = [Uri]$webSocketUrl
     $match = [regex]::Match($uri.AbsolutePath, '^/devtools/browser/(?<id>[A-Za-z0-9._-]{1,200})$')
     if (-not $match.Success -or $uri.Query -or $uri.Fragment) { return $null }
     $browserId = $match.Groups['id'].Value
-    if (-not (Test-DreamSkinBrowserId -Value $browserId)) { return $null }
+    if (-not (Test-KimetsuSkinBrowserId -Value $browserId)) { return $null }
     return [pscustomobject]@{
       BrowserId = $browserId
       WebSocketDebuggerUrl = $webSocketUrl
@@ -570,7 +570,7 @@ function Get-DreamSkinCdpBrowserIdentity {
   }
 }
 
-function Get-DreamSkinPortListeners {
+function Get-KimetsuSkinPortListeners {
   param([int]$Port)
   if (-not (Get-Command Get-NetTCPConnection -ErrorAction SilentlyContinue)) {
     throw 'Get-NetTCPConnection is required to verify CDP listener ownership.'
@@ -578,34 +578,34 @@ function Get-DreamSkinPortListeners {
   return @(Get-NetTCPConnection -State Listen -LocalPort $Port -ErrorAction SilentlyContinue)
 }
 
-function Test-DreamSkinPortAvailable {
+function Test-KimetsuSkinPortAvailable {
   param([int]$Port)
-  return (Get-DreamSkinPortListeners -Port $Port).Count -eq 0
+  return (Get-KimetsuSkinPortListeners -Port $Port).Count -eq 0
 }
 
-function Test-DreamSkinCodexPortOwner {
+function Test-KimetsuSkinCodexPortOwner {
   param([int]$Port, [Parameter(Mandatory = $true)][object]$Codex)
-  $listeners = Get-DreamSkinPortListeners -Port $Port
+  $listeners = Get-KimetsuSkinPortListeners -Port $Port
   if ($listeners.Count -eq 0) { return $false }
   foreach ($listener in $listeners) {
     if ($listener.LocalAddress -notin @('127.0.0.1', '::1')) { return $false }
     $process = Get-CimInstance Win32_Process -Filter "ProcessId = $([int]$listener.OwningProcess)" -ErrorAction SilentlyContinue
-    $processPath = if ($process) { Get-DreamSkinProcessExecutablePath -ProcessInfo $process } else { $null }
-    if (-not $processPath -or -not (Test-DreamSkinPathEqual -Left $processPath -Right $Codex.Executable)) {
+    $processPath = if ($process) { Get-KimetsuSkinProcessExecutablePath -ProcessInfo $process } else { $null }
+    if (-not $processPath -or -not (Test-KimetsuSkinPathEqual -Left $processPath -Right $Codex.Executable)) {
       return $false
     }
   }
   return $true
 }
 
-function Get-DreamSkinVerifiedCdpIdentity {
+function Get-KimetsuSkinVerifiedCdpIdentity {
   param([int]$Port, [Parameter(Mandatory = $true)][object]$Codex)
-  if (-not (Test-DreamSkinCodexPortOwner -Port $Port -Codex $Codex)) { return $null }
-  $browser = Get-DreamSkinCdpBrowserIdentity -Port $Port
+  if (-not (Test-KimetsuSkinCodexPortOwner -Port $Port -Codex $Codex)) { return $null }
+  $browser = Get-KimetsuSkinCdpBrowserIdentity -Port $Port
   if ($null -eq $browser) { return $null }
-  $targets = Get-DreamSkinCdpTargets -Port $Port
+  $targets = Get-KimetsuSkinCdpTargets -Port $Port
   if ($targets.Count -eq 0) { return $null }
-  if (-not (Test-DreamSkinCodexPortOwner -Port $Port -Codex $Codex)) { return $null }
+  if (-not (Test-KimetsuSkinCodexPortOwner -Port $Port -Codex $Codex)) { return $null }
   return [pscustomobject]@{
     BrowserId = $browser.BrowserId
     BrowserWebSocketDebuggerUrl = $browser.WebSocketDebuggerUrl
@@ -614,34 +614,34 @@ function Get-DreamSkinVerifiedCdpIdentity {
   }
 }
 
-function Test-DreamSkinCodexCdpEndpoint {
+function Test-KimetsuSkinCodexCdpEndpoint {
   param([int]$Port, [Parameter(Mandatory = $true)][object]$Codex)
-  return $null -ne (Get-DreamSkinVerifiedCdpIdentity -Port $Port -Codex $Codex)
+  return $null -ne (Get-KimetsuSkinVerifiedCdpIdentity -Port $Port -Codex $Codex)
 }
 
-function Select-DreamSkinPort {
+function Select-KimetsuSkinPort {
   param([int]$PreferredPort)
   for ($candidate = $PreferredPort; $candidate -le [Math]::Min(65535, $PreferredPort + 100); $candidate++) {
-    if (Test-DreamSkinPortAvailable -Port $candidate) { return $candidate }
+    if (Test-KimetsuSkinPortAvailable -Port $candidate) { return $candidate }
   }
   throw "No free loopback port was found between $PreferredPort and $([Math]::Min(65535, $PreferredPort + 100))."
 }
 
-function Wait-DreamSkinPortAvailable {
+function Wait-KimetsuSkinPortAvailable {
   param([int]$Port, [int]$TimeoutSeconds = 5)
   $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
   do {
-    if (Test-DreamSkinPortAvailable -Port $Port) { return $true }
+    if (Test-KimetsuSkinPortAvailable -Port $Port) { return $true }
     Start-Sleep -Milliseconds 200
   } while ((Get-Date) -lt $deadline)
   return $false
 }
 
-function Read-DreamSkinState {
+function Read-KimetsuSkinState {
   param([Parameter(Mandatory = $true)][string]$Path)
   if (-not (Test-Path -LiteralPath $Path)) { return $null }
   try {
-    $state = (Read-DreamSkinUtf8File -Path $Path) | ConvertFrom-Json -ErrorAction Stop
+    $state = (Read-KimetsuSkinUtf8File -Path $Path) | ConvertFrom-Json -ErrorAction Stop
     if ($null -eq $state -or $state -is [string] -or $state -is [array]) { throw 'State root must be an object.' }
     $properties = @($state.PSObject.Properties.Name)
     if ($properties -contains 'platform' -and "$($state.platform)" -ine 'windows') {
@@ -668,7 +668,7 @@ function Read-DreamSkinState {
     if ($properties -contains 'port') {
       $statePort = 0
       if (-not [int]::TryParse("$($state.port)", [ref]$statePort)) { throw 'State port is invalid.' }
-      Assert-DreamSkinPort -Port $statePort
+      Assert-KimetsuSkinPort -Port $statePort
     }
     if ($properties -contains 'injectorPid' -and $null -ne $state.injectorPid) {
       $statePid = 0
@@ -677,22 +677,22 @@ function Read-DreamSkinState {
       }
     }
     if ($properties -contains 'browserId' -and $state.browserId -and
-      -not (Test-DreamSkinBrowserId -Value "$($state.browserId)")) {
+      -not (Test-KimetsuSkinBrowserId -Value "$($state.browserId)")) {
       throw 'State browser ID is invalid.'
     }
     return $state
   } catch {
-    throw "Dream Skin state is unreadable; it was preserved for inspection: $Path"
+    throw "Kimetsu Skin state is unreadable; it was preserved for inspection: $Path"
   }
 }
 
-function Write-DreamSkinState {
+function Write-KimetsuSkinState {
   param([Parameter(Mandatory = $true)][string]$Path, [Parameter(Mandatory = $true)][object]$State)
   $json = $State | ConvertTo-Json -Depth 6
-  Write-DreamSkinUtf8FileAtomically -Path $Path -Content ($json + "`r`n")
+  Write-KimetsuSkinUtf8FileAtomically -Path $Path -Content ($json + "`r`n")
 }
 
-function Archive-DreamSkinStateFile {
+function Archive-KimetsuSkinStateFile {
   param([Parameter(Mandatory = $true)][string]$Path)
   if (-not (Test-Path -LiteralPath $Path)) { return $null }
   $directory = [System.IO.Path]::GetDirectoryName([System.IO.Path]::GetFullPath($Path))
@@ -702,7 +702,7 @@ function Archive-DreamSkinStateFile {
   return $archivePath
 }
 
-function Get-DreamSkinProcessStartedAt {
+function Get-KimetsuSkinProcessStartedAt {
   param([int]$ProcessId)
   try {
     return (Get-Process -Id $ProcessId -ErrorAction Stop).StartTime.ToUniversalTime().ToString('o')
@@ -711,7 +711,7 @@ function Get-DreamSkinProcessStartedAt {
   }
 }
 
-function Stop-DreamSkinRecordedInjector {
+function Stop-KimetsuSkinRecordedInjector {
   param([AllowNull()][object]$State)
   if ($null -eq $State -or -not $State.injectorPid) { return $true }
   $processId = [int]$State.injectorPid
@@ -725,17 +725,17 @@ function Stop-DreamSkinRecordedInjector {
   } else {
     $null
   }
-  $processPath = Get-DreamSkinProcessExecutablePath -ProcessInfo $process
+  $processPath = Get-KimetsuSkinProcessExecutablePath -ProcessInfo $process
   $commandLine = "$($process.CommandLine)"
   if (-not $processPath -or -not $commandLine) {
     throw "The recorded injector PID $processId is running, but its identity cannot be inspected. State was preserved."
   }
   $isNodeExecutable = [System.IO.Path]::GetFileName("$processPath") -ieq 'node.exe'
   $nodeMatches = -not $State.nodePath -or
-    (Test-DreamSkinPathEqual -Left $processPath -Right "$($State.nodePath)")
+    (Test-KimetsuSkinPathEqual -Left $processPath -Right "$($State.nodePath)")
   $injectorMatches = [bool]($expectedInjector -and
-    (Test-DreamSkinCommandLineToken -CommandLine $commandLine -Token $expectedInjector) -and
-    (Test-DreamSkinCommandLineToken -CommandLine $commandLine -Token '--watch'))
+    (Test-KimetsuSkinCommandLineToken -CommandLine $commandLine -Token $expectedInjector) -and
+    (Test-KimetsuSkinCommandLineToken -CommandLine $commandLine -Token '--watch'))
   if ($State.port) {
     $portPattern = '(?i)(?:^|\s)--port(?:=|\s+)' + [regex]::Escape("$($State.port)") + '(?=$|\s)'
     $injectorMatches = $injectorMatches -and [regex]::IsMatch($commandLine, $portPattern)
@@ -746,61 +746,61 @@ function Stop-DreamSkinRecordedInjector {
     $browserPattern = '(?:^|\s)(?i:--browser-id)(?:=|\s+)' + [regex]::Escape("$($State.browserId)") + '(?=$|\s)'
     $injectorMatches = $injectorMatches -and [regex]::IsMatch($commandLine, $browserPattern)
   }
-  $startedAt = Get-DreamSkinProcessStartedAt -ProcessId $processId
+  $startedAt = Get-KimetsuSkinProcessStartedAt -ProcessId $processId
   $startMatches = -not $State.injectorStartedAt -or $startedAt -eq "$($State.injectorStartedAt)"
   $identityMatches = [bool]($isNodeExecutable -and $nodeMatches -and $injectorMatches -and $startMatches)
 
   if (-not $identityMatches) {
-    throw "The recorded injector PID $processId is running, but its visible identity does not match the saved Dream Skin process. State was preserved."
+    throw "The recorded injector PID $processId is running, but its visible identity does not match the saved Kimetsu Skin process. State was preserved."
   }
 
   Stop-Process -Id $processId -Force -ErrorAction Stop
   try { Wait-Process -Id $processId -Timeout 5 -ErrorAction Stop } catch {}
   if (Get-Process -Id $processId -ErrorAction SilentlyContinue) {
-    throw "The recorded Dream Skin injector did not stop: PID $processId"
+    throw "The recorded Kimetsu Skin injector did not stop: PID $processId"
   }
   return $true
 }
 
-function Get-DreamSkinCodexProcesses {
+function Get-KimetsuSkinCodexProcesses {
   param([Parameter(Mandatory = $true)][object]$Codex)
   return @(Get-CimInstance Win32_Process -Filter "Name = 'ChatGPT.exe'" -ErrorAction SilentlyContinue |
     Where-Object {
-      $processPath = Get-DreamSkinProcessExecutablePath -ProcessInfo $_
-      Test-DreamSkinPathEqual -Left $processPath -Right $Codex.Executable
+      $processPath = Get-KimetsuSkinProcessExecutablePath -ProcessInfo $_
+      Test-KimetsuSkinPathEqual -Left $processPath -Right $Codex.Executable
     })
 }
 
-function Stop-DreamSkinCodex {
+function Stop-KimetsuSkinCodex {
   param([Parameter(Mandatory = $true)][object]$Codex, [switch]$AllowForce)
-  $processes = Get-DreamSkinCodexProcesses -Codex $Codex
+  $processes = Get-KimetsuSkinCodexProcesses -Codex $Codex
   if ($processes.Count -eq 0) { return }
   foreach ($item in $processes) {
     try { [void](Get-Process -Id $item.ProcessId -ErrorAction Stop).CloseMainWindow() } catch {}
   }
 
   $deadline = (Get-Date).AddSeconds(15)
-  while ((Get-DreamSkinCodexProcesses -Codex $Codex).Count -gt 0 -and (Get-Date) -lt $deadline) {
+  while ((Get-KimetsuSkinCodexProcesses -Codex $Codex).Count -gt 0 -and (Get-Date) -lt $deadline) {
     Start-Sleep -Milliseconds 250
   }
-  $remaining = Get-DreamSkinCodexProcesses -Codex $Codex
+  $remaining = Get-KimetsuSkinCodexProcesses -Codex $Codex
   if ($remaining.Count -eq 0) { return }
   if (-not $AllowForce) {
     throw 'Codex did not close within 15 seconds. Close it manually or explicitly authorize a forced restart.'
   }
   foreach ($item in $remaining) {
     $current = Get-CimInstance Win32_Process -Filter "ProcessId = $([int]$item.ProcessId)" -ErrorAction SilentlyContinue
-    $currentPath = if ($current) { Get-DreamSkinProcessExecutablePath -ProcessInfo $current } else { $null }
-    if ($currentPath -and (Test-DreamSkinPathEqual -Left $currentPath -Right $Codex.Executable)) {
+    $currentPath = if ($current) { Get-KimetsuSkinProcessExecutablePath -ProcessInfo $current } else { $null }
+    if ($currentPath -and (Test-KimetsuSkinPathEqual -Left $currentPath -Right $Codex.Executable)) {
       Stop-Process -Id $item.ProcessId -Force -ErrorAction SilentlyContinue
     }
   }
   Start-Sleep -Milliseconds 500
-  if ((Get-DreamSkinCodexProcesses -Codex $Codex).Count -gt 0) { throw 'Codex could not be stopped safely.' }
+  if ((Get-KimetsuSkinCodexProcesses -Codex $Codex).Count -gt 0) { throw 'Codex could not be stopped safely.' }
 }
 
-function Confirm-DreamSkinRestart {
+function Confirm-KimetsuSkinRestart {
   param([string]$Message)
   $shell = New-Object -ComObject WScript.Shell
-  return $shell.Popup($Message, 0, 'Codex Dream Skin', 52) -eq 6
+  return $shell.Popup($Message, 0, 'Codex Kimetsu Skin', 52) -eq 6
 }

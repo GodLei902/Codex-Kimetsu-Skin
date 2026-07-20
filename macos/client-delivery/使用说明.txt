@@ -4,4 +4,4 @@ Codex 主题编辑器 1.0.0
 
 手动方式：双击“安装 Codex 主题编辑器.command”。安装完成后，桌面会出现启动、定制、验证和恢复四个入口。
 
-不要只复制图片或 CSS。隐藏目录 .codex-dream-skin-studio 是完整运行引擎，请勿删除。
+不要只复制图片或 CSS。隐藏目录 .codex-kimetsu-skin 是完整运行引擎，请勿删除。

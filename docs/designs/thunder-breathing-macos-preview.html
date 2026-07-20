@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thunder Breathing macOS Supported Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --wallpaper: url("../../macos/presets/preset-thunder-breathing/background.jpg");
+      --bg: #080b10;
+      --panel: rgba(11, 14, 20, .76);
+      --panel-strong: rgba(13, 17, 24, .9);
+      --panel-warm: rgba(50, 36, 24, .78);
+      --text: #f7f4e8;
+      --muted: #aeb9bd;
+      --dim: #79878d;
+      --bolt: #fff8bb;
+      --bolt-soft: #f6d36a;
+      --amber: #e1a04d;
+      --orange: #b95f2a;
+      --steel: #5f8aa6;
+      --line: rgba(255, 232, 142, .22);
+      --line-soft: rgba(255, 232, 142, .14);
+      --radius: 8px;
+      --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Avenir Next", "PingFang SC", "Microsoft YaHei UI", system-ui, sans-serif;
+      --font-display: "Avenir Next Condensed", "DIN Condensed", "SF Pro Display", "PingFang SC", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-width: 2048px;
+      min-height: 1280px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      letter-spacing: 0;
+    }
+
+    .app {
+      position: relative;
+      width: 2048px;
+      height: 1280px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(8, 11, 16, .9) 0%, rgba(8, 11, 16, .72) 27%, rgba(8, 11, 16, .34) 56%, rgba(8, 11, 16, .18) 100%),
+        linear-gradient(180deg, rgba(8, 11, 16, .22) 0%, rgba(8, 11, 16, .3) 62%, rgba(8, 11, 16, .74) 100%),
+        var(--wallpaper) 72% 44% / cover no-repeat;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 73% 34%, rgba(255, 248, 187, .14), transparent 28%),
+        linear-gradient(110deg, rgba(255, 248, 187, .08), transparent 22%),
+        linear-gradient(290deg, rgba(95, 138, 166, .12), transparent 34%);
+      mix-blend-mode: screen;
+    }
+
+    .traffic {
+      position: absolute;
+      z-index: 5;
+      top: 21px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .traffic span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ff5f57;
+    }
+
+    .traffic span:nth-child(2) {
+      background: #ffbd2e;
+    }
+
+    .traffic span:nth-child(3) {
+      background: #28c840;
+    }
+
+    .window-icons {
+      position: absolute;
+      z-index: 5;
+      top: 20px;
+      left: 50%;
+      display: flex;
+      gap: 20px;
+      color: rgba(247, 244, 232, .32);
+      transform: translateX(-50%);
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .sidebar {
+      position: absolute;
+      z-index: 2;
+      inset: 0 auto 0 0;
+      width: 414px;
+      padding: 66px 18px 20px;
+      background:
+        linear-gradient(90deg, rgba(8, 11, 16, .66), rgba(8, 11, 16, .3) 86%, transparent),
+        linear-gradient(180deg, rgba(255, 248, 187, .06), transparent 28%);
+      color: var(--muted);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--amber);
+      font-size: 20px;
+      font-weight: 820;
+      text-shadow: 0 0 12px rgba(225, 160, 77, .22);
+    }
+
+    .brand::after {
+      content: "⌄";
+      color: rgba(255, 248, 187, .5);
+      font-size: 15px;
+    }
+
+    .search {
+      position: absolute;
+      top: 70px;
+      right: 18px;
+      color: rgba(247, 244, 232, .34);
+      font-size: 18px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+      margin-top: 22px;
+      width: 390px;
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 38px;
+      padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      color: rgba(247, 244, 232, .78);
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .nav-row.active {
+      border-color: rgba(255, 248, 187, .2);
+      background:
+        linear-gradient(90deg, rgba(255, 248, 187, .14), rgba(225, 160, 77, .08) 48%, rgba(8, 11, 16, .12));
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--bolt-soft), 0 10px 24px rgba(0, 0, 0, .16);
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 20px;
+      height: 20px;
+      color: var(--amber);
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .section-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+      padding-left: 2px;
+      color: rgba(247, 244, 232, .6);
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .sidebar-bottom {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(247, 244, 232, .7);
+      font-size: 18px;
+      font-weight: 650;
+    }
+
+    .main {
+      position: absolute;
+      z-index: 1;
+      inset: 0 0 0 414px;
+    }
+
+    .hero {
+      position: absolute;
+      top: 320px;
+      left: 88px;
+      width: 500px;
+      text-shadow:
+        0 1px 2px rgba(0, 0, 0, .78),
+        0 0 16px rgba(0, 0, 0, .42);
+    }
+
+    .hero h1 {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font-display);
+      font-size: 50px;
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 18px rgba(255, 248, 187, .34),
+        0 3px 0 rgba(0, 0, 0, .5);
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      color: rgba(247, 244, 232, .82);
+      font-size: 16px;
+      line-height: 1.55;
+      font-weight: 560;
+    }
+
+    .hero-rule {
+      position: relative;
+      width: 260px;
+      height: 10px;
+      margin-top: 22px;
+    }
+
+    .hero-rule::before,
+    .hero-rule::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      height: 2px;
+      background: var(--bolt);
+      box-shadow: 0 0 16px rgba(255, 248, 187, .72);
+      transform: skewX(-24deg);
+    }
+
+    .hero-rule::before {
+      left: 0;
+      width: 172px;
+    }
+
+    .hero-rule::after {
+      left: 188px;
+      width: 62px;
+      background: var(--amber);
+    }
+
+    .suggestions {
+      position: absolute;
+      top: 596px;
+      right: 90px;
+      left: 70px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .suggestion {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      place-items: center;
+      min-height: 142px;
+      padding: 16px 18px 15px;
+      border: 1px solid rgba(255, 248, 187, .2);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(16, 20, 28, .78), rgba(8, 11, 16, .72)),
+        linear-gradient(120deg, rgba(255, 248, 187, .08), transparent 48%);
+      color: var(--text);
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, .3),
+        inset 0 1px rgba(255, 255, 255, .1),
+        inset 0 0 0 1px rgba(255, 248, 187, .06);
+    }
+
+    .suggestion-icon {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 248, 187, .26);
+      border-radius: 50%;
+      background: rgba(225, 160, 77, .12);
+      color: var(--amber);
+      font-size: 22px;
+      font-weight: 900;
+      box-shadow:
+        0 0 0 8px rgba(225, 160, 77, .07),
+        0 0 26px rgba(255, 248, 187, .16);
+    }
+
+    .suggestion span:last-child {
+      color: rgba(247, 244, 232, .82);
+      font-size: 16px;
+      line-height: 1.45;
+      font-weight: 720;
+      text-align: center;
+    }
+
+    .composer-shell {
+      position: absolute;
+      right: 118px;
+      bottom: 56px;
+      left: 118px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 248, 187, .24);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(12, 15, 21, .92), rgba(9, 11, 15, .94)),
+        linear-gradient(90deg, rgba(255, 248, 187, .1), transparent 48%);
+      box-shadow:
+        0 22px 68px rgba(0, 0, 0, .46),
+        inset 0 1px rgba(255, 255, 255, .1);
+    }
+
+    .project-bar {
+      min-height: 78px;
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid rgba(255, 248, 187, .14);
+      background: rgba(8, 11, 16, .42);
+    }
+
+    .project-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 760;
+    }
+
+    .project-pills {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: rgba(247, 244, 232, .62);
+      font-size: 16px;
+      font-weight: 620;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      height: 34px;
+      padding: 0 15px;
+      border: 1px solid rgba(225, 160, 77, .36);
+      border-radius: 999px;
+      background: rgba(225, 160, 77, .1);
+      color: rgba(247, 244, 232, .82);
+      box-shadow: inset 0 0 0 1px rgba(255, 248, 187, .04);
+    }
+
+    .composer {
+      position: relative;
+      min-height: 116px;
+      padding: 18px 17px 14px;
+      background: rgba(21, 21, 22, .92);
+    }
+
+    .placeholder {
+      color: rgba(247, 244, 232, .5);
+      font-size: 18px;
+      font-weight: 560;
+    }
+
+    .composer-footer {
+      position: absolute;
+      right: 14px;
+      bottom: 13px;
+      left: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: rgba(247, 244, 232, .56);
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .tools {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .send {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--bolt), var(--amber) 58%, var(--orange));
+      color: #15100a;
+      font-size: 22px;
+      font-weight: 950;
+      box-shadow: 0 0 22px rgba(255, 248, 187, .38);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="traffic"><span></span><span></span><span></span></div>
+    <div class="window-icons"><span>◧</span><span>‹</span><span>›</span></div>
+
+    <aside class="sidebar">
+      <div class="brand">Codex</div>
+      <div class="search">⌕</div>
+      <nav class="nav">
+        <div class="nav-row active"><span class="icon">✎</span><span>新建任务</span></div>
+        <div class="nav-row"><span class="icon">⌁</span><span>拉取请求</span></div>
+        <div class="nav-row"><span class="icon">◷</span><span>已安排</span></div>
+        <div class="nav-row"><span class="icon">◉</span><span>插件</span></div>
+      </nav>
+      <div class="section-link">项目 <span>›</span></div>
+      <div class="section-link">任务 <span>›</span></div>
+      <div class="sidebar-bottom"><span>⚙</span><span>custom</span></div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <h1>我们该构建什么？</h1>
+        <p>把霹雳的速度感带进今天的工作台。</p>
+        <div class="hero-rule"></div>
+      </section>
+
+      <section class="suggestions">
+        <button class="suggestion">
+          <span class="suggestion-icon">⌘</span>
+          <span>探索并理解代码</span>
+        </button>
+        <button class="suggestion">
+          <span class="suggestion-icon">⌁</span>
+          <span>构建新功能、应用或工具</span>
+        </button>
+        <button class="suggestion">
+          <span class="suggestion-icon">↻</span>
+          <span>审查代码并提出修改建议</span>
+        </button>
+        <button class="suggestion">
+          <span class="suggestion-icon">⚙</span>
+          <span>修复问题和失败</span>
+        </button>
+      </section>
+
+      <section class="composer-shell">
+        <div class="project-bar">
+          <div class="project-label">◉ 选择项目</div>
+          <div class="project-pills">
+            <span class="pill">▣ Codex-Kimetsu-Skin</span>
+            <span>▱ 本地</span>
+            <span>⌘ main</span>
+          </div>
+        </div>
+        <div class="composer">
+          <div class="placeholder">随心输入</div>
+          <div class="composer-footer">
+            <div class="tools"><span>＋</span><span>◉ 完全访问</span></div>
+            <div class="tools"><span>5.5 极高⌄</span><span class="send">↑</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

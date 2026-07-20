@@ -15,30 +15,37 @@ discover_codex_app
 require_macos_runtime
 [ -f "$CONFIG_PATH" ] || fail "Codex config not found: $CONFIG_PATH"
 for required in \
-  "$PROJECT_ROOT/assets/dream-skin.css" \
+  "$PROJECT_ROOT/assets/kimetsu-skin.css" \
   "$PROJECT_ROOT/assets/renderer-inject.js" \
   "$PROJECT_ROOT/assets/theme.json" \
   "$PROJECT_ROOT/scripts/injector.mjs"; do
   [ -s "$required" ] || fail "Required project file is missing or empty: $required"
 done
 
-PAYLOAD_JSON="$("$NODE" "$INJECTOR" --check-payload --theme-dir "$THEME_DIR")"
+PAYLOAD_ARGS=(--check-payload)
+if [ -f "$THEME_DIR/theme.json" ]; then
+  PAYLOAD_ARGS+=(--theme-dir "$THEME_DIR")
+fi
+PAYLOAD_JSON="$("$NODE" "$INJECTOR" "${PAYLOAD_ARGS[@]}")"
 PORT=9341
 if [ -f "$STATE_PATH" ]; then
   PORT="$(state_field port)"
 fi
 LIVE="false"
-if [ -f "$STATE_PATH" ] && verified_cdp_endpoint "$PORT"; then
-  "$NODE" "$INJECTOR" --verify --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 12000 >/dev/null
-  LIVE="true"
+if [ -f "$STATE_PATH" ] && [ -f "$THEME_DIR/theme.json" ] && verified_cdp_endpoint "$PORT"; then
+  if "$NODE" "$INJECTOR" --verify --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 12000 >/dev/null; then
+    LIVE="true"
+  elif [ "$REQUIRE_LIVE" = "true" ]; then
+    fail "Live Kimetsu Skin session failed verification."
+  fi
 fi
-[ "$REQUIRE_LIVE" = "false" ] || [ "$LIVE" = "true" ] || fail "No verified live Dream Skin session is active."
+[ "$REQUIRE_LIVE" = "false" ] || [ "$LIVE" = "true" ] || fail "No verified live Kimetsu Skin session is active."
 
 "$NODE" -e '
   const payload = JSON.parse(process.argv[1]);
   const result = {
     pass: true,
-    product: "Codex Dream Skin Studio",
+    product: "Codex Kimetsu Skin",
     version: process.argv[2],
     platform: `darwin-${process.argv[3]}`,
     codexVersion: process.argv[4],

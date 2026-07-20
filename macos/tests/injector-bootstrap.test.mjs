@@ -19,8 +19,8 @@ function createFixture() {
     document: {
       documentElement: {},
       querySelector(selector) {
-        if (selector === "main.main-surface") return markers.shell ? {} : null;
-        if (selector === "aside.app-shell-left-panel") return markers.sidebar ? {} : null;
+        if (selector === ".main-surface") return markers.shell ? {} : null;
+        if (selector === ".app-shell-left-panel") return markers.sidebar ? {} : null;
         return null;
       },
     },
@@ -61,7 +61,7 @@ assert.deepEqual(
   ["new"],
   "A stale early script must yield to the newest watcher generation.",
 );
-assert.equal(generations.context.window.__CODEX_DREAM_SKIN_EARLY_APPLIED__, "new");
+assert.equal(generations.context.window.__CODEX_KIMETSU_SKIN_EARLY_APPLIED__, "new");
 
 const discoveryStart = source.indexOf("record.earlyScriptId = await registerEarly");
 const probeStart = source.indexOf("const probe = await waitForCodexProbe", discoveryStart);

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Codex Dream Skin"
-  short_description: "Apply and safely restore the full pink-purple Codex skin"
-  default_prompt: "Use $codex-dream-skin to apply, verify, update, or restore the full Codex desktop skin."
+  display_name: "Codex Kimetsu Skin"
+  short_description: "Apply and safely restore the Thunder Breathing Codex skin"
+  default_prompt: "Use $codex-kimetsu-skin to apply, verify, update, or restore the Thunder Breathing Codex desktop skin."

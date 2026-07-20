@@ -12,30 +12,30 @@ import {
 const here = path.dirname(fileURLToPath(import.meta.url));
 const macosRoot = path.resolve(here, "..");
 
-const portal = await fs.readFile(path.join(macosRoot, "assets", "portal-hero.png"));
-assert.deepEqual(readImageMetadata(portal, ".png"), {
-  width: 2168,
-  height: 725,
-  ratio: 2168 / 725,
+const thunder = await fs.readFile(path.join(macosRoot, "assets", "kimetsu-reference.jpg"));
+assert.deepEqual(readImageMetadata(thunder, ".jpg"), {
+  width: 3840,
+  height: 2160,
+  ratio: 3840 / 2160,
   wide: true,
-  aspect: "ultrawide",
-  taskMode: "banner",
+  aspect: "wide",
+  taskMode: "ambient",
 });
-const malformedPng = Buffer.from(portal);
-malformedPng[0] = 0;
-assert.equal(readImageMetadata(malformedPng, ".png"), null);
+const malformedJpeg = Buffer.from(thunder.subarray(0, 64));
+malformedJpeg[0] = 0;
+assert.equal(readImageMetadata(malformedJpeg, ".jpg"), null);
 
-const amber = await fs.readFile(path.join(
+const preset = await fs.readFile(path.join(
   macosRoot,
   "presets",
-  "preset-amber-dusk",
+  "preset-thunder-breathing",
   "background.jpg",
 ));
-assert.deepEqual(readImageMetadata(amber, ".jpg"), {
-  width: 1920,
-  height: 1200,
-  ratio: 1.6,
-  wide: false,
+assert.deepEqual(readImageMetadata(preset, ".jpg"), {
+  width: 3840,
+  height: 2160,
+  ratio: 3840 / 2160,
+  wide: true,
   aspect: "wide",
   taskMode: "ambient",
 });

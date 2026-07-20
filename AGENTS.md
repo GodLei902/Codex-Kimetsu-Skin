@@ -4,7 +4,7 @@
 
 - `macos/` is the primary product: shell launchers, `scripts/` runtime logic, `assets/` CSS/injection payloads, `menubar/` SwiftBar integration, and `tests/` checks.
 - `windows/` contains PowerShell launch/install/restore scripts, Node CDP injection, platform assets, references, and Windows-specific tests.
-- `docs/` holds platform notes, project history, promotional copy, and preview images. Files under `docs/images/gallery/` are composites, not theme backgrounds.
+- `docs/` holds platform notes, project history, design notes, and Kimetsu/Thunder Breathing preview images. Files under `docs/images/` are documentation previews, not theme backgrounds.
 - `.github/` contains issue and pull-request templates. Keep platform behavior documented in `docs/platforms.md`.
 
 ## Build, Test, and Development Commands
@@ -19,7 +19,7 @@ Do not bypass failing checks. Document platform-only test blockers in the PR.
 
 ## Coding Style & Naming Conventions
 
-Use two-space indentation in shell, PowerShell, JavaScript, JSON, and CSS. Shell entry points use `set -euo pipefail`; Node files use ESM. Follow existing kebab-case script names such as `start-dream-skin-macos.sh`. Prefer existing platform helpers over new dependencies. Keep comments short and focused on safety or non-obvious behavior.
+Use two-space indentation in shell, PowerShell, JavaScript, JSON, and CSS. Shell entry points use `set -euo pipefail`; Node files use ESM. Follow existing kebab-case script names such as `start-kimetsu-skin-macos.sh`. Prefer existing platform helpers over new dependencies. Keep comments short and focused on safety or non-obvious behavior.
 
 ## Testing Guidelines
 

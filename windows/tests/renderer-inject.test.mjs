@@ -7,11 +7,11 @@ import { fileURLToPath } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const windowsRoot = path.resolve(here, "..");
 const template = await fs.readFile(path.join(windowsRoot, "assets", "renderer-inject.js"), "utf8");
-const css = await fs.readFile(path.join(windowsRoot, "assets", "dream-skin.css"), "utf8");
+const css = await fs.readFile(path.join(windowsRoot, "assets", "kimetsu-skin.css"), "utf8");
 const buildPayload = (config = {}) => template
-  .replace("__DREAM_CSS_JSON__", JSON.stringify(".fixture { color: blue; }"))
-  .replace("__DREAM_ART_JSON__", JSON.stringify("data:image/png;base64,AA=="))
-  .replace("__DREAM_THEME_JSON__", JSON.stringify(config));
+  .replace("__KIMETSU_CSS_JSON__", JSON.stringify(".fixture { color: blue; }"))
+  .replace("__KIMETSU_ART_JSON__", JSON.stringify("data:image/png;base64,AA=="))
+  .replace("__KIMETSU_THEME_JSON__", JSON.stringify(config));
 const payload = buildPayload();
 
 assert.doesNotMatch(
@@ -31,8 +31,8 @@ function createFixture({
   analysisFixture = null,
 }) {
   const nodes = new Map();
-  const rootClasses = new Set(staleSkin ? ["codex-dream-skin"] : []);
-  const rootStyles = new Map(staleSkin ? [["--dream-art", "url(\"blob:stale\")"]] : []);
+  const rootClasses = new Set(staleSkin ? ["codex-kimetsu-skin"] : []);
+  const rootStyles = new Map(staleSkin ? [["--kimetsu-art", "url(\"blob:stale\")"]] : []);
   const revokedUrls = [];
   const observers = [];
   let objectUrlCount = 0;
@@ -105,8 +105,8 @@ function createFixture({
       return [];
     },
   };
-  const staleHome = { classList: makeClassList(new Set(["dream-home"])) };
-  const staleShell = { classList: makeClassList(new Set(["dream-home-shell"])) };
+  const staleHome = { classList: makeClassList(new Set(["kimetsu-home"])) };
+  const staleShell = { classList: makeClassList(new Set(["kimetsu-home-shell"])) };
 
   const createElement = (tagName) => {
     if (tagName === "canvas" && analysisFixture) {
@@ -135,10 +135,10 @@ function createFixture({
   };
   if (staleSkin) {
     const style = createElement();
-    style.id = "codex-dream-skin-style";
+    style.id = "codex-kimetsu-skin-style";
     nodes.set(style.id, style);
     const chrome = createElement();
-    chrome.id = "codex-dream-skin-chrome";
+    chrome.id = "codex-kimetsu-skin-chrome";
     nodes.set(chrome.id, chrome);
   }
 
@@ -158,13 +158,13 @@ function createFixture({
     },
     querySelectorAll(selector) {
       if (selector === '[role="main"]') return hasShell ? [routeMain] : [];
-      if (selector === ".dream-task") return routeClasses.has("dream-task") ? [routeMain] : [];
-      if (selector === ".dream-home-utility") {
-        return utilityClasses.has("dream-home-utility") ? [utilityNode] : [];
+      if (selector === ".kimetsu-task") return routeClasses.has("kimetsu-task") ? [routeMain] : [];
+      if (selector === ".kimetsu-home-utility") {
+        return utilityClasses.has("kimetsu-home-utility") ? [utilityNode] : [];
       }
       if (!staleSkin) return [];
-      if (selector === ".dream-home") return [staleHome];
-      if (selector === ".dream-home-shell") return [staleShell];
+      if (selector === ".kimetsu-home") return [staleHome];
+      if (selector === ".kimetsu-home-shell") return [staleShell];
       return [];
     },
   };
@@ -232,29 +232,29 @@ function createFixture({
 const main = createFixture({ shellPresent: true });
 const mainResult = vm.runInNewContext(payload, main.context);
 assert.equal(mainResult.installed, true);
-assert.equal(main.rootClasses.has("codex-dream-skin"), true);
-assert.equal(main.rootStyles.get("--dream-art"), 'url("blob:fixture-1")');
-assert.equal(main.nodes.has("codex-dream-skin-style"), true);
-assert.equal(main.nodes.has("codex-dream-skin-chrome"), true);
-assert.equal(main.rootClasses.has("dream-theme-dark"), true);
-assert.equal(main.rootClasses.has("dream-art-standard"), true);
-assert.equal(main.rootClasses.has("dream-task-ambient"), true);
-assert.equal(main.routeClasses.has("dream-task"), true);
-assert.equal(main.context.window.__CODEX_DREAM_SKIN_STATE__.cleanup(), true);
-assert.equal(main.rootClasses.has("codex-dream-skin"), false);
-assert.equal(main.rootClasses.has("dream-theme-dark"), false);
-assert.equal(main.nodes.has("codex-dream-skin-style"), false);
-assert.equal(main.nodes.has("codex-dream-skin-chrome"), false);
+assert.equal(main.rootClasses.has("codex-kimetsu-skin"), true);
+assert.equal(main.rootStyles.get("--kimetsu-art"), 'url("blob:fixture-1")');
+assert.equal(main.nodes.has("codex-kimetsu-skin-style"), true);
+assert.equal(main.nodes.has("codex-kimetsu-skin-chrome"), true);
+assert.equal(main.rootClasses.has("kimetsu-theme-dark"), true);
+assert.equal(main.rootClasses.has("kimetsu-art-standard"), true);
+assert.equal(main.rootClasses.has("kimetsu-task-ambient"), true);
+assert.equal(main.routeClasses.has("kimetsu-task"), true);
+assert.equal(main.context.window.__CODEX_KIMETSU_SKIN_STATE__.cleanup(), true);
+assert.equal(main.rootClasses.has("codex-kimetsu-skin"), false);
+assert.equal(main.rootClasses.has("kimetsu-theme-dark"), false);
+assert.equal(main.nodes.has("codex-kimetsu-skin-style"), false);
+assert.equal(main.nodes.has("codex-kimetsu-skin-chrome"), false);
 assert.deepEqual(main.revokedUrls, ["blob:fixture-1"]);
 
 const reinjected = createFixture({ shellPresent: true });
 vm.runInNewContext(payload, reinjected.context);
-const firstState = reinjected.context.window.__CODEX_DREAM_SKIN_STATE__;
+const firstState = reinjected.context.window.__CODEX_KIMETSU_SKIN_STATE__;
 vm.runInNewContext(payload, reinjected.context);
-const secondState = reinjected.context.window.__CODEX_DREAM_SKIN_STATE__;
+const secondState = reinjected.context.window.__CODEX_KIMETSU_SKIN_STATE__;
 assert.notEqual(secondState.installToken, firstState.installToken);
 assert.equal(secondState.artUrl, "blob:fixture-2");
-assert.equal(reinjected.rootStyles.get("--dream-art"), 'url("blob:fixture-2")');
+assert.equal(reinjected.rootStyles.get("--kimetsu-art"), 'url("blob:fixture-2")');
 assert.deepEqual(reinjected.revokedUrls, ["blob:fixture-1"]);
 assert.equal(firstState.cleanup(), false);
 assert.equal(secondState.cleanup(), true);
@@ -262,16 +262,16 @@ assert.equal(secondState.cleanup(), true);
 const auxiliary = createFixture({ shellPresent: false, staleSkin: true });
 const auxiliaryResult = vm.runInNewContext(payload, auxiliary.context);
 assert.equal(auxiliaryResult.installed, true);
-assert.equal(auxiliary.rootClasses.has("codex-dream-skin"), false);
-assert.equal(auxiliary.rootStyles.has("--dream-art"), false);
-assert.equal(auxiliary.nodes.has("codex-dream-skin-style"), false);
-assert.equal(auxiliary.nodes.has("codex-dream-skin-chrome"), false);
+assert.equal(auxiliary.rootClasses.has("codex-kimetsu-skin"), false);
+assert.equal(auxiliary.rootStyles.has("--kimetsu-art"), false);
+assert.equal(auxiliary.nodes.has("codex-kimetsu-skin-style"), false);
+assert.equal(auxiliary.nodes.has("codex-kimetsu-skin-chrome"), false);
 
 auxiliary.setShellPresent(true);
-auxiliary.context.window.__CODEX_DREAM_SKIN_STATE__.ensure();
-assert.equal(auxiliary.rootClasses.has("codex-dream-skin"), true);
-assert.equal(auxiliary.nodes.has("codex-dream-skin-style"), true);
-assert.equal(auxiliary.nodes.has("codex-dream-skin-chrome"), true);
+auxiliary.context.window.__CODEX_KIMETSU_SKIN_STATE__.ensure();
+assert.equal(auxiliary.rootClasses.has("codex-kimetsu-skin"), true);
+assert.equal(auxiliary.nodes.has("codex-kimetsu-skin-style"), true);
+assert.equal(auxiliary.nodes.has("codex-kimetsu-skin-chrome"), true);
 
 const configured = createFixture({
   shellPresent: true,
@@ -285,18 +285,18 @@ const configuredPayload = buildPayload({
 });
 const configuredResult = vm.runInNewContext(configuredPayload, configured.context);
 assert.equal(configuredResult.adaptive, true);
-assert.equal(configured.rootClasses.has("dream-theme-light"), true);
-assert.equal(configured.rootClasses.has("dream-theme-dark"), false);
-assert.equal(configured.rootClasses.has("dream-focus-left"), true);
-assert.equal(configured.rootClasses.has("dream-safe-right"), true);
-assert.equal(configured.rootClasses.has("dream-task-off"), true);
-assert.equal(configured.rootStyles.get("--dream-art-position"), "15% 80%");
-assert.equal(configured.rootStyles.get("--dream-accent"), "#d45a70");
-assert.equal(configured.routeClasses.has("dream-home"), true);
-assert.equal(configured.routeClasses.has("dream-task"), false);
-assert.equal(configured.utilityClasses.has("dream-home-utility"), true);
-assert.equal(configured.context.window.__CODEX_DREAM_SKIN_STATE__.cleanup(), true);
-assert.equal(configured.utilityClasses.has("dream-home-utility"), false);
+assert.equal(configured.rootClasses.has("kimetsu-theme-light"), true);
+assert.equal(configured.rootClasses.has("kimetsu-theme-dark"), false);
+assert.equal(configured.rootClasses.has("kimetsu-focus-left"), true);
+assert.equal(configured.rootClasses.has("kimetsu-safe-right"), true);
+assert.equal(configured.rootClasses.has("kimetsu-task-off"), true);
+assert.equal(configured.rootStyles.get("--kimetsu-art-position"), "15% 80%");
+assert.equal(configured.rootStyles.get("--kimetsu-accent"), "#d45a70");
+assert.equal(configured.routeClasses.has("kimetsu-home"), true);
+assert.equal(configured.routeClasses.has("kimetsu-task"), false);
+assert.equal(configured.utilityClasses.has("kimetsu-home-utility"), true);
+assert.equal(configured.context.window.__CODEX_KIMETSU_SKIN_STATE__.cleanup(), true);
+assert.equal(configured.utilityClasses.has("kimetsu-home-utility"), false);
 
 const analysisPixels = new Uint8ClampedArray(48 * 12 * 4);
 for (let index = 0; index < 48 * 12; index += 1) {
@@ -314,12 +314,12 @@ const analyzed = createFixture({
 });
 vm.runInNewContext(payload, analyzed.context);
 await Promise.resolve();
-assert.equal(analyzed.rootClasses.has("dream-theme-dark"), true);
-assert.equal(analyzed.rootClasses.has("dream-theme-light"), false);
-assert.equal(analyzed.rootClasses.has("dream-art-wide"), true);
-assert.equal(analyzed.rootClasses.has("dream-task-banner"), true);
-assert.equal(analyzed.rootClasses.has("dream-safe-left"), true);
-assert.notEqual(analyzed.rootStyles.get("--dream-accent"), "rgb(216 104 119)");
+assert.equal(analyzed.rootClasses.has("kimetsu-theme-dark"), true);
+assert.equal(analyzed.rootClasses.has("kimetsu-theme-light"), false);
+assert.equal(analyzed.rootClasses.has("kimetsu-art-wide"), true);
+assert.equal(analyzed.rootClasses.has("kimetsu-task-banner"), true);
+assert.equal(analyzed.rootClasses.has("kimetsu-safe-left"), true);
+assert.notEqual(analyzed.rootStyles.get("--kimetsu-accent"), "rgb(216 104 119)");
 
 const standardArt = createFixture({
   shellPresent: true,
@@ -327,9 +327,9 @@ const standardArt = createFixture({
 });
 vm.runInNewContext(payload, standardArt.context);
 await Promise.resolve();
-assert.equal(standardArt.rootClasses.has("dream-art-standard"), true);
-assert.equal(standardArt.rootClasses.has("dream-task-ambient"), true);
-assert.equal(standardArt.rootClasses.has("dream-task-banner"), false);
+assert.equal(standardArt.rootClasses.has("kimetsu-art-standard"), true);
+assert.equal(standardArt.rootClasses.has("kimetsu-task-ambient"), true);
+assert.equal(standardArt.rootClasses.has("kimetsu-task-banner"), false);
 
 const mediumWide = createFixture({
   shellPresent: true,
@@ -337,14 +337,14 @@ const mediumWide = createFixture({
 });
 vm.runInNewContext(payload, mediumWide.context);
 await Promise.resolve();
-assert.equal(mediumWide.rootClasses.has("dream-art-wide"), true);
-assert.equal(mediumWide.rootClasses.has("dream-task-ambient"), true);
-assert.equal(mediumWide.rootClasses.has("dream-task-banner"), false);
+assert.equal(mediumWide.rootClasses.has("kimetsu-art-wide"), true);
+assert.equal(mediumWide.rootClasses.has("kimetsu-task-ambient"), true);
+assert.equal(mediumWide.rootClasses.has("kimetsu-task-banner"), false);
 
 const nativeLight = createFixture({ shellPresent: true, shellAppearance: "light" });
 vm.runInNewContext(payload, nativeLight.context);
-assert.equal(nativeLight.rootClasses.has("dream-theme-light"), true);
-assert.equal(nativeLight.rootClasses.has("dream-theme-dark"), false);
+assert.equal(nativeLight.rootClasses.has("kimetsu-theme-light"), true);
+assert.equal(nativeLight.rootClasses.has("kimetsu-theme-dark"), false);
 
 const nativeComputedDark = createFixture({
   shellPresent: true,
@@ -353,19 +353,19 @@ const nativeComputedDark = createFixture({
   osAppearance: "light",
 });
 vm.runInNewContext(payload, nativeComputedDark.context);
-assert.equal(nativeComputedDark.rootClasses.has("dream-theme-dark"), true);
-assert.equal(nativeComputedDark.rootClasses.has("dream-theme-light"), false);
-nativeComputedDark.context.window.__CODEX_DREAM_SKIN_STATE__.ensure();
-assert.equal(nativeComputedDark.rootClasses.has("dream-theme-dark"), true);
+assert.equal(nativeComputedDark.rootClasses.has("kimetsu-theme-dark"), true);
+assert.equal(nativeComputedDark.rootClasses.has("kimetsu-theme-light"), false);
+nativeComputedDark.context.window.__CODEX_KIMETSU_SKIN_STATE__.ensure();
+assert.equal(nativeComputedDark.rootClasses.has("kimetsu-theme-dark"), true);
 const nativeObserver = nativeComputedDark.observers[0];
 nativeObserver.takeRecords();
-nativeComputedDark.context.window.__CODEX_DREAM_SKIN_STATE__.ensure();
+nativeComputedDark.context.window.__CODEX_KIMETSU_SKIN_STATE__.ensure();
 assert.equal(nativeObserver.takeRecords().length, 0,
   "Sampling the native computed color-scheme must not queue a self-triggering root mutation pass.");
 
 const metadataWide = createFixture({ shellPresent: true });
 vm.runInNewContext(buildPayload({ artMetadata: { ratio: 16 / 9 } }), metadataWide.context);
-assert.equal(metadataWide.rootClasses.has("dream-art-wide"), true);
-assert.equal(metadataWide.rootClasses.has("dream-art-standard"), false);
+assert.equal(metadataWide.rootClasses.has("kimetsu-art-wide"), true);
+assert.equal(metadataWide.rootClasses.has("kimetsu-art-standard"), false);
 
 console.log("PASS: renderer applies adaptive theme metadata and preserves transparent auxiliary windows.");

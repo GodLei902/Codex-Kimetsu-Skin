@@ -1,9 +1,9 @@
-$script:DreamSkinUtf8NoBom = [System.Text.UTF8Encoding]::new($false, $true)
-$script:DreamSkinLegacyAppearanceTheme = 'appearanceTheme = "light"'
-$script:DreamSkinManagedLightCodeTheme = 'appearanceLightCodeThemeId = "codex"'
-$script:DreamSkinManagedLightChromeTheme = 'appearanceLightChromeTheme = { accent = "#B65CFF", contrast = 64, fonts = { code = "Cascadia Code", ui = "Microsoft YaHei UI" }, ink = "#4A235F", opaqueWindows = true, semanticColors = { diffAdded = "#BCE8CF", diffRemoved = "#F7B8CE", skill = "#C47BFF" }, surface = "#FFF4FA" }'
+$script:KimetsuSkinUtf8NoBom = [System.Text.UTF8Encoding]::new($false, $true)
+$script:KimetsuSkinLegacyAppearanceTheme = 'appearanceTheme = "light"'
+$script:KimetsuSkinManagedLightCodeTheme = 'appearanceLightCodeThemeId = "codex"'
+$script:KimetsuSkinManagedLightChromeTheme = 'appearanceLightChromeTheme = { accent = "#B65CFF", contrast = 64, fonts = { code = "Cascadia Code", ui = "Microsoft YaHei UI" }, ink = "#4A235F", opaqueWindows = true, semanticColors = { diffAdded = "#BCE8CF", diffRemoved = "#F7B8CE", skill = "#C47BFF" }, surface = "#FFF4FA" }'
 
-function ConvertFrom-DreamSkinUtf8Bytes {
+function ConvertFrom-KimetsuSkinUtf8Bytes {
   param(
     [Parameter(Mandatory = $true)][AllowEmptyCollection()][byte[]]$Bytes,
     [Parameter(Mandatory = $true)][string]$Path
@@ -11,7 +11,7 @@ function ConvertFrom-DreamSkinUtf8Bytes {
 
   try {
     $offset = if ($Bytes.Length -ge 3 -and $Bytes[0] -eq 0xEF -and $Bytes[1] -eq 0xBB -and $Bytes[2] -eq 0xBF) { 3 } else { 0 }
-    $content = $script:DreamSkinUtf8NoBom.GetString($Bytes, $offset, $Bytes.Length - $offset)
+    $content = $script:KimetsuSkinUtf8NoBom.GetString($Bytes, $offset, $Bytes.Length - $offset)
     if ($content.IndexOf([char]0) -ge 0) {
       throw "Refusing to rewrite a config file containing NUL characters (possibly BOM-less UTF-16): $Path"
     }
@@ -21,7 +21,7 @@ function ConvertFrom-DreamSkinUtf8Bytes {
   }
 }
 
-function Test-DreamSkinBytesEqual {
+function Test-KimetsuSkinBytesEqual {
   param(
     [Parameter(Mandatory = $true)][AllowEmptyCollection()][byte[]]$Left,
     [Parameter(Mandatory = $true)][AllowEmptyCollection()][byte[]]$Right
@@ -33,7 +33,7 @@ function Test-DreamSkinBytesEqual {
   return $true
 }
 
-function Assert-DreamSkinFileUnchanged {
+function Assert-KimetsuSkinFileUnchanged {
   param(
     [Parameter(Mandatory = $true)][string]$Path,
     [AllowNull()][byte[]]$ExpectedBytes
@@ -44,18 +44,18 @@ function Assert-DreamSkinFileUnchanged {
   }
   if (-not (Test-Path -LiteralPath $Path)) { throw "File disappeared during the operation; retry: $Path" }
   $currentBytes = [System.IO.File]::ReadAllBytes($Path)
-  if (-not (Test-DreamSkinBytesEqual -Left $ExpectedBytes -Right $currentBytes)) {
+  if (-not (Test-KimetsuSkinBytesEqual -Left $ExpectedBytes -Right $currentBytes)) {
     throw "File changed during the operation; retry without other writers: $Path"
   }
 }
 
-function Get-DreamSkinNewLine {
+function Get-KimetsuSkinNewLine {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Content)
   if ($Content.Contains("`r`n")) { return "`r`n" }
   return "`n"
 }
 
-function Read-DreamSkinUtf8File {
+function Read-KimetsuSkinUtf8File {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)]
@@ -63,10 +63,10 @@ function Read-DreamSkinUtf8File {
   )
 
   $bytes = [System.IO.File]::ReadAllBytes($Path)
-  return (ConvertFrom-DreamSkinUtf8Bytes -Bytes $bytes -Path $Path)
+  return (ConvertFrom-KimetsuSkinUtf8Bytes -Bytes $bytes -Path $Path)
 }
 
-function Write-DreamSkinUtf8FileAtomically {
+function Write-KimetsuSkinUtf8FileAtomically {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)]
@@ -80,15 +80,15 @@ function Write-DreamSkinUtf8FileAtomically {
     [byte[]]$ExpectedBytes
   )
 
-  $bytes = $script:DreamSkinUtf8NoBom.GetBytes($Content)
+  $bytes = $script:KimetsuSkinUtf8NoBom.GetBytes($Content)
   if ($PSBoundParameters.ContainsKey('ExpectedBytes')) {
-    Write-DreamSkinBytesAtomically -Path $Path -Bytes $bytes -ExpectedBytes $ExpectedBytes
+    Write-KimetsuSkinBytesAtomically -Path $Path -Bytes $bytes -ExpectedBytes $ExpectedBytes
   } else {
-    Write-DreamSkinBytesAtomically -Path $Path -Bytes $bytes
+    Write-KimetsuSkinBytesAtomically -Path $Path -Bytes $bytes
   }
 }
 
-function Remove-DreamSkinAtomicArtifact {
+function Remove-KimetsuSkinAtomicArtifact {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)]
@@ -100,7 +100,7 @@ function Remove-DreamSkinAtomicArtifact {
   }
 }
 
-function Write-DreamSkinBytesAtomically {
+function Write-KimetsuSkinBytesAtomically {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)][string]$Path,
@@ -121,7 +121,7 @@ function Write-DreamSkinBytesAtomically {
   try {
     [System.IO.File]::WriteAllBytes($temporary, $Bytes)
     if ($PSBoundParameters.ContainsKey('ExpectedBytes')) {
-      Assert-DreamSkinFileUnchanged -Path $fullPath -ExpectedBytes $ExpectedBytes
+      Assert-KimetsuSkinFileUnchanged -Path $fullPath -ExpectedBytes $ExpectedBytes
     }
     if ([System.IO.File]::Exists($fullPath)) {
       [System.IO.File]::Replace($temporary, $fullPath, $replacementBackup)
@@ -131,7 +131,7 @@ function Write-DreamSkinBytesAtomically {
   } finally {
     foreach ($artifact in @($temporary, $replacementBackup)) {
       try {
-        Remove-DreamSkinAtomicArtifact -Path $artifact
+        Remove-KimetsuSkinAtomicArtifact -Path $artifact
       } catch {
         try {
           Write-Warning "Could not remove temporary atomic config artifact '$artifact': $($_.Exception.Message)"
@@ -143,7 +143,7 @@ function Write-DreamSkinBytesAtomically {
   }
 }
 
-function Get-DreamSkinTomlKeyTokenPattern {
+function Get-KimetsuSkinTomlKeyTokenPattern {
   param([Parameter(Mandatory = $true)][string]$Key)
   $bare = [regex]::Escape($Key)
   $doubleQuoted = [regex]::Escape('"' + $Key + '"')
@@ -151,7 +151,7 @@ function Get-DreamSkinTomlKeyTokenPattern {
   return "(?:$bare|$doubleQuoted|$singleQuoted)"
 }
 
-function ConvertTo-DreamSkinTomlAsciiEscapeProbe {
+function ConvertTo-KimetsuSkinTomlAsciiEscapeProbe {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Value)
 
   $result = $Value
@@ -164,7 +164,7 @@ function ConvertTo-DreamSkinTomlAsciiEscapeProbe {
   return $result
 }
 
-function Get-DreamSkinTomlArrayBracketBalance {
+function Get-KimetsuSkinTomlArrayBracketBalance {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Line)
 
   $quote = $null
@@ -188,21 +188,21 @@ function Get-DreamSkinTomlArrayBracketBalance {
   return $balance
 }
 
-function Assert-DreamSkinTomlLineEditingSafe {
+function Assert-KimetsuSkinTomlLineEditingSafe {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Content)
 
   if ($Content.Contains('"""') -or $Content.Contains("'''")) {
-    throw 'Refusing to rewrite TOML containing multiline strings; use single-line values before installing Dream Skin.'
+    throw 'Refusing to rewrite TOML containing multiline strings; use single-line values before installing Kimetsu Skin.'
   }
   foreach ($match in [regex]::Matches($Content, '(?m)^[^\r\n]*=[\t ]*\[[^\r\n]*\r?$')) {
-    if ((Get-DreamSkinTomlArrayBracketBalance -Line $match.Value) -ne 0) {
-      throw 'Refusing to rewrite TOML containing multiline arrays; use single-line arrays before installing Dream Skin.'
+    if ((Get-KimetsuSkinTomlArrayBracketBalance -Line $match.Value) -ne 0) {
+      throw 'Refusing to rewrite TOML containing multiline arrays; use single-line arrays before installing Kimetsu Skin.'
     }
   }
 
-  $probe = ConvertTo-DreamSkinTomlAsciiEscapeProbe -Value $Content
+  $probe = ConvertTo-KimetsuSkinTomlAsciiEscapeProbe -Value $Content
   if ($probe -cne $Content) {
-    $desktopToken = Get-DreamSkinTomlKeyTokenPattern -Key 'desktop'
+    $desktopToken = Get-KimetsuSkinTomlKeyTokenPattern -Key 'desktop'
     $desktopShape = "(?m)^[\t ]*(?:\[\[?[\t ]*$desktopToken[\t ]*(?:\]|\.)|$desktopToken[\t ]*(?:\.|=))"
     $rawDesktopShapes = [regex]::Matches($Content, $desktopShape).Count
     $probedDesktopShapes = [regex]::Matches($probe, $desktopShape).Count
@@ -212,40 +212,40 @@ function Assert-DreamSkinTomlLineEditingSafe {
   }
 }
 
-function Get-DreamSkinDesktopSectionPattern {
-  $desktopToken = Get-DreamSkinTomlKeyTokenPattern -Key 'desktop'
+function Get-KimetsuSkinDesktopSectionPattern {
+  $desktopToken = Get-KimetsuSkinTomlKeyTokenPattern -Key 'desktop'
   return "(?ms)^[\t ]*\[[\t ]*$desktopToken[\t ]*\][\t ]*(?:#[^\r\n]*)?(?:\r?\n|(?=\z))(?<body>.*?)(?=^[\t ]*\[\[?|\z)"
 }
 
-function Test-DreamSkinDesktopNestedTable {
+function Test-KimetsuSkinDesktopNestedTable {
   param(
     [Parameter(Mandatory = $true)][AllowEmptyString()][string]$Content,
     [Parameter(Mandatory = $true)][string]$Key
   )
 
-  $desktopToken = Get-DreamSkinTomlKeyTokenPattern -Key 'desktop'
-  $keyToken = Get-DreamSkinTomlKeyTokenPattern -Key $Key
+  $desktopToken = Get-KimetsuSkinTomlKeyTokenPattern -Key 'desktop'
+  $keyToken = Get-KimetsuSkinTomlKeyTokenPattern -Key $Key
   return [regex]::IsMatch(
     $Content,
     "(?m)^[\t ]*\[[\t ]*$desktopToken[\t ]*\.[\t ]*$keyToken[\t ]*(?:\]|\.)"
   )
 }
 
-function Assert-DreamSkinDesktopShapeSupported {
+function Assert-KimetsuSkinDesktopShapeSupported {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Content)
 
-  Assert-DreamSkinTomlLineEditingSafe -Content $Content
-  $sectionPattern = Get-DreamSkinDesktopSectionPattern
+  Assert-KimetsuSkinTomlLineEditingSafe -Content $Content
+  $sectionPattern = Get-KimetsuSkinDesktopSectionPattern
   if ([regex]::Matches($Content, $sectionPattern).Count -gt 1) {
     throw 'Refusing to rewrite multiple equivalent [desktop] tables.'
   }
 
-  $desktopToken = Get-DreamSkinTomlKeyTokenPattern -Key 'desktop'
+  $desktopToken = Get-KimetsuSkinTomlKeyTokenPattern -Key 'desktop'
   if ([regex]::IsMatch($Content, "(?m)^[\t ]*\[\[[\t ]*$desktopToken[\t ]*(?:\]\]|\.)")) {
     throw 'Refusing to rewrite a config that represents desktop as an array of tables.'
   }
   foreach ($key in @('appearanceTheme', 'appearanceLightCodeThemeId')) {
-    if (Test-DreamSkinDesktopNestedTable -Content $Content -Key $key) {
+    if (Test-KimetsuSkinDesktopNestedTable -Content $Content -Key $key) {
       throw "Refusing to replace '$key' because it is represented as a nested desktop table."
     }
   }
@@ -256,14 +256,14 @@ function Assert-DreamSkinDesktopShapeSupported {
     throw 'Refusing to rewrite root dotted or inline desktop keys; normalize them to a [desktop] table first.'
   }
 
-  $desktop = Get-DreamSkinDesktopSection -Content $Content
+  $desktop = Get-KimetsuSkinDesktopSection -Content $Content
   if ($null -ne $desktop) {
-    $bodyProbe = ConvertTo-DreamSkinTomlAsciiEscapeProbe -Value $desktop.Body
+    $bodyProbe = ConvertTo-KimetsuSkinTomlAsciiEscapeProbe -Value $desktop.Body
     foreach ($key in @('appearanceTheme', 'appearanceLightCodeThemeId', 'appearanceLightChromeTheme')) {
-      $keyToken = Get-DreamSkinTomlKeyTokenPattern -Key $key
+      $keyToken = Get-KimetsuSkinTomlKeyTokenPattern -Key $key
       $settingShape = "(?m)^[\t ]*$keyToken[\t ]*(?:\.|=)"
       if ($key -eq 'appearanceLightChromeTheme' -and
-        (Test-DreamSkinDesktopNestedTable -Content $Content -Key $key) -and
+        (Test-KimetsuSkinDesktopNestedTable -Content $Content -Key $key) -and
         [regex]::IsMatch($desktop.Body, $settingShape)) {
         throw "Refusing to rewrite '$key' because both a scalar and nested table are present."
       }
@@ -278,10 +278,10 @@ function Assert-DreamSkinDesktopShapeSupported {
   }
 }
 
-function Get-DreamSkinDesktopSection {
+function Get-KimetsuSkinDesktopSection {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Content)
 
-  $match = [regex]::Match($Content, (Get-DreamSkinDesktopSectionPattern))
+  $match = [regex]::Match($Content, (Get-KimetsuSkinDesktopSectionPattern))
   if (-not $match.Success) { return $null }
   return [pscustomobject]@{
     Body = $match.Groups['body'].Value
@@ -292,7 +292,7 @@ function Get-DreamSkinDesktopSection {
   }
 }
 
-function Add-DreamSkinDesktopSection {
+function Add-KimetsuSkinDesktopSection {
   param(
     [Parameter(Mandatory = $true)][AllowEmptyString()][string]$Content,
     [Parameter(Mandatory = $true)][string]$NewLine
@@ -303,7 +303,7 @@ function Add-DreamSkinDesktopSection {
   return $Content + $separator + "[desktop]$NewLine"
 }
 
-function Set-DreamSkinSectionSetting {
+function Set-KimetsuSkinSectionSetting {
   param(
     [Parameter(Mandatory = $true)][AllowEmptyString()][string]$Body,
     [Parameter(Mandatory = $true)][string]$Key,
@@ -311,7 +311,7 @@ function Set-DreamSkinSectionSetting {
     [Parameter(Mandatory = $true)][string]$NewLine
   )
 
-  $keyToken = Get-DreamSkinTomlKeyTokenPattern -Key $Key
+  $keyToken = Get-KimetsuSkinTomlKeyTokenPattern -Key $Key
   $pattern = "(?m)^[\t ]*$keyToken[\t ]*=[^\r\n]*(?:\r?\n|(?=\z))"
   $matcher = [regex]::new($pattern)
   if ($matcher.Matches($Body).Count -gt 1) {
@@ -327,68 +327,68 @@ function Set-DreamSkinSectionSetting {
   return $Body + $separator + $normalizedLine
 }
 
-function Get-DreamSkinSectionSettingLine {
+function Get-KimetsuSkinSectionSettingLine {
   param(
     [Parameter(Mandatory = $true)][AllowEmptyString()][string]$Body,
     [Parameter(Mandatory = $true)][string]$Key
   )
-  $keyToken = Get-DreamSkinTomlKeyTokenPattern -Key $Key
+  $keyToken = Get-KimetsuSkinTomlKeyTokenPattern -Key $Key
   $matches = [regex]::Matches($Body, "(?m)^[\t ]*$keyToken[\t ]*=.*$")
   if ($matches.Count -gt 1) { throw "Refusing to inspect duplicate '$Key' entries in the [desktop] section." }
   if ($matches.Count -eq 0) { return $null }
   return $matches[0].Value.Trim()
 }
 
-function Test-DreamSkinLegacyManagedLightTrio {
+function Test-KimetsuSkinLegacyManagedLightTrio {
   param([Parameter(Mandatory = $true)][AllowEmptyString()][string]$Content)
-  $desktop = Get-DreamSkinDesktopSection -Content $Content
+  $desktop = Get-KimetsuSkinDesktopSection -Content $Content
   if ($null -eq $desktop) { return $false }
   return (
-    (Get-DreamSkinSectionSettingLine -Body $desktop.Body -Key 'appearanceTheme') -ceq
-      $script:DreamSkinLegacyAppearanceTheme -and
-    (Get-DreamSkinSectionSettingLine -Body $desktop.Body -Key 'appearanceLightCodeThemeId') -ceq
-      $script:DreamSkinManagedLightCodeTheme -and
-    (Get-DreamSkinSectionSettingLine -Body $desktop.Body -Key 'appearanceLightChromeTheme') -ceq
-      $script:DreamSkinManagedLightChromeTheme
+    (Get-KimetsuSkinSectionSettingLine -Body $desktop.Body -Key 'appearanceTheme') -ceq
+      $script:KimetsuSkinLegacyAppearanceTheme -and
+    (Get-KimetsuSkinSectionSettingLine -Body $desktop.Body -Key 'appearanceLightCodeThemeId') -ceq
+      $script:KimetsuSkinManagedLightCodeTheme -and
+    (Get-KimetsuSkinSectionSettingLine -Body $desktop.Body -Key 'appearanceLightChromeTheme') -ceq
+      $script:KimetsuSkinManagedLightChromeTheme
   )
 }
 
-function Get-DreamSkinAppearanceMarkerPath {
+function Get-KimetsuSkinAppearanceMarkerPath {
   param([Parameter(Mandatory = $true)][string]$BackupPath)
   return "$BackupPath.appearance.json"
 }
 
-function Read-DreamSkinAppearanceMarker {
+function Read-KimetsuSkinAppearanceMarker {
   param([Parameter(Mandatory = $true)][string]$BackupPath)
-  $markerPath = Get-DreamSkinAppearanceMarkerPath -BackupPath $BackupPath
+  $markerPath = Get-KimetsuSkinAppearanceMarkerPath -BackupPath $BackupPath
   if (-not (Test-Path -LiteralPath $markerPath)) { return $null }
   try {
-    $marker = (Read-DreamSkinUtf8File -Path $markerPath) | ConvertFrom-Json -ErrorAction Stop
+    $marker = (Read-KimetsuSkinUtf8File -Path $markerPath) | ConvertFrom-Json -ErrorAction Stop
   } catch {
-    throw "Dream Skin appearance marker is unreadable; config was preserved: $markerPath"
+    throw "Kimetsu Skin appearance marker is unreadable; config was preserved: $markerPath"
   }
   if ($null -eq $marker -or $marker -is [string] -or $marker -is [array] -or
     [int]$marker.schemaVersion -ne 1 -or $marker.appearanceThemeManaged -isnot [bool] -or
     [bool]$marker.appearanceThemeManaged) {
-    throw "Dream Skin appearance marker is invalid; config was preserved: $markerPath"
+    throw "Kimetsu Skin appearance marker is invalid; config was preserved: $markerPath"
   }
   return $marker
 }
 
-function Write-DreamSkinAppearanceMarker {
+function Write-KimetsuSkinAppearanceMarker {
   param([Parameter(Mandatory = $true)][string]$BackupPath)
-  $markerPath = Get-DreamSkinAppearanceMarkerPath -BackupPath $BackupPath
-  if (Get-Command Assert-DreamSkinNoReparseComponents -ErrorAction SilentlyContinue) {
-    Assert-DreamSkinNoReparseComponents -Path $markerPath
+  $markerPath = Get-KimetsuSkinAppearanceMarkerPath -BackupPath $BackupPath
+  if (Get-Command Assert-KimetsuSkinNoReparseComponents -ErrorAction SilentlyContinue) {
+    Assert-KimetsuSkinNoReparseComponents -Path $markerPath
   }
   $marker = [ordered]@{
     schemaVersion = 1
     appearanceThemeManaged = $false
   } | ConvertTo-Json
-  Write-DreamSkinUtf8FileAtomically -Path $markerPath -Content ($marker + "`r`n")
+  Write-KimetsuSkinUtf8FileAtomically -Path $markerPath -Content ($marker + "`r`n")
 }
 
-function Install-DreamSkinBaseTheme {
+function Install-KimetsuSkinBaseTheme {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)]
@@ -399,57 +399,57 @@ function Install-DreamSkinBaseTheme {
   )
 
   if (-not (Test-Path -LiteralPath $ConfigPath)) { throw "Codex config not found: $ConfigPath" }
-  if (Get-Command Assert-DreamSkinNoReparseComponents -ErrorAction SilentlyContinue) {
-    Assert-DreamSkinNoReparseComponents -Path $BackupPath
-    Assert-DreamSkinNoReparseComponents -Path (Get-DreamSkinAppearanceMarkerPath -BackupPath $BackupPath)
+  if (Get-Command Assert-KimetsuSkinNoReparseComponents -ErrorAction SilentlyContinue) {
+    Assert-KimetsuSkinNoReparseComponents -Path $BackupPath
+    Assert-KimetsuSkinNoReparseComponents -Path (Get-KimetsuSkinAppearanceMarkerPath -BackupPath $BackupPath)
   }
   $originalBytes = [System.IO.File]::ReadAllBytes($ConfigPath)
-  $content = ConvertFrom-DreamSkinUtf8Bytes -Bytes $originalBytes -Path $ConfigPath
-  $appearanceMarker = Read-DreamSkinAppearanceMarker -BackupPath $BackupPath
+  $content = ConvertFrom-KimetsuSkinUtf8Bytes -Bytes $originalBytes -Path $ConfigPath
+  $appearanceMarker = Read-KimetsuSkinAppearanceMarker -BackupPath $BackupPath
   $backupCreated = $false
   if (-not (Test-Path -LiteralPath $BackupPath)) {
-    Write-DreamSkinBytesAtomically -Path $BackupPath -Bytes $originalBytes -ExpectedBytes $null
+    Write-KimetsuSkinBytesAtomically -Path $BackupPath -Bytes $originalBytes -ExpectedBytes $null
     $backupCreated = $true
   }
 
   $writeCompleted = $false
   try {
-    Assert-DreamSkinDesktopShapeSupported -Content $content
-    $newLine = Get-DreamSkinNewLine -Content $content
-    $desktop = Get-DreamSkinDesktopSection -Content $content
+    Assert-KimetsuSkinDesktopShapeSupported -Content $content
+    $newLine = Get-KimetsuSkinNewLine -Content $content
+    $desktop = Get-KimetsuSkinDesktopSection -Content $content
     if ($null -eq $desktop) {
-      $content = Add-DreamSkinDesktopSection -Content $content -NewLine $newLine
-      $desktop = Get-DreamSkinDesktopSection -Content $content
+      $content = Add-KimetsuSkinDesktopSection -Content $content -NewLine $newLine
+      $desktop = Get-KimetsuSkinDesktopSection -Content $content
     }
 
     $body = $desktop.Body
     $backupContent = $null
     $legacyMigration = $null -eq $appearanceMarker -and (Test-Path -LiteralPath $BackupPath) -and
-      (Test-DreamSkinLegacyManagedLightTrio -Content $content)
+      (Test-KimetsuSkinLegacyManagedLightTrio -Content $content)
     if ($legacyMigration) {
-      $backupContent = ConvertFrom-DreamSkinUtf8Bytes -Bytes ([System.IO.File]::ReadAllBytes($BackupPath)) -Path $BackupPath
-      Assert-DreamSkinDesktopShapeSupported -Content $backupContent
-      $backupDesktop = Get-DreamSkinDesktopSection -Content $backupContent
+      $backupContent = ConvertFrom-KimetsuSkinUtf8Bytes -Bytes ([System.IO.File]::ReadAllBytes($BackupPath)) -Path $BackupPath
+      Assert-KimetsuSkinDesktopShapeSupported -Content $backupContent
+      $backupDesktop = Get-KimetsuSkinDesktopSection -Content $backupContent
       $savedAppearance = if ($null -ne $backupDesktop) {
-        Get-DreamSkinSectionSettingLine -Body $backupDesktop.Body -Key 'appearanceTheme'
+        Get-KimetsuSkinSectionSettingLine -Body $backupDesktop.Body -Key 'appearanceTheme'
       } else { $null }
-      $body = Set-DreamSkinSectionSetting -Body $body -Key 'appearanceTheme' -Line $savedAppearance -NewLine $newLine
+      $body = Set-KimetsuSkinSectionSetting -Body $body -Key 'appearanceTheme' -Line $savedAppearance -NewLine $newLine
     }
     $settings = [ordered]@{
-      appearanceLightCodeThemeId = $script:DreamSkinManagedLightCodeTheme
-      appearanceLightChromeTheme = $script:DreamSkinManagedLightChromeTheme
+      appearanceLightCodeThemeId = $script:KimetsuSkinManagedLightCodeTheme
+      appearanceLightChromeTheme = $script:KimetsuSkinManagedLightChromeTheme
     }
-    $hasNestedLightChromeTheme = Test-DreamSkinDesktopNestedTable `
+    $hasNestedLightChromeTheme = Test-KimetsuSkinDesktopNestedTable `
       -Content $content -Key 'appearanceLightChromeTheme'
     foreach ($key in $settings.Keys) {
       if ($key -eq 'appearanceLightChromeTheme' -and $hasNestedLightChromeTheme) { continue }
-      $body = Set-DreamSkinSectionSetting -Body $body -Key $key -Line $settings[$key] -NewLine $newLine
+      $body = Set-KimetsuSkinSectionSetting -Body $body -Key $key -Line $settings[$key] -NewLine $newLine
     }
 
     $content = $content.Substring(0, $desktop.BodyStart) + $body +
       $content.Substring($desktop.BodyStart + $desktop.BodyLength)
-    Write-DreamSkinUtf8FileAtomically -Path $ConfigPath -Content $content -ExpectedBytes $originalBytes
-    Write-DreamSkinAppearanceMarker -BackupPath $BackupPath
+    Write-KimetsuSkinUtf8FileAtomically -Path $ConfigPath -Content $content -ExpectedBytes $originalBytes
+    Write-KimetsuSkinAppearanceMarker -BackupPath $BackupPath
     $writeCompleted = $true
   } catch {
     if ($backupCreated -and -not $writeCompleted) {
@@ -459,7 +459,7 @@ function Install-DreamSkinBaseTheme {
   }
 }
 
-function Restore-DreamSkinBaseTheme {
+function Restore-KimetsuSkinBaseTheme {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)]
@@ -470,39 +470,39 @@ function Restore-DreamSkinBaseTheme {
   )
 
   if (-not (Test-Path -LiteralPath $BackupPath)) { throw 'No pre-install config backup is available.' }
-  if (Get-Command Assert-DreamSkinNoReparseComponents -ErrorAction SilentlyContinue) {
-    Assert-DreamSkinNoReparseComponents -Path $BackupPath
-    Assert-DreamSkinNoReparseComponents -Path (Get-DreamSkinAppearanceMarkerPath -BackupPath $BackupPath)
+  if (Get-Command Assert-KimetsuSkinNoReparseComponents -ErrorAction SilentlyContinue) {
+    Assert-KimetsuSkinNoReparseComponents -Path $BackupPath
+    Assert-KimetsuSkinNoReparseComponents -Path (Get-KimetsuSkinAppearanceMarkerPath -BackupPath $BackupPath)
   }
   $backupBytes = [System.IO.File]::ReadAllBytes($BackupPath)
-  $backupContent = ConvertFrom-DreamSkinUtf8Bytes -Bytes $backupBytes -Path $BackupPath
+  $backupContent = ConvertFrom-KimetsuSkinUtf8Bytes -Bytes $backupBytes -Path $BackupPath
   $currentBytes = [System.IO.File]::ReadAllBytes($ConfigPath)
-  $currentContent = ConvertFrom-DreamSkinUtf8Bytes -Bytes $currentBytes -Path $ConfigPath
-  Assert-DreamSkinDesktopShapeSupported -Content $backupContent
-  Assert-DreamSkinDesktopShapeSupported -Content $currentContent
-  $newLine = Get-DreamSkinNewLine -Content $currentContent
-  $backupDesktop = Get-DreamSkinDesktopSection -Content $backupContent
-  $currentDesktop = Get-DreamSkinDesktopSection -Content $currentContent
+  $currentContent = ConvertFrom-KimetsuSkinUtf8Bytes -Bytes $currentBytes -Path $ConfigPath
+  Assert-KimetsuSkinDesktopShapeSupported -Content $backupContent
+  Assert-KimetsuSkinDesktopShapeSupported -Content $currentContent
+  $newLine = Get-KimetsuSkinNewLine -Content $currentContent
+  $backupDesktop = Get-KimetsuSkinDesktopSection -Content $backupContent
+  $currentDesktop = Get-KimetsuSkinDesktopSection -Content $currentContent
   if ($null -eq $currentDesktop) {
-    $currentContent = Add-DreamSkinDesktopSection -Content $currentContent -NewLine $newLine
-    $currentDesktop = Get-DreamSkinDesktopSection -Content $currentContent
+    $currentContent = Add-KimetsuSkinDesktopSection -Content $currentContent -NewLine $newLine
+    $currentDesktop = Get-KimetsuSkinDesktopSection -Content $currentContent
   }
 
   $body = $currentDesktop.Body
-  $appearanceMarker = Read-DreamSkinAppearanceMarker -BackupPath $BackupPath
+  $appearanceMarker = Read-KimetsuSkinAppearanceMarker -BackupPath $BackupPath
   $restoreLegacyAppearance = $null -eq $appearanceMarker -and
-    (Test-DreamSkinLegacyManagedLightTrio -Content $currentContent)
+    (Test-KimetsuSkinLegacyManagedLightTrio -Content $currentContent)
   $restoreKeys = @('appearanceLightCodeThemeId', 'appearanceLightChromeTheme')
   if ($restoreLegacyAppearance) { $restoreKeys = @('appearanceTheme') + $restoreKeys }
-  $hasNestedLightChromeTheme = Test-DreamSkinDesktopNestedTable `
+  $hasNestedLightChromeTheme = Test-KimetsuSkinDesktopNestedTable `
     -Content $currentContent -Key 'appearanceLightChromeTheme'
   foreach ($key in $restoreKeys) {
     if ($key -eq 'appearanceLightChromeTheme' -and $hasNestedLightChromeTheme) { continue }
-    $keyToken = Get-DreamSkinTomlKeyTokenPattern -Key $key
+    $keyToken = Get-KimetsuSkinTomlKeyTokenPattern -Key $key
     $pattern = "(?m)^[\t ]*$keyToken[\t ]*=[^\r\n]*(?:\r?\n|(?=\z))"
     $saved = if ($null -ne $backupDesktop) { [regex]::Match($backupDesktop.Body, $pattern) } else { $null }
     $line = if ($null -ne $saved -and $saved.Success) { $saved.Value } else { $null }
-    $body = Set-DreamSkinSectionSetting -Body $body -Key $key -Line $line -NewLine $newLine
+    $body = Set-KimetsuSkinSectionSetting -Body $body -Key $key -Line $line -NewLine $newLine
   }
   if ($null -eq $backupDesktop -and [string]::IsNullOrWhiteSpace($body)) {
     $currentContent = $currentContent.Remove($currentDesktop.SectionStart, $currentDesktop.SectionLength)
@@ -510,10 +510,10 @@ function Restore-DreamSkinBaseTheme {
     $currentContent = $currentContent.Substring(0, $currentDesktop.BodyStart) + $body +
       $currentContent.Substring($currentDesktop.BodyStart + $currentDesktop.BodyLength)
   }
-  Write-DreamSkinUtf8FileAtomically -Path $ConfigPath -Content $currentContent -ExpectedBytes $currentBytes
+  Write-KimetsuSkinUtf8FileAtomically -Path $ConfigPath -Content $currentContent -ExpectedBytes $currentBytes
 }
 
-function Restore-DreamSkinConfigBackup {
+function Restore-KimetsuSkinConfigBackup {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)][string]$ConfigPath,
@@ -523,17 +523,17 @@ function Restore-DreamSkinConfigBackup {
 
   if (-not (Test-Path -LiteralPath $BackupPath)) { throw 'No pre-install config backup is available.' }
   $backupBytes = [System.IO.File]::ReadAllBytes($BackupPath)
-  $null = ConvertFrom-DreamSkinUtf8Bytes -Bytes $backupBytes -Path $BackupPath
+  $null = ConvertFrom-KimetsuSkinUtf8Bytes -Bytes $backupBytes -Path $BackupPath
   $currentBytes = $null
   if (Test-Path -LiteralPath $ConfigPath) {
     $currentBytes = [System.IO.File]::ReadAllBytes($ConfigPath)
-    Write-DreamSkinBytesAtomically -Path $RecoveryBackupPath -Bytes $currentBytes -ExpectedBytes $null
+    Write-KimetsuSkinBytesAtomically -Path $RecoveryBackupPath -Bytes $currentBytes -ExpectedBytes $null
   }
 
-  Write-DreamSkinBytesAtomically -Path $ConfigPath -Bytes $backupBytes -ExpectedBytes $currentBytes
+  Write-KimetsuSkinBytesAtomically -Path $ConfigPath -Bytes $backupBytes -ExpectedBytes $currentBytes
 }
 
-function Archive-DreamSkinConfigBackup {
+function Archive-KimetsuSkinConfigBackup {
   [CmdletBinding()]
   param(
     [Parameter(Mandatory = $true)][string]$BackupPath,
@@ -543,5 +543,5 @@ function Archive-DreamSkinConfigBackup {
   if (-not (Test-Path -LiteralPath $BackupPath)) { return }
   if (Test-Path -LiteralPath $ArchivePath) { throw "Config backup archive already exists: $ArchivePath" }
   Move-Item -LiteralPath $BackupPath -Destination $ArchivePath -ErrorAction Stop
-  Remove-Item -LiteralPath (Get-DreamSkinAppearanceMarkerPath -BackupPath $BackupPath) -Force -ErrorAction SilentlyContinue
+  Remove-Item -LiteralPath (Get-KimetsuSkinAppearanceMarkerPath -BackupPath $BackupPath) -Force -ErrorAction SilentlyContinue
 }

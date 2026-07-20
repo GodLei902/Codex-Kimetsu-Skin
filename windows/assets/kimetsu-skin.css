@@ -1,0 +1,642 @@
+:root.codex-kimetsu-skin {
+  color-scheme: light;
+  --kimetsu-accent: oklch(0.66 0.15 18);
+  --kimetsu-accent-ink: oklch(0.98 0.006 20);
+  --kimetsu-art-position: 72% 45%;
+  --kimetsu-canvas: color-mix(in oklab, oklch(0.975 0.006 35) 96%, var(--kimetsu-accent));
+  --kimetsu-surface: color-mix(in oklab, oklch(0.988 0.004 35) 97%, var(--kimetsu-accent));
+  --kimetsu-surface-raised: color-mix(in oklab, oklch(0.995 0.003 35) 98%, var(--kimetsu-accent));
+  --kimetsu-sidebar: color-mix(in oklab, oklch(0.965 0.006 35) 94%, var(--kimetsu-accent));
+  --kimetsu-text: oklch(0.25 0.018 30);
+  --kimetsu-text-muted: oklch(0.48 0.018 30);
+  --kimetsu-line: color-mix(in oklab, oklch(0.75 0.012 30) 80%, var(--kimetsu-accent));
+  --kimetsu-line-soft: color-mix(in oklab, transparent 76%, var(--kimetsu-accent));
+  --kimetsu-accent-soft: color-mix(in oklab, var(--kimetsu-accent) 14%, var(--kimetsu-surface));
+  --kimetsu-accent-hover: color-mix(in oklab, var(--kimetsu-accent) 20%, var(--kimetsu-surface));
+  --kimetsu-hero-shade: color-mix(in oklab, var(--kimetsu-surface) 93%, transparent);
+  --kimetsu-ambient-opacity: .18;
+  --kimetsu-shadow: 0 16px 42px color-mix(in oklab, var(--kimetsu-accent) 9%, transparent);
+  --kimetsu-immersive-edge: color-mix(in oklab, var(--kimetsu-surface) 46%, transparent);
+  --kimetsu-immersive-mid: color-mix(in oklab, var(--kimetsu-surface) 28%, transparent);
+  --kimetsu-immersive-far: color-mix(in oklab, var(--kimetsu-surface) 14%, transparent);
+  --kimetsu-immersive-sidebar: color-mix(in oklab, var(--kimetsu-sidebar) 50%, transparent);
+  --kimetsu-task-immersive-sidebar: color-mix(in oklab, var(--kimetsu-sidebar) 72%, transparent);
+  --kimetsu-immersive-composer: color-mix(in oklab, var(--kimetsu-surface-raised) 76%, var(--kimetsu-accent) 4%);
+  --kimetsu-immersive-line: color-mix(in oklab, var(--kimetsu-line) 76%, transparent);
+  --kimetsu-task-immersive-edge: color-mix(in oklab, var(--kimetsu-surface) 86%, transparent);
+  --kimetsu-task-immersive-mid: color-mix(in oklab, var(--kimetsu-surface) 78%, transparent);
+  --kimetsu-task-immersive-far: color-mix(in oklab, var(--kimetsu-surface) 66%, transparent);
+}
+
+:root.codex-kimetsu-skin.kimetsu-theme-dark {
+  color-scheme: dark;
+  --kimetsu-canvas: color-mix(in oklab, oklch(0.16 0.012 245) 96%, var(--kimetsu-accent));
+  --kimetsu-surface: color-mix(in oklab, oklch(0.19 0.012 245) 95%, var(--kimetsu-accent));
+  --kimetsu-surface-raised: color-mix(in oklab, oklch(0.23 0.012 245) 95%, var(--kimetsu-accent));
+  --kimetsu-sidebar: color-mix(in oklab, oklch(0.145 0.014 245) 94%, var(--kimetsu-accent));
+  --kimetsu-text: oklch(0.93 0.008 245);
+  --kimetsu-text-muted: oklch(0.7 0.012 245);
+  --kimetsu-line: color-mix(in oklab, oklch(0.42 0.018 245) 76%, var(--kimetsu-accent));
+  --kimetsu-line-soft: color-mix(in oklab, transparent 78%, var(--kimetsu-accent));
+  --kimetsu-accent-soft: color-mix(in oklab, var(--kimetsu-accent) 18%, var(--kimetsu-surface));
+  --kimetsu-accent-hover: color-mix(in oklab, var(--kimetsu-accent) 27%, var(--kimetsu-surface));
+  --kimetsu-hero-shade: color-mix(in oklab, var(--kimetsu-surface) 91%, transparent);
+  --kimetsu-ambient-opacity: .22;
+  --kimetsu-shadow: 0 18px 48px color-mix(in oklab, oklch(0.06 0.01 245) 72%, transparent);
+  --kimetsu-immersive-edge: color-mix(in oklab, var(--kimetsu-surface) 43%, transparent);
+  --kimetsu-immersive-mid: color-mix(in oklab, var(--kimetsu-surface) 27%, transparent);
+  --kimetsu-immersive-far: color-mix(in oklab, var(--kimetsu-surface) 16%, transparent);
+  --kimetsu-immersive-sidebar: color-mix(in oklab, var(--kimetsu-sidebar) 48%, transparent);
+  --kimetsu-task-immersive-sidebar: color-mix(in oklab, var(--kimetsu-sidebar) 70%, transparent);
+  --kimetsu-immersive-composer: color-mix(in oklab, var(--kimetsu-surface-raised) 88%, var(--kimetsu-accent) 5%);
+  --kimetsu-immersive-line: color-mix(in oklab, var(--kimetsu-line) 82%, transparent);
+  --kimetsu-task-immersive-edge: color-mix(in oklab, var(--kimetsu-surface) 82%, transparent);
+  --kimetsu-task-immersive-mid: color-mix(in oklab, var(--kimetsu-surface) 74%, transparent);
+  --kimetsu-task-immersive-far: color-mix(in oklab, var(--kimetsu-surface) 60%, transparent);
+}
+
+html.codex-kimetsu-skin body {
+  background: var(--kimetsu-canvas) !important;
+  color: var(--kimetsu-text) !important;
+  font-family: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif !important;
+}
+
+html.codex-kimetsu-skin aside.app-shell-left-panel {
+  color: var(--kimetsu-text) !important;
+  background: var(--kimetsu-sidebar) !important;
+  border-color: var(--kimetsu-line-soft) !important;
+  box-shadow: inset -1px 0 var(--kimetsu-line-soft) !important;
+  backdrop-filter: none !important;
+}
+
+html.codex-kimetsu-skin aside.app-shell-left-panel nav {
+  background: transparent !important;
+}
+
+html.codex-kimetsu-skin aside.app-shell-left-panel button {
+  color: var(--kimetsu-text) !important;
+  transition: background-color 180ms cubic-bezier(.22, 1, .36, 1), color 180ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+html.codex-kimetsu-skin aside.app-shell-left-panel button:hover {
+  background: var(--kimetsu-accent-soft) !important;
+}
+
+html.codex-kimetsu-skin aside.app-shell-left-panel [class~="bg-token-list-hover-background"],
+html.codex-kimetsu-skin aside.app-shell-left-panel [aria-current="page"] {
+  color: var(--kimetsu-text) !important;
+  background: var(--kimetsu-accent-hover) !important;
+  box-shadow: inset 0 0 0 1px var(--kimetsu-line-soft) !important;
+}
+
+html.codex-kimetsu-skin aside.app-shell-left-panel svg,
+html.codex-kimetsu-skin aside.app-shell-left-panel [class*="text-token"] {
+  color: currentColor;
+}
+
+html.codex-kimetsu-skin main.main-surface {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden !important;
+  color: var(--kimetsu-text) !important;
+  background: var(--kimetsu-surface) !important;
+  border-color: var(--kimetsu-line-soft) !important;
+  box-shadow: inset 0 1px color-mix(in oklab, var(--kimetsu-surface-raised) 72%, transparent) !important;
+}
+
+html.codex-kimetsu-skin main.main-surface > header.app-header-tint {
+  /* Preserve Codex's native fixed header geometry and side-panel controls. */
+  color: var(--kimetsu-text) !important;
+  background: color-mix(in oklab, var(--kimetsu-surface) 94%, transparent) !important;
+  border-color: var(--kimetsu-line-soft) !important;
+  backdrop-filter: blur(12px) saturate(1.05) !important;
+}
+
+/* Wide art also reaches the native application menu, which sits outside the
+   main surface and needs its own dark-theme legibility layer. */
+html.codex-kimetsu-skin.kimetsu-theme-dark [class~="group/application-menu-top-bar"] {
+  color: var(--kimetsu-text) !important;
+  background: color-mix(in oklab, var(--kimetsu-sidebar) 90%, transparent) !important;
+  border-bottom: 1px solid var(--kimetsu-line-soft) !important;
+  box-shadow: 0 1px 12px color-mix(in oklab, var(--kimetsu-canvas) 72%, transparent) !important;
+  backdrop-filter: blur(16px) saturate(.9) !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-theme-dark [class~="group/application-menu-top-bar"] button,
+html.codex-kimetsu-skin.kimetsu-theme-dark [class~="group/application-menu-top-bar"] svg {
+  color: var(--kimetsu-text) !important;
+  text-shadow: 0 1px 2px color-mix(in oklab, var(--kimetsu-canvas) 82%, transparent) !important;
+}
+
+#codex-kimetsu-skin-chrome {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+html.codex-kimetsu-skin [role="main"] {
+  color: var(--kimetsu-text);
+}
+
+/* Task routes use the art as a quiet atmospheric layer. Wide banners are shown
+   at their natural width instead of being enlarged and center-cropped. */
+html.codex-kimetsu-skin .kimetsu-task {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+  background: var(--kimetsu-surface) !important;
+}
+
+html.codex-kimetsu-skin .kimetsu-task::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--kimetsu-ambient-opacity);
+  background-image: var(--kimetsu-art);
+  background-repeat: no-repeat;
+  background-position: var(--kimetsu-art-position);
+  background-size: cover;
+  mask-image: linear-gradient(to bottom, oklch(0 0 0) 0, oklch(0 0 0 / .92) 38%, transparent 88%);
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide .kimetsu-task::before {
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:not(.kimetsu-task-banner) .kimetsu-task::before {
+  background-position: var(--kimetsu-art-position);
+  background-size: cover;
+  mask-image: linear-gradient(to bottom, oklch(0 0 0) 0, oklch(0 0 0 / .92) 44%, oklch(0 0 0 / .72) 100%);
+}
+
+html.codex-kimetsu-skin.kimetsu-task-banner .kimetsu-task::before {
+  bottom: auto;
+  height: min(46vh, 520px);
+  opacity: calc(var(--kimetsu-ambient-opacity) * 1.8);
+  mask-image: linear-gradient(to bottom, oklch(0 0 0) 0, oklch(0 0 0 / .9) 52%, transparent 100%);
+}
+
+html.codex-kimetsu-skin.kimetsu-task-off .kimetsu-task::before {
+  display: none;
+}
+
+html.codex-kimetsu-skin .kimetsu-task > * {
+  position: relative;
+  z-index: 1;
+}
+
+html.codex-kimetsu-skin .kimetsu-task article,
+html.codex-kimetsu-skin .kimetsu-task [data-message-author-role] {
+  color: var(--kimetsu-text);
+}
+
+/* The home route keeps the source image expressive, with a semantic safe-area
+   wash selected from image focus metadata. */
+html.codex-kimetsu-skin .kimetsu-home {
+  --thread-content-max-width: min(1180px, calc(100cqw - 56px)) !important;
+  overflow-x: hidden !important;
+  background: var(--kimetsu-surface) !important;
+}
+
+.kimetsu-home > div:first-child {
+  min-height: 100% !important;
+  padding-top: 24px !important;
+}
+
+.kimetsu-home > div:first-child > div:first-child {
+  flex: 0 0 clamp(390px, 42cqw, 510px) !important;
+  min-height: 390px !important;
+  align-items: flex-start !important;
+  padding-bottom: 0 !important;
+}
+
+.kimetsu-home > div:first-child > div:first-child > div:first-child {
+  position: relative !important;
+  isolation: isolate;
+  width: calc(100% - 56px) !important;
+  max-width: 1180px !important;
+  height: clamp(230px, 27cqw, 326px) !important;
+  min-height: 230px !important;
+  flex: 0 1 auto !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid var(--kimetsu-line) !important;
+  border-radius: 20px !important;
+  background-image: var(--kimetsu-art) !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-position: var(--kimetsu-art-position) !important;
+  box-shadow: var(--kimetsu-shadow) !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide .kimetsu-home > div:first-child > div:first-child > div:first-child {
+  background-size: cover !important;
+}
+
+.kimetsu-home > div:first-child > div:first-child > div:first-child::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--kimetsu-hero-shade) 0 32%, transparent 70%);
+}
+
+html.codex-kimetsu-skin.kimetsu-safe-right .kimetsu-home > div:first-child > div:first-child > div:first-child::before {
+  background: linear-gradient(270deg, var(--kimetsu-hero-shade) 0 32%, transparent 70%);
+}
+
+html.codex-kimetsu-skin.kimetsu-safe-center .kimetsu-home > div:first-child > div:first-child > div:first-child::before {
+  background: radial-gradient(ellipse at center, var(--kimetsu-hero-shade) 0 23%, transparent 72%);
+}
+
+html.codex-kimetsu-skin.kimetsu-safe-none .kimetsu-home > div:first-child > div:first-child > div:first-child::before {
+  background: transparent;
+}
+
+.kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  height: 100%;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 30px 40px;
+}
+
+.kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  width: min(48%, 520px) !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-safe-right .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child {
+  justify-content: flex-end !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-safe-right .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  align-items: flex-end !important;
+  text-align: right !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-safe-center .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child {
+  justify-content: center !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-safe-center .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.kimetsu-home [data-testid="home-icon"] {
+  display: none !important;
+}
+
+.kimetsu-home [data-feature="game-source"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: inherit !important;
+  justify-content: flex-start !important;
+  max-width: 100% !important;
+  color: var(--kimetsu-text) !important;
+  font-size: 28px !important;
+  line-height: 1.25 !important;
+  font-weight: 720 !important;
+  text-align: inherit !important;
+  text-shadow: 0 1px 16px var(--kimetsu-surface);
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.kimetsu-home [data-feature="game-source"] button {
+  margin: 0 4px;
+  padding: 2px 7px;
+  border: 1px solid var(--kimetsu-line);
+  border-radius: 999px;
+  color: var(--kimetsu-text) !important;
+  background: var(--kimetsu-accent-soft) !important;
+  text-underline-offset: 4px;
+}
+
+.kimetsu-home > div:first-child > div:first-child > div:first-child > div:nth-child(2) {
+  left: 0 !important;
+  right: 0 !important;
+  top: 100% !important;
+  margin-top: 16px !important;
+}
+
+.kimetsu-home .group\/home-suggestions {
+  overflow: visible !important;
+}
+
+.kimetsu-home .group\/home-suggestions button {
+  min-height: 112px !important;
+  padding: 16px 14px !important;
+  color: var(--kimetsu-text) !important;
+  border: 1px solid var(--kimetsu-line-soft) !important;
+  border-radius: 16px !important;
+  background: var(--kimetsu-surface-raised) !important;
+  box-shadow: 0 8px 24px color-mix(in oklab, var(--kimetsu-accent) 6%, transparent) !important;
+  transition: transform 180ms cubic-bezier(.22, 1, .36, 1), border-color 180ms cubic-bezier(.22, 1, .36, 1), background-color 180ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.kimetsu-home .group\/home-suggestions button:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--kimetsu-line) !important;
+  background: var(--kimetsu-accent-soft) !important;
+}
+
+.kimetsu-home .group\/home-suggestions button > span:first-child > span:first-child {
+  width: 38px;
+  height: 38px;
+  display: grid !important;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--kimetsu-accent-ink) !important;
+  background: var(--kimetsu-accent) !important;
+  box-shadow: 0 0 0 6px var(--kimetsu-accent-soft);
+}
+
+.kimetsu-home .group\/home-suggestions button svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: currentColor !important;
+}
+
+html.codex-kimetsu-skin .composer-surface-chrome {
+  color: var(--kimetsu-text) !important;
+  border: 1px solid var(--kimetsu-line) !important;
+  border-radius: 18px !important;
+  background: color-mix(in oklab, var(--kimetsu-surface-raised) 95%, transparent) !important;
+  box-shadow: 0 12px 34px color-mix(in oklab, var(--kimetsu-accent) 8%, transparent) !important;
+  backdrop-filter: blur(14px) saturate(1.06) !important;
+}
+
+html.codex-kimetsu-skin .ProseMirror {
+  color: var(--kimetsu-text) !important;
+  caret-color: var(--kimetsu-accent) !important;
+}
+
+html.codex-kimetsu-skin button[class~="bg-token-foreground"] {
+  color: var(--kimetsu-accent-ink) !important;
+  background: var(--kimetsu-accent) !important;
+  box-shadow: none !important;
+}
+
+html.codex-kimetsu-skin [data-message-author-role],
+html.codex-kimetsu-skin article {
+  color: var(--kimetsu-text);
+}
+
+/* A 16:9 or wider image is painted once on the native window. The sidebar,
+   title bar and route surface become coordinated readability layers instead
+   of repeating or cropping the image inside individual panels. */
+html.codex-kimetsu-skin.kimetsu-art-wide:has(main.main-surface.kimetsu-home-shell) body,
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner):has(main.main-surface:not(.kimetsu-home-shell)) body {
+  background-color: var(--kimetsu-canvas) !important;
+  background-image: var(--kimetsu-art) !important;
+  background-position: var(--kimetsu-art-position) !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:has(main.main-surface.kimetsu-home-shell)
+  aside.app-shell-left-panel,
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner):has(main.main-surface:not(.kimetsu-home-shell))
+  aside.app-shell-left-panel {
+  background: linear-gradient(90deg,
+    var(--kimetsu-immersive-sidebar),
+    var(--kimetsu-immersive-edge)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner):has(main.main-surface:not(.kimetsu-home-shell))
+  aside.app-shell-left-panel {
+  background: linear-gradient(90deg,
+    var(--kimetsu-task-immersive-sidebar),
+    var(--kimetsu-task-immersive-edge)) !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:has(main.main-surface.kimetsu-home-shell)
+  aside.app-shell-left-panel::after,
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner):has(main.main-surface:not(.kimetsu-home-shell))
+  aside.app-shell-left-panel::after {
+  background: transparent !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface.kimetsu-home-shell,
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner) main.main-surface:not(.kimetsu-home-shell) {
+  background: linear-gradient(90deg,
+    var(--kimetsu-immersive-edge),
+    var(--kimetsu-immersive-mid) 64%,
+    var(--kimetsu-immersive-far)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner) main.main-surface:not(.kimetsu-home-shell) {
+  background: linear-gradient(90deg,
+    var(--kimetsu-task-immersive-edge),
+    var(--kimetsu-task-immersive-mid) 64%,
+    var(--kimetsu-task-immersive-far)) !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner) .kimetsu-task {
+  background: transparent !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner) .kimetsu-task::before {
+  content: none !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface > header.app-header-tint {
+  background: transparent !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  text-shadow: 0 1px 2px color-mix(in oklab, var(--kimetsu-canvas) 86%, transparent),
+    0 0 8px color-mix(in oklab, var(--kimetsu-canvas) 58%, transparent) !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface > header.app-header-tint svg {
+  filter: drop-shadow(0 1px 2px color-mix(in oklab, var(--kimetsu-canvas) 72%, transparent));
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface [role="main"] {
+  background: transparent !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface.kimetsu-home-shell
+  .kimetsu-home > div:first-child > div:first-child > div:first-child {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface.kimetsu-home-shell
+  .kimetsu-home > div:first-child > div:first-child > div:first-child::before {
+  content: none !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface.kimetsu-home-shell
+  .kimetsu-home .group\/home-suggestions button {
+  background: color-mix(in oklab, var(--kimetsu-surface-raised) 58%, transparent) !important;
+  box-shadow: 0 8px 22px color-mix(in oklab, var(--kimetsu-canvas) 18%, transparent),
+    inset 0 0 0 1px var(--kimetsu-immersive-line) !important;
+  backdrop-filter: blur(8px) saturate(1.04) !important;
+}
+
+/* The composer owns exactly one solid readability surface. Native bottom
+   gradients are cleared below so the control never appears double stacked. */
+html.codex-kimetsu-skin.kimetsu-art-wide .composer-surface-chrome {
+  color: var(--kimetsu-text) !important;
+  background: var(--kimetsu-immersive-composer) !important;
+  border: 0 !important;
+  box-shadow: 0 10px 30px color-mix(in oklab, var(--kimetsu-canvas) 20%, transparent),
+    inset 0 0 0 1px var(--kimetsu-immersive-line) !important;
+  backdrop-filter: none !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide .composer-surface-chrome::before {
+  content: none !important;
+}
+
+/* Current Codex builds render the home project picker in a hashed utility bar.
+   Merge it with the composer so the bottom control reads as one surface. */
+html.codex-kimetsu-skin .kimetsu-home-utility {
+  border: 1px solid var(--kimetsu-line) !important;
+  border-bottom: 0 !important;
+  border-radius: 18px 18px 0 0 !important;
+  background: var(--kimetsu-immersive-composer) !important;
+  box-shadow: none !important;
+}
+
+html.codex-kimetsu-skin .kimetsu-home:has(.kimetsu-home-utility) .composer-surface-chrome {
+  border-radius: 0 0 18px 18px !important;
+  box-shadow: 0 10px 30px color-mix(in oklab, var(--kimetsu-canvas) 20%, transparent),
+    inset 1px 0 var(--kimetsu-immersive-line),
+    inset -1px 0 var(--kimetsu-immersive-line),
+    inset 0 -1px var(--kimetsu-immersive-line) !important;
+}
+
+/* Plugins, scheduled tasks and search routes ship opaque sticky wrappers.
+   Clear only full-window or sticky route chrome, leaving functional cards and
+   their hover states intact. */
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner)
+  main.main-surface:not(.kimetsu-home-shell) div.sticky:has(input[type="text"]),
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner)
+  main.main-surface:not(.kimetsu-home-shell) div.sticky:has(input[type="text"])::after {
+  background: transparent !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner)
+  main.main-surface:not(.kimetsu-home-shell) div.no-drag:has(> input[type="text"]) {
+  background: var(--kimetsu-immersive-composer) !important;
+  border: 0 !important;
+  box-shadow: inset 0 0 0 1px var(--kimetsu-immersive-line) !important;
+  backdrop-filter: none !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide:is(.kimetsu-task-ambient, .kimetsu-task-banner)
+  main.main-surface:not(.kimetsu-home-shell)
+  [class~="bg-token-main-surface-primary"][class~="h-full"][class~="w-full"] {
+  background: transparent !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface .app-shell-main-content-frame {
+  border-top: 0 !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface .app-shell-main-content-top-fade {
+  display: none !important;
+  background: transparent !important;
+}
+
+html.codex-kimetsu-skin.kimetsu-art-wide main.main-surface
+  .thread-scroll-container .bg-gradient-to-t.from-token-main-surface-primary {
+  background: transparent !important;
+}
+
+@media (max-width: 1120px) {
+  html.codex-kimetsu-skin .kimetsu-home {
+    --thread-content-max-width: min(940px, calc(100cqw - 36px)) !important;
+  }
+
+  .kimetsu-home > div:first-child > div:first-child > div:first-child {
+    width: calc(100% - 36px) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .kimetsu-home > div:first-child {
+    padding-top: 16px !important;
+  }
+
+  .kimetsu-home > div:first-child > div:first-child {
+    flex-basis: 370px !important;
+    min-height: 370px !important;
+  }
+
+  .kimetsu-home > div:first-child > div:first-child > div:first-child {
+    height: 220px !important;
+    min-height: 220px !important;
+    border-radius: 16px !important;
+  }
+
+  .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child {
+    padding: 24px;
+  }
+
+  .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+    width: 62% !important;
+  }
+
+  .kimetsu-home [data-feature="game-source"] {
+    font-size: 22px !important;
+  }
+
+  .kimetsu-home .group\/home-suggestions button {
+    min-height: 104px !important;
+    padding: 12px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .kimetsu-home > div:first-child > div:first-child > div:first-child::before,
+  html.codex-kimetsu-skin.kimetsu-safe-right .kimetsu-home > div:first-child > div:first-child > div:first-child::before,
+  html.codex-kimetsu-skin.kimetsu-safe-center .kimetsu-home > div:first-child > div:first-child > div:first-child::before {
+    background: color-mix(in oklab, var(--kimetsu-surface) 78%, transparent);
+  }
+
+  .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child,
+  html.codex-kimetsu-skin.kimetsu-safe-right .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child,
+  html.codex-kimetsu-skin.kimetsu-safe-center .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child {
+    justify-content: center !important;
+  }
+
+  .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child,
+  html.codex-kimetsu-skin.kimetsu-safe-right .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child,
+  html.codex-kimetsu-skin.kimetsu-safe-center .kimetsu-home > div:first-child > div:first-child > div:first-child > div:first-child > div:first-child {
+    width: min(88%, 440px) !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.codex-kimetsu-skin *,
+  html.codex-kimetsu-skin *::before,
+  html.codex-kimetsu-skin *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}

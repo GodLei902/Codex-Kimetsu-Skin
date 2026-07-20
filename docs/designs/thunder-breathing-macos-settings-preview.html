@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thunder Breathing macOS Settings Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --wallpaper: url("../../macos/presets/preset-thunder-breathing/background.jpg");
+      --bg: #070a0f;
+      --panel: rgba(10, 14, 20, .78);
+      --panel-strong: rgba(9, 12, 18, .94);
+      --panel-card: rgba(13, 18, 27, .92);
+      --text: #f7f4e8;
+      --muted: #aab7bd;
+      --dim: #78868d;
+      --bolt: #fff8bb;
+      --bolt-soft: #f6d36a;
+      --amber: #e1a04d;
+      --orange: #b95f2a;
+      --steel: #5f8aa6;
+      --line: rgba(255, 232, 142, .22);
+      --line-cool: rgba(95, 138, 166, .24);
+      --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Avenir Next", "PingFang SC", "Microsoft YaHei UI", system-ui, sans-serif;
+      --font-display: "Avenir Next Condensed", "DIN Condensed", "SF Pro Display", "PingFang SC", system-ui, sans-serif;
+      --font-mono: "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-width: 2048px;
+      min-height: 1280px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      letter-spacing: 0;
+    }
+
+    .settings-app {
+      position: relative;
+      width: 2048px;
+      height: 1280px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(7, 10, 15, .96), rgba(7, 10, 15, .84) 36%, rgba(7, 10, 15, .70) 64%, rgba(7, 10, 15, .62)),
+        linear-gradient(180deg, rgba(7, 10, 15, .62), rgba(7, 10, 15, .78)),
+        var(--wallpaper) 72% 44% / cover no-repeat;
+    }
+
+    .settings-app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 70% 34%, rgba(255, 248, 187, .10), transparent 27%),
+        linear-gradient(112deg, rgba(255, 248, 187, .07), transparent 19%),
+        linear-gradient(292deg, rgba(95, 138, 166, .12), transparent 36%);
+      mix-blend-mode: screen;
+    }
+
+    .traffic {
+      position: absolute;
+      z-index: 10;
+      top: 21px;
+      left: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .traffic span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ff5f57;
+    }
+
+    .traffic span:nth-child(2) { background: #ffbd2e; }
+    .traffic span:nth-child(3) { background: #28c840; }
+
+    .settings-sidebar {
+      position: absolute;
+      z-index: 2;
+      inset: 0 auto 0 0;
+      width: 426px;
+      padding: 63px 18px 24px;
+      background:
+        linear-gradient(90deg, rgba(8, 11, 16, .88), rgba(8, 11, 16, .58) 88%, rgba(8, 11, 16, .18)),
+        linear-gradient(180deg, rgba(255, 248, 187, .06), transparent 30%);
+      border-right: 1px solid rgba(255, 248, 187, .10);
+      color: var(--muted);
+    }
+
+    .back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 32px;
+      padding: 0 9px;
+      color: rgba(247, 244, 232, .48);
+      font-size: 15px;
+      font-weight: 720;
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      height: 34px;
+      margin: 10px 0 17px;
+      padding: 0 12px;
+      border: 1px solid rgba(255, 248, 187, .18);
+      border-radius: 8px;
+      background: rgba(9, 12, 18, .58);
+      color: rgba(247, 244, 232, .44);
+      box-shadow: inset 0 1px rgba(255, 248, 187, .06);
+    }
+
+    .search span:first-child {
+      color: rgba(255, 248, 187, .58);
+      font-size: 17px;
+    }
+
+    .settings-nav {
+      height: calc(100% - 92px);
+      overflow: hidden;
+      padding-right: 3px;
+    }
+
+    .nav-section {
+      margin-bottom: 18px;
+    }
+
+    .nav-title {
+      padding: 0 12px 7px;
+      color: rgba(247, 244, 232, .40);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+
+    .nav-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 8px;
+      color: rgba(247, 244, 232, .70);
+      font-size: 16px;
+      font-weight: 670;
+    }
+
+    .nav-row.active {
+      border: 1px solid rgba(255, 248, 187, .23);
+      background: linear-gradient(90deg, rgba(255, 248, 187, .15), rgba(225, 160, 77, .10), rgba(95, 138, 166, .06));
+      color: var(--text);
+      box-shadow: inset 3px 0 0 var(--bolt-soft), 0 10px 22px rgba(0, 0, 0, .16);
+    }
+
+    .nav-icon {
+      width: 20px;
+      color: rgba(255, 248, 187, .76);
+      text-align: center;
+    }
+
+    .settings-main {
+      position: absolute;
+      z-index: 1;
+      inset: 0 0 0 426px;
+      background:
+        linear-gradient(90deg, rgba(7, 10, 15, .58), rgba(7, 10, 15, .74) 58%, rgba(7, 10, 15, .88)),
+        linear-gradient(180deg, rgba(7, 10, 15, .40), rgba(7, 10, 15, .78));
+    }
+
+    .top-space {
+      height: 68px;
+    }
+
+    .settings-scroll {
+      position: absolute;
+      inset: 58px 0 0;
+      overflow: hidden;
+      padding-bottom: 48px;
+    }
+
+    .settings-scroll::after {
+      content: "";
+      position: absolute;
+      top: 17px;
+      right: 34px;
+      width: 8px;
+      height: 870px;
+      border-radius: 999px;
+      background: rgba(247, 244, 232, .10);
+    }
+
+    .settings-scroll::before {
+      content: "";
+      position: absolute;
+      top: 17px;
+      right: 34px;
+      z-index: 2;
+      width: 8px;
+      height: 322px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255, 248, 187, .44), rgba(225, 160, 77, .38));
+      box-shadow: 0 0 16px rgba(255, 248, 187, .16);
+    }
+
+    .content {
+      width: 930px;
+      margin: 8px auto 0;
+    }
+
+    .page-title {
+      margin: 0 0 48px;
+      color: var(--bolt);
+      font-family: var(--font-display);
+      font-size: 36px;
+      line-height: 1;
+      font-weight: 850;
+      letter-spacing: 0;
+      text-shadow: 0 0 18px rgba(255, 248, 187, .18);
+    }
+
+    .section {
+      margin-bottom: 42px;
+    }
+
+    .section h2 {
+      margin: 0 0 18px;
+      color: rgba(247, 244, 232, .82);
+      font-size: 17px;
+      font-weight: 760;
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid rgba(255, 248, 187, .20);
+      border-radius: 8px;
+      background:
+        linear-gradient(180deg, rgba(17, 23, 32, .93), rgba(11, 16, 24, .94)),
+        var(--panel-card);
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, .28),
+        inset 0 1px rgba(255, 248, 187, .09);
+    }
+
+    .row {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      min-height: 72px;
+      align-items: center;
+      padding: 15px 20px;
+    }
+
+    .row + .row::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255, 248, 187, .18), rgba(95, 138, 166, .16), transparent);
+    }
+
+    .label {
+      color: rgba(247, 244, 232, .88);
+      font-size: 16px;
+      font-weight: 760;
+    }
+
+    .desc {
+      margin-top: 5px;
+      color: rgba(170, 183, 189, .84);
+      font-size: 14px;
+      line-height: 1.45;
+      font-weight: 520;
+    }
+
+    .switch {
+      width: 42px;
+      height: 24px;
+      padding: 2px;
+      border-radius: 999px;
+      background: rgba(255, 248, 187, .14);
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 248, 187, .18),
+        0 0 14px rgba(255, 248, 187, .13);
+    }
+
+    .switch::after {
+      content: "";
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin-left: 18px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, var(--bolt), var(--bolt-soft));
+      box-shadow: 0 0 12px rgba(255, 248, 187, .30);
+    }
+
+    .switch.off {
+      background: rgba(120, 134, 141, .24);
+      box-shadow: inset 0 0 0 1px rgba(170, 183, 189, .10);
+    }
+
+    .switch.off::after {
+      margin-left: 0;
+      background: rgba(247, 244, 232, .88);
+      box-shadow: none;
+    }
+
+    .button,
+    .segmented {
+      display: inline-flex;
+      align-items: center;
+      height: 34px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 248, 187, .18);
+      background: rgba(255, 248, 187, .06);
+      color: rgba(247, 244, 232, .82);
+      font-size: 15px;
+      font-weight: 720;
+      white-space: nowrap;
+    }
+
+    .button {
+      gap: 8px;
+      padding: 0 12px;
+    }
+
+    .button .badge {
+      width: 20px;
+      height: 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 5px;
+      background: rgba(95, 138, 166, .24);
+      color: var(--bolt);
+      font-size: 13px;
+    }
+
+    .segmented {
+      overflow: hidden;
+      padding: 3px;
+      gap: 2px;
+      background: rgba(7, 10, 15, .42);
+    }
+
+    .segmented span {
+      min-width: 56px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 4px;
+      color: rgba(247, 244, 232, .48);
+    }
+
+    .segmented span.active {
+      color: #11151d;
+      background: linear-gradient(180deg, var(--bolt), var(--bolt-soft));
+      box-shadow: 0 0 14px rgba(255, 248, 187, .16);
+    }
+
+    .action {
+      height: 34px;
+      min-width: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      background: rgba(255, 248, 187, .10);
+      color: var(--bolt);
+      font-size: 15px;
+      font-weight: 760;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-app">
+    <div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+    <aside class="settings-sidebar">
+      <div class="back">← 返回应用</div>
+      <div class="search"><span>⌕</span><span>搜索设置...</span></div>
+      <div class="settings-nav">
+        <div class="nav-section">
+          <div class="nav-title">个人</div>
+          <div class="nav-row active"><span class="nav-icon">⚙</span><span>常规</span></div>
+          <div class="nav-row"><span class="nav-icon">☼</span><span>外观</span></div>
+          <div class="nav-row"><span class="nav-icon">◌</span><span>语音</span></div>
+          <div class="nav-row"><span class="nav-icon">◈</span><span>配置</span></div>
+          <div class="nav-row"><span class="nav-icon">◉</span><span>个性化</span></div>
+          <div class="nav-row"><span class="nav-icon">☾</span><span>宠物</span></div>
+          <div class="nav-row"><span class="nav-icon">⌘</span><span>键盘快捷键</span></div>
+          <div class="nav-row"><span class="nav-icon">◎</span><span>账户</span></div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">集成</div>
+          <div class="nav-row"><span class="nav-icon">⌗</span><span>智能快照</span></div>
+          <div class="nav-row"><span class="nav-icon">◇</span><span>插件</span></div>
+          <div class="nav-row"><span class="nav-icon">▭</span><span>浏览器</span></div>
+          <div class="nav-row"><span class="nav-icon">✧</span><span>电脑操控</span></div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">编码</div>
+          <div class="nav-row"><span class="nav-icon">⌁</span><span>钩子</span></div>
+          <div class="nav-row"><span class="nav-icon">◎</span><span>连接</span></div>
+          <div class="nav-row"><span class="nav-icon">⑂</span><span>Git</span></div>
+          <div class="nav-row"><span class="nav-icon">▱</span><span>环境</span></div>
+          <div class="nav-row"><span class="nav-icon">⌯</span><span>工作树</span></div>
+        </div>
+        <div class="nav-section">
+          <div class="nav-title">已归档</div>
+          <div class="nav-row"><span class="nav-icon">▤</span><span>已归档任务</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="settings-main">
+      <div class="top-space"></div>
+      <div class="settings-scroll">
+        <div class="content">
+          <h1 class="page-title">常规</h1>
+          <section class="section">
+            <h2>权限</h2>
+            <div class="card">
+              <div class="row">
+                <div>
+                  <div class="label">默认权限</div>
+                  <div class="desc">默认情况下，ChatGPT 可以读取和编辑其工作空间中的文件。需要时，它可以请求额外访问权限</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">自动审核</div>
+                  <div class="desc">ChatGPT 可以读取和编辑其工作空间中的文件。ChatGPT 会自动审查额外访问权限请求。</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">完全访问权限</div>
+                  <div class="desc">当 ChatGPT 以完整访问权限运行时，它无需你的批准即可编辑电脑上的任何文件，并运行可访问网络的命令。</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2>常规</h2>
+            <div class="card">
+              <div class="row">
+                <div>
+                  <div class="label">默认文件打开目标</div>
+                  <div class="desc">默认打开文件和文件夹的位置</div>
+                </div>
+                <div class="button"><span class="badge">⌘</span><span>VS Code⌄</span></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">语言</div>
+                  <div class="desc">应用 UI 语言</div>
+                </div>
+                <div class="button">自动检测⌄</div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">在菜单栏中显示</div>
+                  <div class="desc">关闭主窗口后，仍在 macOS 菜单栏中保留 ChatGPT</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">底部面板</div>
+                  <div class="desc">在应用标题栏中显示底部面板控件</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">默认终端位置</div>
+                  <div class="desc">选择终端快捷键和环境操作在何处打开终端标签页</div>
+                </div>
+                <div class="segmented"><span class="active">底部</span><span>右侧</span></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">运行时防止系统休眠</div>
+                  <div class="desc">在 ChatGPT 运行任务时，让电脑保持唤醒状态</div>
+                </div>
+                <div class="switch off"></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">建议提示</div>
+                  <div class="desc">搜索项目文件和已连接应用，建议下一步操作</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">从其他 AI 应用导入工作内容</div>
+                  <div class="desc">导入您的设置、项目和最近聊天记录</div>
+                </div>
+                <div class="action">导入</div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">开源许可证</div>
+                  <div class="desc">捆绑依赖项的第三方声明</div>
+                </div>
+                <div class="action">查看</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section">
+            <h2>编辑器</h2>
+            <div class="card">
+              <div class="row">
+                <div>
+                  <div class="label">显示上下文窗口使用情况</div>
+                  <div class="desc">在编辑器中显示上下文窗口使用情况</div>
+                </div>
+                <div class="switch"></div>
+              </div>
+              <div class="row">
+                <div>
+                  <div class="label">发送快捷键</div>
+                  <div class="desc">选择按 Enter 时是发送提示还是插入新行</div>
+                </div>
+                <div class="button">按 Enter 键⌄</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

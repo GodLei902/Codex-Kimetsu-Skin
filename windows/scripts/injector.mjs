@@ -7,7 +7,7 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.2.0";
+const SKIN_VERSION = "1.2.2";
 const MAX_ART_BYTES = 16 * 1024 * 1024;
 const STRONG_THEME_AUDIT_MS = 30000;
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]", "::1"]);
@@ -333,7 +333,7 @@ async function loadTheme(themeDir) {
     ? raw.palette : {};
   const theme = {
     id: normalizedText(raw.id, "id", "custom", 80),
-    name: normalizedText(raw.name, "name", "Codex Dream Skin", 120),
+    name: normalizedText(raw.name, "name", "Codex Kimetsu Skin", 120),
     image,
     appearance: normalizedChoice(raw.appearance, "appearance", THEME_CHOICES.appearance, "auto"),
     art: {
@@ -384,7 +384,7 @@ async function loadTheme(themeDir) {
 async function loadPayload(themeDir = path.join(root, "assets"), candidateTheme = null) {
   const loadedTheme = candidateTheme ?? await loadTheme(themeDir);
   const [css, template] = await Promise.all([
-    fs.readFile(path.join(root, "assets", "dream-skin.css"), "utf8"),
+    fs.readFile(path.join(root, "assets", "kimetsu-skin.css"), "utf8"),
     fs.readFile(path.join(root, "assets", "renderer-inject.js"), "utf8"),
   ]);
   const extension = path.extname(loadedTheme.imagePath).toLowerCase();
@@ -392,9 +392,9 @@ async function loadPayload(themeDir = path.join(root, "assets"), candidateTheme 
     : extension === ".webp" ? "image/webp" : "image/png";
   const artDataUrl = `data:${mime};base64,${loadedTheme.imageBytes.toString("base64")}`;
   const payload = template
-    .replace("__DREAM_CSS_JSON__", JSON.stringify(css))
-    .replace("__DREAM_ART_JSON__", JSON.stringify(artDataUrl))
-    .replace("__DREAM_THEME_JSON__", JSON.stringify(loadedTheme.theme));
+    .replace("__KIMETSU_CSS_JSON__", JSON.stringify(css))
+    .replace("__KIMETSU_ART_JSON__", JSON.stringify(artDataUrl))
+    .replace("__KIMETSU_THEME_JSON__", JSON.stringify(loadedTheme.theme));
   const { imageBytes: _imageBytes, ...themeState } = loadedTheme;
   return { ...themeState, payload };
 }
@@ -487,8 +487,8 @@ async function applyToSession(session, payload) {
 
 export function earlyPayloadFor(payload, revision) {
   return `(() => {
-    const generationKey = "__CODEX_DREAM_SKIN_EARLY_GENERATION__";
-    const appliedKey = "__CODEX_DREAM_SKIN_EARLY_APPLIED__";
+    const generationKey = "__CODEX_KIMETSU_SKIN_EARLY_GENERATION__";
+    const appliedKey = "__CODEX_KIMETSU_SKIN_EARLY_APPLIED__";
     const generation = ${JSON.stringify(revision)};
     window[generationKey] = generation;
     let observer = null;
@@ -534,40 +534,40 @@ async function removeEarlyPayload(session, identifier) {
 
 async function removeFromSession(session) {
   return session.evaluate(`(() => {
-    window.__CODEX_DREAM_SKIN_DISABLED__ = true;
-    const state = window.__CODEX_DREAM_SKIN_STATE__;
+    window.__CODEX_KIMETSU_SKIN_DISABLED__ = true;
+    const state = window.__CODEX_KIMETSU_SKIN_STATE__;
     if (state?.cleanup) return state.cleanup();
     document.documentElement?.classList.remove(
-      'codex-dream-skin', 'dream-theme-light', 'dream-theme-dark',
-      'dream-art-wide', 'dream-art-standard', 'dream-focus-left',
-      'dream-focus-center', 'dream-focus-right', 'dream-safe-left',
-      'dream-safe-center', 'dream-safe-right', 'dream-safe-none',
-      'dream-task-ambient', 'dream-task-banner', 'dream-task-off'
+      'codex-kimetsu-skin', 'kimetsu-theme-light', 'kimetsu-theme-dark',
+      'kimetsu-art-wide', 'kimetsu-art-standard', 'kimetsu-focus-left',
+      'kimetsu-focus-center', 'kimetsu-focus-right', 'kimetsu-safe-left',
+      'kimetsu-safe-center', 'kimetsu-safe-right', 'kimetsu-safe-none',
+      'kimetsu-task-ambient', 'kimetsu-task-banner', 'kimetsu-task-off'
     );
     for (const property of [
-      '--dream-art', '--dream-art-position', '--dream-focus-x', '--dream-focus-y',
-      '--dream-accent', '--dream-accent-ink', '--dream-image-luma'
+      '--kimetsu-art', '--kimetsu-art-position', '--kimetsu-focus-x', '--kimetsu-focus-y',
+      '--kimetsu-accent', '--kimetsu-accent-ink', '--kimetsu-image-luma'
     ]) document.documentElement?.style.removeProperty(property);
-    document.querySelectorAll('.dream-home').forEach((node) => node.classList.remove('dream-home'));
-    document.querySelectorAll('.dream-task').forEach((node) => node.classList.remove('dream-task'));
-    document.querySelectorAll('.dream-home-shell').forEach((node) => node.classList.remove('dream-home-shell'));
-    document.getElementById('codex-dream-skin-style')?.remove();
-    document.getElementById('codex-dream-skin-chrome')?.remove();
-    delete window.__CODEX_DREAM_SKIN_STATE__;
+    document.querySelectorAll('.kimetsu-home').forEach((node) => node.classList.remove('kimetsu-home'));
+    document.querySelectorAll('.kimetsu-task').forEach((node) => node.classList.remove('kimetsu-task'));
+    document.querySelectorAll('.kimetsu-home-shell').forEach((node) => node.classList.remove('kimetsu-home-shell'));
+    document.getElementById('codex-kimetsu-skin-style')?.remove();
+    document.getElementById('codex-kimetsu-skin-chrome')?.remove();
+    delete window.__CODEX_KIMETSU_SKIN_STATE__;
     return true;
   })()`);
 }
 
 async function verifyRemovedSession(session) {
   return session.evaluate(`(() =>
-    !document.documentElement.classList.contains('codex-dream-skin') &&
-    !document.documentElement.style.getPropertyValue('--dream-art') &&
-    !document.querySelector('.dream-home') &&
-    !document.querySelector('.dream-task') &&
-    !document.querySelector('.dream-home-shell') &&
-    !document.getElementById('codex-dream-skin-style') &&
-    !document.getElementById('codex-dream-skin-chrome') &&
-    !window.__CODEX_DREAM_SKIN_STATE__
+    !document.documentElement.classList.contains('codex-kimetsu-skin') &&
+    !document.documentElement.style.getPropertyValue('--kimetsu-art') &&
+    !document.querySelector('.kimetsu-home') &&
+    !document.querySelector('.kimetsu-task') &&
+    !document.querySelector('.kimetsu-home-shell') &&
+    !document.getElementById('codex-kimetsu-skin-style') &&
+    !document.getElementById('codex-kimetsu-skin-chrome') &&
+    !window.__CODEX_KIMETSU_SKIN_STATE__
   )()`);
 }
 
@@ -578,16 +578,16 @@ async function verifySession(session) {
       const r = node.getBoundingClientRect();
       return { x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height) };
     };
-    const home = document.querySelector('.dream-home');
+    const home = document.querySelector('.kimetsu-home');
     const suggestions = home?.querySelector('.group\\\\/home-suggestions') ?? null;
     const cards = suggestions ? [...suggestions.querySelectorAll('button')].map(box) : [];
     const result = {
-      installed: document.documentElement.classList.contains('codex-dream-skin'),
-      version: window.__CODEX_DREAM_SKIN_STATE__?.version ?? null,
+      installed: document.documentElement.classList.contains('codex-kimetsu-skin'),
+      version: window.__CODEX_KIMETSU_SKIN_STATE__?.version ?? null,
       expectedVersion: ${JSON.stringify(SKIN_VERSION)},
-      stylePresent: Boolean(document.getElementById('codex-dream-skin-style')),
-      chromePresent: Boolean(document.getElementById('codex-dream-skin-chrome')),
-      chromePointerEvents: getComputedStyle(document.getElementById('codex-dream-skin-chrome') || document.body).pointerEvents,
+      stylePresent: Boolean(document.getElementById('codex-kimetsu-skin-style')),
+      chromePresent: Boolean(document.getElementById('codex-kimetsu-skin-chrome')),
+      chromePointerEvents: getComputedStyle(document.getElementById('codex-kimetsu-skin-chrome') || document.body).pointerEvents,
       homePresent: Boolean(home),
       suggestionsPresent: Boolean(suggestions),
       hero: box(home?.firstElementChild?.firstElementChild?.firstElementChild),
@@ -711,7 +711,7 @@ async function runWatch(options) {
     const delayMs = Math.min(30000, baseDelayMs * (2 ** Math.min(failures - 1, 4)));
     const now = Date.now();
     if (error && (failures === 1 || now - previous.lastLogAt >= 30000)) {
-      console.error(`[dream-skin] inject failed for ${target.id}: ${error.message}; retrying in ${delayMs}ms`);
+      console.error(`[kimetsu-skin] inject failed for ${target.id}: ${error.message}; retrying in ${delayMs}ms`);
       previous.lastLogAt = now;
     }
     targetFailures.set(target.id, { failures, lastLogAt: previous.lastLogAt, until: now + delayMs });
@@ -726,7 +726,7 @@ async function runWatch(options) {
         const operation = paused ? removeFromSession(session) : applyToSession(session, loadedPayload.payload);
         operation.catch((error) => {
           if (Date.now() - lastReinjectErrorLogAt >= 30000) {
-            console.error(`[dream-skin] reinject failed for ${target.id}: ${error.message}`);
+            console.error(`[kimetsu-skin] reinject failed for ${target.id}: ${error.message}`);
             lastReinjectErrorLogAt = Date.now();
           }
         });
@@ -742,7 +742,7 @@ async function runWatch(options) {
     paused = await fileExists(options.pauseFile);
     while (!stopping) {
       if (identityAnchor.closed) {
-        console.error("[dream-skin] original CDP browser identity closed; watcher is stopping instead of reconnecting");
+        console.error("[kimetsu-skin] original CDP browser identity closed; watcher is stopping instead of reconnecting");
         process.exitCode = 3;
         break;
       }
@@ -754,7 +754,7 @@ async function runWatch(options) {
         listFailures += 1;
         const retryMs = Math.min(10000, 1000 * (2 ** Math.min(listFailures - 1, 4)));
         if (listFailures === 1 || Date.now() - lastListErrorLogAt >= 30000) {
-          console.error(`[dream-skin] ${new Date().toISOString()} ${error.message}; retrying in ${retryMs}ms`);
+          console.error(`[kimetsu-skin] ${new Date().toISOString()} ${error.message}; retrying in ${retryMs}ms`);
           lastListErrorLogAt = Date.now();
         }
         await new Promise((resolve) => setTimeout(resolve, retryMs));
@@ -785,7 +785,7 @@ async function runWatch(options) {
           }
         } catch (error) {
           if (Date.now() - lastThemeErrorLogAt >= 30000) {
-            console.error(`[dream-skin] theme update rejected: ${error.message}; keeping the active theme`);
+            console.error(`[kimetsu-skin] theme update rejected: ${error.message}; keeping the active theme`);
             lastThemeErrorLogAt = Date.now();
           }
         }
@@ -817,7 +817,7 @@ async function runWatch(options) {
                 fallbackTargets.set(id, false);
               } catch (error) {
                 fallbackTargets.set(id, true);
-                console.error(`[dream-skin] early theme refresh unavailable for ${id}: ${error.message}`);
+                console.error(`[kimetsu-skin] early theme refresh unavailable for ${id}: ${error.message}`);
                 attachLoadFallback(id, { id }, session);
               }
               if (nextEarlyScript) earlyScripts.set(id, nextEarlyScript);
@@ -826,7 +826,7 @@ async function runWatch(options) {
               await applyToSession(session, loadedPayload.payload);
             }
           } catch (error) {
-            console.error(`[dream-skin] live theme update failed for ${id}: ${error.message}`);
+            console.error(`[kimetsu-skin] live theme update failed for ${id}: ${error.message}`);
             await removeEarlyPayload(session, earlyScripts.get(id));
             earlyScripts.delete(id);
             fallbackTargets.delete(id);
@@ -835,7 +835,7 @@ async function runWatch(options) {
             sessions.delete(id);
           }
         }
-        console.log(paused ? "[dream-skin] paused" : `[dream-skin] active theme ${loadedPayload.theme.id}`);
+        console.log(paused ? "[kimetsu-skin] paused" : `[kimetsu-skin] active theme ${loadedPayload.theme.id}`);
       }
 
       const activeIds = new Set(targets.map((target) => target.id));
@@ -877,7 +877,7 @@ async function runWatch(options) {
               await removeEarlyPayload(session, earlyScriptId);
               earlyScriptId = null;
               earlyInjectionFallback = true;
-              console.error(`[dream-skin] early injection unavailable for ${target.id}: ${error.message}`);
+              console.error(`[kimetsu-skin] early injection unavailable for ${target.id}: ${error.message}`);
             }
           }
           const probe = await waitForCodexProbe(session);
@@ -893,7 +893,7 @@ async function runWatch(options) {
           let earlyApplied = false;
           if (!paused && !earlyInjectionFallback) {
             earlyApplied = await session.evaluate(
-              `window.__CODEX_DREAM_SKIN_EARLY_APPLIED__ === ${JSON.stringify(loadedPayload.fingerprint)}`,
+              `window.__CODEX_KIMETSU_SKIN_EARLY_APPLIED__ === ${JSON.stringify(loadedPayload.fingerprint)}`,
             ).catch(() => false);
           }
           if (paused) await removeFromSession(session);
@@ -901,7 +901,7 @@ async function runWatch(options) {
           sessions.set(target.id, session);
           if (earlyScriptId) earlyScripts.set(target.id, earlyScriptId);
           targetFailures.delete(target.id);
-          console.log(`[dream-skin] injected target ${target.id}`);
+          console.log(`[kimetsu-skin] injected target ${target.id}`);
         } catch (error) {
           await removeEarlyPayload(session, earlyScriptId);
           fallbackTargets.delete(target.id);
@@ -974,7 +974,7 @@ if (path.resolve(process.argv[1] || "") === path.resolve(scriptPath)) {
   console.log(JSON.stringify({ pass: true, version: SKIN_VERSION, test: "loopback-cdp-validation" }));
   } else if (options.mode === "check-payload") {
     const loaded = await loadPayload(options.themeDir);
-    const unresolved = ["__DREAM_CSS_JSON__", "__DREAM_ART_JSON__", "__DREAM_THEME_JSON__"]
+    const unresolved = ["__KIMETSU_CSS_JSON__", "__KIMETSU_ART_JSON__", "__KIMETSU_THEME_JSON__"]
       .some((placeholder) => loaded.payload.includes(placeholder));
     if (unresolved) {
       throw new Error("Payload placeholders were not fully replaced");
