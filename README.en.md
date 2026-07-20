@@ -15,17 +15,17 @@
 
 <p align="center">
   <img src="docs/images/codex-live-home-current-theme.png" alt="Zenitsu Thunder Breathing Codex home screen" width="900"><br>
-  <sub>Home · real macOS injection screenshot · refreshed 2026-07-20</sub>
+  <sub>Home preview</sub>
 </p>
 
 <p align="center">
   <img src="docs/images/codex-live-task-current-theme.png" alt="Zenitsu Thunder Breathing Codex task screen" width="900"><br>
-  <sub>Task route · native messages, resource cards, and side panel remain interactive</sub>
+  <sub>Task preview</sub>
 </p>
 
 <p align="center">
   <img src="docs/images/codex-live-settings-current-theme.png" alt="Zenitsu Thunder Breathing Codex settings screen" width="900"><br>
-  <sub>Settings · native navigation, switches, and dropdown controls remain usable</sub>
+  <sub>Settings preview</sub>
 </p>
 
 The skin uses a blue-black shell, electric ivory highlights, haori-orange action states, and sharper 6-8px UI surfaces. Codex still renders the real sidebar, task view, project picker, settings route, profile menu, and composer; the skin only changes appearance through CSS and a small decorative DOM layer.

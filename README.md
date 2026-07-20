@@ -15,17 +15,17 @@
 
 <p align="center">
   <img src="docs/images/codex-live-home-current-theme.png" alt="我妻善逸霹雳呼吸主题首页实机效果" width="900"><br>
-  <sub>首页 · macOS 实机注入截图 · 2026-07-20 重新截取</sub>
+  <sub>首页预览</sub>
 </p>
 
 <p align="center">
   <img src="docs/images/codex-live-task-current-theme.png" alt="我妻善逸霹雳呼吸主题任务页实机效果" width="900"><br>
-  <sub>任务页 · 原生消息、资源卡和右侧环境面板保持可交互</sub>
+  <sub>任务页预览</sub>
 </p>
 
 <p align="center">
   <img src="docs/images/codex-live-settings-current-theme.png" alt="我妻善逸霹雳呼吸主题设置页实机效果" width="900"><br>
-  <sub>设置页 · 原生设置导航、开关和下拉控件保持可用</sub>
+  <sub>设置页预览</sub>
 </p>
 
 这套主题使用深蓝黑背景、霹雳白金高光、羽织橙动作态和更硬朗的 6-8px 控件语言。运行时仍然是官方 Codex 的真实侧栏、任务页、项目选择、设置页、输入框和菜单；主题层只通过 CSS 与少量装饰 DOM 改变外观。
