@@ -1,8 +1,31 @@
 {
   "name": "codex-kimetsu-skin",
   "version": "1.2.2",
+  "description": "Zenitsu Thunder Breathing theme skin for OpenAI Codex Desktop on macOS and Windows.",
   "private": true,
   "type": "module",
+  "keywords": [
+    "codex",
+    "codex-theme",
+    "codex-skin",
+    "openai-codex",
+    "codex-desktop",
+    "kimetsu-no-yaiba",
+    "demon-slayer",
+    "zenitsu",
+    "thunder-breathing",
+    "macos",
+    "windows"
+  ],
+  "homepage": "https://github.com/GodLei902/Codex-Kimetsu-Skin#readme",
+  "bugs": {
+    "url": "https://github.com/GodLei902/Codex-Kimetsu-Skin/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GodLei902/Codex-Kimetsu-Skin.git",
+    "directory": "macos"
+  },
   "scripts": {
     "test": "./tests/run-tests.sh",
     "doctor": "./scripts/doctor-macos.sh"

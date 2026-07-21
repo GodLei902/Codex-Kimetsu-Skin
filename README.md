@@ -9,7 +9,20 @@
   基于本机 CDP 注入 · 不修改官方安装包 · 保留 Codex 原生交互
 </p>
 
-> 把我妻善逸「霹雳呼吸」的速度感、雷光和深色工作台氛围带进 Codex 桌面端。主题通过本机 CDP 注入应用，不改官方安装包，也不替换 Codex 的原生交互。
+> Codex-Kimetsu-Skin 是一款面向 OpenAI Codex Desktop 的跨平台主题皮肤，把我妻善逸「霹雳呼吸」的速度感、雷光和深色工作台氛围带进 Codex 桌面端。主题通过本机 CDP 注入应用，不改官方安装包，也不替换 Codex 的原生交互。
+
+适合搜索关键词：Codex Kimetsu Skin、Codex-Kimetsu-Skin、Codex theme、Codex skin、OpenAI Codex desktop theme、Kimetsu no Yaiba Codex、Demon Slayer Codex skin、Zenitsu Thunder Breathing theme、macOS Codex skin、Windows Codex skin。
+
+## 项目定位
+
+Codex Kimetsu Skin 专注于给 Codex 桌面端提供可恢复、可验证的视觉主题层。它不是一个 Codex 客户端替代品，也不改写账号、模型、API Key、Base URL 或官方应用文件。
+
+核心能力：
+
+- macOS 和 Windows 双平台安装、启动、验证、暂停和恢复。
+- 通过 `127.0.0.1` 本机 CDP 会话注入 CSS 与少量装饰 DOM。
+- 内置我妻善逸「霹雳呼吸」主题，并保留本地主题导入、保存和切换能力。
+- 保持 Codex 原生侧栏、任务页、项目选择、设置页、输入框和菜单交互。
 
 ## 主题预览
 
@@ -63,6 +76,7 @@ Windows 首次安装会把同一套「霹雳呼吸」设为活动主题，并播
 | `windows/` | Windows PowerShell 启动/安装/恢复脚本、CDP 注入器和同款默认主题 |
 | `docs/designs/` | 霹雳呼吸设计说明和静态预览 |
 | `docs/images/` | 当前实机截图与设计预览图 |
+| `docs/github-discovery.md` | GitHub About 描述、topics 和搜索短语维护建议 |
 
 ## 安全边界
 

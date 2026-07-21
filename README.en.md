@@ -9,7 +9,20 @@
   Local CDP injection · no official app patching · native Codex controls remain interactive
 </p>
 
-> Bring Zenitsu Agatsuma's Thunder Breathing energy, lightning accents, and focused dark-workbench atmosphere into Codex Desktop. The skin is applied through local CDP injection without patching the official app or replacing native Codex interactions.
+> Codex-Kimetsu-Skin is a cross-platform theme skin for OpenAI Codex Desktop. It brings Zenitsu Agatsuma's Thunder Breathing energy, lightning accents, and focused dark-workbench atmosphere into Codex Desktop through local CDP injection, without patching the official app or replacing native Codex interactions.
+
+Search keywords: Codex Kimetsu Skin, Codex-Kimetsu-Skin, Codex theme, Codex skin, OpenAI Codex desktop theme, Kimetsu no Yaiba Codex, Demon Slayer Codex skin, Zenitsu Thunder Breathing theme, macOS Codex skin, Windows Codex skin.
+
+## Project Focus
+
+Codex Kimetsu Skin provides a recoverable and verifiable visual theme layer for Codex Desktop. It is not a replacement Codex client and does not rewrite accounts, models, API keys, base URLs, or official application files.
+
+Core capabilities:
+
+- macOS and Windows install, start, verify, pause, and restore flows.
+- CSS and a small decorative DOM layer injected through a `127.0.0.1` local CDP session.
+- Built-in Zenitsu Agatsuma “Thunder Breathing” theme with local import, save, and switch support.
+- Native Codex sidebar, task view, project picker, settings route, composer, and menus remain interactive.
 
 ## Preview
 
@@ -63,6 +76,7 @@ The Windows installer seeds the same Thunder Breathing theme as the initial acti
 | `windows/` | Windows PowerShell launch/install/restore scripts, CDP injector, and matching default theme |
 | `docs/designs/` | Thunder Breathing design notes and static previews |
 | `docs/images/` | Current live screenshots and design previews |
+| `docs/github-discovery.md` | Suggested GitHub About description, topics, and search phrases |
 
 ## Safety
 
